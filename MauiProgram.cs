@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FarmOrganizer.ViewModels;
+using FarmOrganizer.Views;
+using Microsoft.Extensions.Logging;
 
 namespace FarmOrganizer;
 
@@ -18,6 +20,14 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+
+		//Register singletons of view and VM types to dependency inject into XAML code-behinds
+		//Singletons are created only once and remain through app's lifetime
+		//Transients are created and disposed repeatedly
+		builder.Services.AddSingleton<MainPage>();
+		builder.Services.AddSingleton<MainPageViewModel>();
+		builder.Services.AddSingleton<QuickCalculator>();
+		builder.Services.AddSingleton<QuickCalculatorViewModel>();
 
 		return builder.Build();
 	}
