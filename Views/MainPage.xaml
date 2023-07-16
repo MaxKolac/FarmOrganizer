@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
     Shoutout to these YT Guides:
-    https://www.youtube.com/watch?v=PH9_bPu-ImQ - GeraldVersluis
+    https://www.youtube.com/watch?v=PH9_bPu-ImQ - Controls referencing eachother aka View-to-View by GeraldVersluis
+    https://www.youtube.com/watch?v=ddmZ6k1GIkM - .NET MAUI MVVM Beginner's Guide by James Montemagno
 -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"

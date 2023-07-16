@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SQLite;
+#nullable enable
 
 namespace FarmOrganizer.Models
 {

@@ -26,8 +26,8 @@ public static class MauiProgram
 		//Transients are created and disposed repeatedly
 		builder.Services.AddSingleton<MainPage>();
 		builder.Services.AddSingleton<MainPageViewModel>();
-		builder.Services.AddSingleton<QuickCalculator>();
-		builder.Services.AddSingleton<QuickCalculatorViewModel>();
+		builder.Services.AddTransient<QuickCalculator>();
+		builder.Services.AddTransient<QuickCalculatorViewModel>();
 
 		return builder.Build();
 	}

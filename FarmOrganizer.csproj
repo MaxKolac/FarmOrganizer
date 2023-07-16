@@ -61,9 +61,6 @@
 	  <Compile Update="Views\QuickCalculator.xaml.cs">
 	    <DependentUpon>QuickCalculator.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\TestPage.xaml.cs">
-	    <DependentUpon>TestPage.xaml</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>

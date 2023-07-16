@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SQLite;
+#nullable enable
 
 namespace FarmOrganizer.Models
 {
@@ -8,7 +9,7 @@ namespace FarmOrganizer.Models
     {
         public int Id { get; set; }
         [Column("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "Nowe pole";
         [Column("desc")]
         public string? Description { get; set; }
 
