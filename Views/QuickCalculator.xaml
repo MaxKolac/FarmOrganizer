@@ -3,7 +3,81 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              x:Class="FarmOrganizer.Views.QuickCalculator"
-             x:DataType="viewmodel:MainPageViewModel"
-             Title="QuickCalculator">
+             x:DataType="viewmodel:QuickCalculatorViewModel"
+             Title="Szybki kalkulator">
     
+    <Grid ColumnDefinitions="*"
+          RowDefinitions=".25*, Auto, Auto, Auto, Auto, Auto, Auto, *"
+          Padding="10">
+        
+        <Label Text="Lorem ipsum dolores at"
+               Grid.ColumnSpan="2"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"
+               Margin="10"
+               FontSize="Body"/>
+
+        <Label Text="Ilość plonów (kg):"
+               Grid.Row="1"
+               Grid.ColumnSpan="2"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Start"
+               FontSize="Medium"
+               FontAttributes="Bold"/>
+        <Entry x:Name="cropAmount"
+               Grid.Row="2"
+               Keyboard="Numeric"
+               ClearButtonVisibility="WhileEditing"
+               FontSize="Medium"
+               IsReadOnly="{Binding CropAmountReadOnly}"
+               Text="{Binding CropAmountValue}"
+               ReturnCommand="{Binding TextChangedCommand}">
+            <Entry.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
+                                      CommandParameter="cropAmount"/>
+            </Entry.GestureRecognizers>
+        </Entry>
+
+        <Label Text="Cena za kilogram (zł):"
+               Grid.Row="3"
+               Grid.ColumnSpan="2"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Start"
+               FontSize="Medium"
+               FontAttributes="Bold"/>
+        <Entry x:Name="sellRate"
+               Grid.Row="4"
+               Keyboard="Numeric"
+               ClearButtonVisibility="WhileEditing"
+               FontSize="Medium"
+               IsReadOnly="{Binding SellRateReadOnly}"
+               Text="{Binding SellRateValue}"
+               ReturnCommand="{Binding TextChangedCommand}">
+            <Entry.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
+                                      CommandParameter="sellRate"/>
+            </Entry.GestureRecognizers>
+        </Entry>
+
+        <Label Text="Zysk ze sprzedaży (zł):"
+               Grid.Row="5"
+               Grid.ColumnSpan="2"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Start"
+               FontSize="Medium"
+               FontAttributes="Bold"/>
+        <Entry x:Name="pureIncome"
+               Grid.Row="6"
+               Keyboard="Numeric"
+               ClearButtonVisibility="WhileEditing"
+               FontSize="Medium"
+               IsReadOnly="{Binding PureIncomeReadOnly}"
+               Text="{Binding PureIncomeValue}"
+               ReturnCommand="{Binding TextChangedCommand}">
+            <Entry.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
+                                      CommandParameter="pureIncome"/>
+            </Entry.GestureRecognizers>
+        </Entry>
+    </Grid>
 </ContentPage>
