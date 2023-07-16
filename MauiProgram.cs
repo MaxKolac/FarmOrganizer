@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace farm_organizer;
+namespace FarmOrganizer;
 
 public static class MauiProgram
 {

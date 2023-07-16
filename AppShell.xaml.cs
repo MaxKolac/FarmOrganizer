@@ -1,4 +1,4 @@
-﻿namespace farm_organizer;
+﻿namespace FarmOrganizer;
 
 public partial class AppShell : Shell
 {

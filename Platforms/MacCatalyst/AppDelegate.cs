@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace farm_organizer;
+namespace FarmOrganizer;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

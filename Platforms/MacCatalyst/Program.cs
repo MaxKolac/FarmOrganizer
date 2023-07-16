@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace farm_organizer;
+namespace FarmOrganizer;
 
 public class Program
 {

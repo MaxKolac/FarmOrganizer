@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace farm_organizer;
+namespace FarmOrganizer;
 
 [Application]
 public class MainApplication : MauiApplication
