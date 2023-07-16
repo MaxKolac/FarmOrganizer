@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>farm-organizer</ApplicationTitle>
+		<ApplicationTitle>Farm Organizer</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.farm_organizer</ApplicationId>
+		<ApplicationId>com.companyname.farmorganizer</ApplicationId>
 		<ApplicationIdGuid>9f967c6a-7047-499b-9958-b5b302b28871</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -58,6 +58,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\QuickCalculator.xaml.cs">
+	    <DependentUpon>QuickCalculator.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\TestPage.xaml.cs">
 	    <DependentUpon>TestPage.xaml</DependentUpon>
 	  </Compile>
@@ -65,6 +68,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\MainPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\QuickCalculator.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
