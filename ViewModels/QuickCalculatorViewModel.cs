@@ -53,8 +53,6 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         void LastTappedControlsChanged(string caller)
         {
-            if (lastEditedControls.Contains(caller))
-                return;
             lastEditedControls.Enqueue(caller);
             lastEditedControls.Dequeue();
 
@@ -64,7 +62,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         /// <summary>
-        /// <para>Android's Numeric Keyboard has the period hardcoded into it. This allows the number to have a comma from a calculation and a dot from the keyboard, which breaks calculations of the third value.</para>
+        /// <para>Android's Numeric Keyboard has the period hardcoded into it and C#'s <see cref="float.TryParse(string?, out float)">float.TryParse</see> breaks when it receives a string with a dot, instead of a comma. This allows the number to have a comma from a previous calculation and a dot from the keyboard, which breaks calculations of the third value.</para>
         /// <para>This method is a workaround of this problem. Despite it being overly engineered and probably in need of refactoring, at the moment it's the only solution which works and can handle both commas and dots. It can even verify and modify a number with both a comma and dot to be correct.</para>
         /// </summary>
         /// <returns>A floating point value of the input string. If the input is not a valid number, 0 is returned instead.</returns>

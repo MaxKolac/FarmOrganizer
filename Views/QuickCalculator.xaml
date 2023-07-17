@@ -10,12 +10,12 @@
           RowDefinitions=".25*, Auto, Auto, Auto, Auto, Auto, Auto, *"
           Padding="10">
         
-        <Label Text="Lorem ipsum dolores at"
+        <Label Text="Dwie ostatnio kliknięte liczby są użyte do obliczenia trzeciej. Wciśnij OK aby zatwierdzić wpisaną liczbę."
                Grid.ColumnSpan="2"
                HorizontalTextAlignment="Center"
                VerticalTextAlignment="Center"
                Margin="10"
-               FontSize="Body"/>
+               FontSize="18"/>
 
         <Label Text="Ilość plonów (kg):"
                Grid.Row="1"
