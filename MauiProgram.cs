@@ -28,6 +28,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<MainPageViewModel>();
 		builder.Services.AddTransient<QuickCalculator>();
 		builder.Services.AddTransient<QuickCalculatorViewModel>();
+		builder.Services.AddTransient<DatabasePage>();
+		builder.Services.AddTransient<DatabasePageViewModel>();
 
 		return builder.Build();
 	}

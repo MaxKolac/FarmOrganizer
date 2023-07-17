@@ -1,12 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FarmOrganizer.Views;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class MainPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        public string someText;
+        public string someText = "test";
 
         [RelayCommand]
         void ChangeText()
@@ -15,6 +16,11 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        static async Task OpenPage(string s) => await Shell.Current.GoToAsync(s);
+        static async Task OpenPage(string s) => 
+            await Shell.Current.GoToAsync(s);
+
+        [RelayCommand]
+        async Task OpenDatabasePage() => 
+            await Shell.Current.GoToAsync($"{nameof(DatabasePage)}?query={SomeText}");
     }
 }
