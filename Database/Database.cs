@@ -1,5 +1,4 @@
-﻿using FarmOrganizer.Models;
-using SQLite;
+﻿/*using SQLite;
 
 namespace FarmOrganizer.Database
 {
@@ -11,9 +10,9 @@ namespace FarmOrganizer.Database
         public Database()
         {
             _database = new SQLiteAsyncConnection(Constants.Filepath, Constants.Flags);
-            _database.CreateTableAsync<BalanceLedgerEntry>();
-            _database.CreateTableAsync<CropField>();
-            _database.CreateTableAsync<CostType>();
+            //_database.CreateTableAsync<BalanceLedgerEntry>();
+            //_database.CreateTableAsync<CropField>();
+            //_database.CreateTableAsync<CostType>();
         }
     }
-}
+}*/
