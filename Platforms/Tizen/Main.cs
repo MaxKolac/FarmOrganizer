@@ -2,7 +2,7 @@ using System;
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 
-namespace farm_organizer;
+namespace FarmOrganizer;
 
 class Program : MauiApplication
 {
