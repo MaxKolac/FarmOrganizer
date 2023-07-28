@@ -110,13 +110,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\LedgerPage.xaml.cs">
+	    <DependentUpon>LedgerPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\QuickCalculator.xaml.cs">
 	    <DependentUpon>QuickCalculator.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\DatabasePage.xaml">
+	  <MauiXaml Update="Views\LedgerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MainPage.xaml">

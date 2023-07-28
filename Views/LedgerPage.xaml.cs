@@ -2,9 +2,9 @@ using FarmOrganizer.ViewModels;
 
 namespace FarmOrganizer.Views;
 
-public partial class DatabasePage : ContentPage
+public partial class LedgerPage : ContentPage
 {
-	public DatabasePage(DatabasePageViewModel vm)
+	public LedgerPage(LedgerPageViewModel vm)
 	{
 		InitializeComponent();
 		BindingContext = vm;

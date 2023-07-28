@@ -10,6 +10,6 @@ public partial class AppShell : Shell
 
 		//Route registries for different pages
 		Routing.RegisterRoute(nameof(QuickCalculator), typeof(QuickCalculator));
-		Routing.RegisterRoute(nameof(DatabasePage), typeof(DatabasePage));
+		Routing.RegisterRoute(nameof(LedgerPage), typeof(LedgerPage));
 	}
 }
