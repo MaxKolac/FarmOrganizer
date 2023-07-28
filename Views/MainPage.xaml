@@ -12,41 +12,38 @@
              Title="Menu główne">
     <Grid 
         ColumnDefinitions="*, *"
-        RowDefinitions="0.2*, *, *, *"
+        RowDefinitions="*, *, *"
         Margin="10" 
         ColumnSpacing="6"
         RowSpacing="6" >
 
-        <Entry
-            Grid.ColumnSpan="2"
-            Placeholder="Text goes here"
-            Text="{Binding SomeText}"/>
-        
         <Button 
-            Grid.Row="1" 
-            Text="Database Page"
+            Grid.Row="0"
+            Grid.Column="0"
+            Text="Tabela kosztów"
             Command="{Binding OpenDatabasePageCommand}"/>
         <Button 
-            Grid.Row="2" 
-            Text="Open Quick Calc" 
+            Grid.Row="0" 
+            Grid.Column="1"
+            Text="Szybki kalkulator" 
             Command="{Binding OpenPageCommand}"
             CommandParameter="QuickCalculator"/>
-        <Button 
+        <!--<Button 
             x:Name="DisableThatFuck"
             Grid.Row="3" 
             Text="Holy shit" 
-            IsEnabled="{Binding IsToggled, Source={x:Reference TheFunnySwitch}}"/>
+            IsEnabled="{Binding IsToggled, Source={x:Reference TheFunnySwitch}}"/>-->
         
         <Button 
-            Grid.Column="1" 
             Grid.Row="1"  
+            Grid.Column="0" 
             Text="PLACEHOLDER" />
         <Button
+            Grid.Row="1" 
             Grid.Column="1" 
-            Grid.Row="2" 
             Text="PLACEHOLDER" />
-        <Switch x:Name="TheFunnySwitch"
+        <!--<Switch x:Name="TheFunnySwitch"
                 Grid.Column="1"
-                Grid.Row="3"/>
+                Grid.Row="3"/>-->
     </Grid>
 </ContentPage>
