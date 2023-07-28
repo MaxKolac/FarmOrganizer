@@ -10,7 +10,7 @@ namespace FarmOrganizer.Models
         public long Id { get; set; }
         public long IdCostType { get; set; }
         public long IdCropField { get; set; }
-        public long DateAdded { get; set; }
+        public byte[] DateAdded { get; set; }
         public double BalanceChange { get; set; }
         public string Notes { get; set; }
 

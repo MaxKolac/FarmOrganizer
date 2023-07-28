@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 2,
-   "ContextClassName": "LedgerContext",
+   "ContextClassName": "DatabaseContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -28,7 +28,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "C:\\Users\\ja\\Documents\\GitHub\\farm-organizer\\Database\\database",
+   "UiHint": "C:\\Users\\ja\\Documents\\GitHub\\farm-organizer\\Database\\database.sqlite3",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

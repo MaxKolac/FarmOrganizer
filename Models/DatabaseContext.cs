@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FarmOrganizer.Models
 {
-    public partial class LedgerContext : DbContext
+    public partial class DatabaseContext : DbContext
     {
-        public LedgerContext()
+        public DatabaseContext()
         {
         }
 
-        public LedgerContext(DbContextOptions<LedgerContext> options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
         }
@@ -39,6 +39,8 @@ namespace FarmOrganizer.Models
                     .HasDefaultValueSql("0.0");
 
                 entity.Property(e => e.DateAdded)
+                    .IsRequired()
+                    .HasColumnType("DATETIME")
                     .HasColumnName("dateAdded")
                     .HasDefaultValueSql("datetime()");
 
