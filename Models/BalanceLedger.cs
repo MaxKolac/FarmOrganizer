@@ -10,7 +10,7 @@ namespace FarmOrganizer.Models
         public int Id { get; set; }
         public int IdCostType { get; set; }
         public int IdCropField { get; set; }
-        public byte[] DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
         public double BalanceChange { get; set; }
         public string Notes { get; set; }
 
@@ -23,11 +23,7 @@ namespace FarmOrganizer.Models
                 $"Id = {Id}; " +
                 $"CostType = {IdCostType}; " +
                 $"CropField = {IdCropField}; " +
-                $"DateAdded Raw = ";
-            foreach (byte b in DateAdded)
-                s += b + " ";
-            s +=
-                $";" +
+                $"DateAdded Raw = {DateAdded};" +
                 $"BalanceChange = {BalanceChange}; " +
                 $"Notes = {Notes}";
             return s;
