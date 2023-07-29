@@ -21,6 +21,7 @@ namespace FarmOrganizer.ViewModels
 
         [RelayCommand]
         async Task OpenDatabasePage() => 
-            await Shell.Current.GoToAsync($"{nameof(LedgerPage)}?query=SomeText");
+            //await Shell.Current.GoToAsync($"{nameof(LedgerPage)}?query=SomeText");
+            await Shell.Current.GoToAsync(nameof(LedgerPage));
     }
 }

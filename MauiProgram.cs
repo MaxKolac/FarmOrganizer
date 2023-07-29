@@ -1,6 +1,9 @@
-﻿using FarmOrganizer.ViewModels;
+﻿using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Storage;
 
 namespace FarmOrganizer;
 
@@ -30,7 +33,27 @@ public static class MauiProgram
 		builder.Services.AddTransient<QuickCalculatorViewModel>();
 		builder.Services.AddTransient<LedgerPage>();
 		builder.Services.AddTransient<LedgerPageViewModel>();
+		builder.Services.AddTransient<DebugPage>();
+		builder.Services.AddTransient<DebugPageViewModel>();
+		builder.Services.AddDbContext<DatabaseContext>();
+		CopyDatabaseToAppDirectory("database.sqlite3");
 
-		return builder.Build();
+        return builder.Build();
 	}
+
+    /// <summary>
+    /// Copy the read-only database file bundled with the APK to app's local storage to be editable.
+	/// <para>
+    /// <see href="https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/storage/file-system-helpers?tabs=android"/>
+	/// </para>
+    /// </summary>
+    /// <param name="databaseFilename">The name of the database file.</param>
+    public static async Task CopyDatabaseToAppDirectory(string databaseFilename)
+    {
+        using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(databaseFilename);
+			string targetFile = Path.Combine(FileSystem.Current.AppDataDirectory, databaseFilename);
+
+        using FileStream outputStream = File.Create(targetFile);
+			await inputStream.CopyToAsync(outputStream);
+    }
 }

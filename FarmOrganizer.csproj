@@ -119,6 +119,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\DebugPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\LedgerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -131,11 +134,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Database\ledger.db">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+	  <Resource Include="Resources\Raw\database.sqlite3">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
-	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionfarmorganizerHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+	<ItemGroup>
+	  <Folder Include="Database\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiAsset Update="Resources\Raw\database.sqlite3">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </MauiAsset>
+	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionfarmorganizerHideInfoBar="True" XamarinHotReloadWrongLinkerErrorInfoBarFarmOrganizerHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

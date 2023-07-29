@@ -7,14 +7,30 @@ namespace FarmOrganizer.Models
 {
     public partial class BalanceLedger
     {
-        public long Id { get; set; }
-        public long IdCostType { get; set; }
-        public long IdCropField { get; set; }
+        public int Id { get; set; }
+        public int IdCostType { get; set; }
+        public int IdCropField { get; set; }
         public byte[] DateAdded { get; set; }
         public double BalanceChange { get; set; }
         public string Notes { get; set; }
 
         public virtual CostType IdCostTypeNavigation { get; set; }
         public virtual CropField IdCropFieldNavigation { get; set; }
+
+        public override string ToString()
+        {
+            string s =
+                $"Id = {Id}; " +
+                $"CostType = {IdCostType}; " +
+                $"CropField = {IdCropField}; " +
+                $"DateAdded Raw = ";
+            foreach (byte b in DateAdded)
+                s += b + " ";
+            s +=
+                $";" +
+                $"BalanceChange = {BalanceChange}; " +
+                $"Notes = {Notes}";
+            return s;
+        }
     }
 }

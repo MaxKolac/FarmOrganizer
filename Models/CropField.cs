@@ -12,7 +12,7 @@ namespace FarmOrganizer.Models
             BalanceLedger = new HashSet<BalanceLedger>();
         }
 
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public double Hectares { get; set; }
 
