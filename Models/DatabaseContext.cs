@@ -7,6 +7,8 @@ namespace FarmOrganizer.Models
 {
     public partial class DatabaseContext : DbContext
     {
+        public static DatabaseContext Instance { get; private set; } = new DatabaseContext();
+
         public DatabaseContext()
         {
         }
@@ -41,7 +43,9 @@ namespace FarmOrganizer.Models
                 entity.HasIndex(e => e.Id, "IX_balanceLedger_id")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.BalanceChange)
                     .HasColumnType("REAL (8, 2)")
@@ -78,7 +82,9 @@ namespace FarmOrganizer.Models
                 entity.HasIndex(e => e.Id, "IX_costType_id")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -92,7 +98,9 @@ namespace FarmOrganizer.Models
                 entity.HasIndex(e => e.Id, "IX_cropField_id")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Hectares)
                     .HasColumnType("REAL (8, 2)")
