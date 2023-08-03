@@ -7,8 +7,6 @@ namespace FarmOrganizer.Models
 {
     public partial class DatabaseContext : DbContext
     {
-        public static DatabaseContext Instance { get; private set; } = new DatabaseContext();
-
         public DatabaseContext()
         {
         }

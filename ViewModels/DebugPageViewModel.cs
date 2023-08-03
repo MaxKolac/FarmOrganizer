@@ -9,10 +9,11 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         public string debugText;
 
-        public void AppendText(string s)
+        public void AppendText(string s, bool addPause = true)
         {
             DebugText += s;
-            PutPause();
+            if (addPause)
+                PutPause();
         }
 
         public void ClearText() =>
@@ -25,18 +26,21 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         void PerformCRUDTests()
         {
-            var context = DatabaseContext.Instance;
+            using var context = new DatabaseContext();
             ClearText();
 
             //Query whole table
+            AppendText("QUERY WHOLE TABLE");
             var qr_fullTable = context.BalanceLedger.ToList();
-            AppendText(qr_fullTable.ToString());
+            foreach (var qr in qr_fullTable)
+                AppendText(qr.ToString());
 
             //Create new entry
+            AppendText("CREATED NEW ENTRY");
             BalanceLedger newEntry = new()
             {
-                IdCostType = 0,
-                IdCropField = 1,
+                IdCostType = 2,
+                IdCropField = 2,
                 DateAdded = DateTime.Now,
                 BalanceChange = 1234.12,
                 Notes = "Created fresh new entry!"
@@ -45,39 +49,53 @@ namespace FarmOrganizer.ViewModels
             context.SaveChanges();
 
             //Read existing entry
-            var qr_existingEntry = context.BalanceLedger.Find(1);
+            AppendText("READ EXISTING ENTRY");
+            var qr_existingEntry = context.BalanceLedger.Find(7);
             AppendText(qr_existingEntry.ToString());
 
             //Read created entry
-            var qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 1234.12);
+            AppendText("READ CREATED ENTRY");
+            var qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 1234.12).First();
             AppendText(qr_createdEntry.ToString());
 
             //Update existing entry
             //this is a bit more complicated, because of Tracked Untracked attributes attachted to entities
+            AppendText("UPDATE EXISTING ENTRY");
+            qr_existingEntry.BalanceChange = 69.69;
+            context.SaveChanges();
 
             //Update created entry
+            AppendText("UPDATE CREATED ENTRY");
+            qr_createdEntry.BalanceChange = 71.71;
+            context.SaveChanges();
 
             //Read existing entry again
-            //qr_existingEntry = context.BalanceLedger.Find(1);
-            //AppendText(qr_existingEntry.ToString());
+            AppendText("READ EXISTING ENTRY AFTER UPDATE");
+            qr_existingEntry = context.BalanceLedger.Find(7);
+            AppendText(qr_existingEntry.ToString());
 
             //Read created entry again
-            //qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 1234.12);
-            //AppendText(qr_createdEntry.ToString());
+            AppendText("READ CREATED ENTRY AFTER UPDATE");
+            qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 71.71).First();
+            AppendText(qr_createdEntry.ToString());
 
             //Delete existing entry
+            AppendText("DELETE EXISTING ENTRY");
             qr_existingEntry = context.BalanceLedger.Find(1);
             context.BalanceLedger.Remove(qr_existingEntry);
             context.SaveChanges();
 
             //Delete created entry
-            qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 1234.12);
-            context.BalanceLedger.Remove((BalanceLedger)qr_createdEntry); 
+            AppendText("DELETE CREATED ENTRY");
+            qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == -12.99).First();
+            context.BalanceLedger.Remove(qr_createdEntry);
             context.SaveChanges();
 
             //Query whole table
+            AppendText("QUERY WHOLE TABLE - CRUD OPERATIONS RESULT");
             qr_fullTable = context.BalanceLedger.ToList();
-            AppendText(qr_fullTable.ToString());
+            foreach (var qr in qr_fullTable)
+                AppendText(qr.ToString());
         }
     }
 }
