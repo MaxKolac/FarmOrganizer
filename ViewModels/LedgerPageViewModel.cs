@@ -25,6 +25,10 @@ namespace FarmOrganizer.ViewModels
                 App.AlertSvc.ShowAlert(
                     "Coś poszło nie tak",
                     $"Program zwrócił błąd związany z bazą danych. Nie udało się załadować rekordów z tabeli BalanceLedger. Kod błędu SQLite: {ex.SqliteErrorCode}, {ex.SqliteExtendedErrorCode}.");
+                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
+                {
+                    await Shell.Current.GoToAsync("..");
+                });
             }
         }
 

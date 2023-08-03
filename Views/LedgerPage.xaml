@@ -18,7 +18,7 @@
             <Picker HorizontalOptions="FillAndExpand"/>
         </HorizontalStackLayout>
 
-        <CollectionView Grid.Row="1">
+        <CollectionView Grid.Row="1" ItemsSource="{Binding LedgerList}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:BalanceLedger">
                     <SwipeView>
@@ -48,13 +48,6 @@
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
-            <CollectionView.ItemsSource>
-                <x:Array Type="{x:Type model:BalanceLedger}">
-                    <model:BalanceLedger IdCropField="2" IdCostType="4" BalanceChange="-200.69" DateAdded="01.23.2001" Notes="Bruh"/>
-                    <model:BalanceLedger IdCropField="3" IdCostType="3" BalanceChange="692.30" DateAdded="9.9.9999" Notes="Bruh #2"/>
-                </x:Array>
-            </CollectionView.ItemsSource>
         </CollectionView>
 
         <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
