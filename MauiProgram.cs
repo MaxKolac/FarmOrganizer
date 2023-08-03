@@ -1,4 +1,5 @@
 ﻿using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
@@ -34,6 +35,7 @@ public static class MauiProgram
         builder.Services.AddTransient<DebugPage>();
         builder.Services.AddTransient<DebugPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
+        builder.Services.AddSingleton<IAlertService, AlertService>();
         CopyDatabaseToAppDirectory("database.sqlite3");
 
         return builder.Build();
