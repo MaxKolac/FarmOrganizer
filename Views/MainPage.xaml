@@ -44,7 +44,8 @@
         <Button
             Grid.Row="1" 
             Grid.Column="1" 
-            Text="PLACEHOLDER" />
+            Text="Zarządzaj polami i rodzajami kosztów" 
+            LineBreakMode="CharacterWrap"/>
         <!--<Switch x:Name="TheFunnySwitch"
                 Grid.Column="1"
                 Grid.Row="3"/>-->

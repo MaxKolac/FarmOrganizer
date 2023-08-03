@@ -1,23 +1,72 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+    Useful resources used when developing:
+    .NET MAUI SwipeView by Programming with Pragnesh - https://www.youtube.com/watch?v=WAVeY8ySGY4
+    Stringformatting a Datetime type by csharpcorner - https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
+-->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.LedgerPage"
              x:DataType="viewmodel:LedgerPageViewModel"
              Title="Tabela kosztów">
+    <Grid RowDefinitions=".05*,*,.1*"
+          Padding="5">
+        <HorizontalStackLayout>
+            <Label Text="Wybrane pole:" HorizontalOptions="Start"/>
+            <Picker HorizontalOptions="FillAndExpand"/>
+        </HorizontalStackLayout>
 
-    <Grid RowDefinitions=".1*,*,.15*"
-          Padding="10">
-        <VerticalStackLayout>
-            <Label Text="Wybrane pole:"/>
-            <Picker></Picker>
-        </VerticalStackLayout>
-        <SwipeItemView Grid.Row="1">
+        <CollectionView Grid.Row="1">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:BalanceLedger">
+                    <SwipeView>
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Edytuj"
+                                           BackgroundColor="YellowGreen"
+                                           Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}"/>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Usuń"
+                                           BackgroundColor="Firebrick"
+                                           Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"/>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
 
-        </SwipeItemView>
+                        <Frame Margin="5,2,5,2" Padding="8">
+                            <Grid ColumnDefinitions="*, *, *" RowDefinitions=".5*, .5*">
+                                <Label FontSize="20" Text="{Binding BalanceChange, StringFormat='{0:F2}'}"/>
+                                <Label Grid.Column="1" FontSize="16" HorizontalTextAlignment="End" Text="{Binding IdCostType}"/>
+                                <Label Grid.Column="2" FontSize="16" Text="{Binding DateAdded, StringFormat='{0:d MMMM yy}'}" FontAttributes="Italic"/>
+                                <Label Grid.Row="1" Grid.ColumnSpan="2" FontAttributes="Italic" Text="{Binding Notes}"/>
+                            </Grid>
+                        </Frame>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.ItemsSource>
+                <x:Array Type="{x:Type model:BalanceLedger}">
+                    <model:BalanceLedger IdCropField="2" IdCostType="4" BalanceChange="-200.69" DateAdded="01.23.2001" Notes="Bruh"/>
+                    <model:BalanceLedger IdCropField="3" IdCostType="3" BalanceChange="692.30" DateAdded="9.9.9999" Notes="Bruh #2"/>
+                </x:Array>
+            </CollectionView.ItemsSource>
+        </CollectionView>
+
         <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
-            <Button Text="Dodaj wpis" Margin="2"/>
-            <Button Text="Generuj raport i oblicz" Margin="2"/>
+            <Button Text="Sortuj" 
+                    Command="{Binding SortRecordsCommand}"
+                    Margin="2"/>
+            <Button Text="Dodaj wpis" 
+                    Command="{Binding AddRecordCommand}"
+                    Margin="2"/>
+            <Button Text="Generuj raport i oblicz" 
+                    Command="{Binding GenerateAndCalculateCommand}"
+                    Margin="2"/>
         </HorizontalStackLayout>
     </Grid>
 </ContentPage>
