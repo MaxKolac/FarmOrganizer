@@ -38,9 +38,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAlertService, AlertService>();
 
         if (!DatabaseFile.Exists())
-        {
-            Application.Current.MainPage.Dispatcher.Dispatch(async () => await DatabaseFile.Create());
-        }
+            MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
 
         return builder.Build();
     }

@@ -16,13 +16,13 @@ namespace FarmOrganizer.ViewModels
             if (addPause)
                 PutPause();
         }
+        public void ClearText() => DebugText = string.Empty;
+        public void PutPause() => DebugText += "\n=========\n";
 
-        public void ClearText() =>
-            DebugText = string.Empty;
-
-        public void PutPause() =>
-            DebugText += "\n=========\n";
-
+        [RelayCommand]
+        void PerformTest() =>
+            //PerformCRUDTests();
+            PerformDatabaseFileTests();
 
         [RelayCommand]
         void PerformCRUDTests()
@@ -97,6 +97,32 @@ namespace FarmOrganizer.ViewModels
             qr_fullTable = context.BalanceLedger.ToList();
             foreach (var qr in qr_fullTable)
                 AppendText(qr.ToString());
+        }
+        [RelayCommand]
+        void PerformDatabaseFileTests()
+        {
+            ClearText();
+            try
+            {
+                //After starting the app the DB should already be there, check for it
+                AppendText($"DATABASE FILE EXISTS: {DatabaseFile.Exists()}");
+
+                //Delete it and check if it deleted
+                AppendText("DELETING DB FILE...");
+                DatabaseFile.Delete();
+                AppendText($"DATABASE FILE EXISTS: {DatabaseFile.Exists()}");
+
+                //Create it again
+                AppendText("CREATING DB FILE...");
+                MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
+                AppendText($"DATABASE FILE EXISTS: {DatabaseFile.Exists()}");
+            }
+            catch (Exception ex)
+            {
+                AppendText("EXCEPTION WAS THROWN!");
+                AppendText(ex.ToString());
+                AppendText(ex.Message);
+            }
         }
     }
 }

@@ -8,7 +8,7 @@
     
     <ScrollView>
         <VerticalStackLayout>
-            <Button Command="{Binding PerformCRUDTestsCommand}" Text="Do the thing!"/>
+            <Button Command="{Binding PerformTestCommand}" Text="Do the thing!"/>
             <Label Text="{Binding DebugText}"/>
         </VerticalStackLayout>
     </ScrollView>

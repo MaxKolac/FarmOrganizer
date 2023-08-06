@@ -16,6 +16,14 @@
 
         /// <summary>
         /// Copy the read-only fresh database file bundled with the APK to app's local storage to be editable.
+        /// You can dispatch the creation of a new file with the following sample:
+        /// <code>
+        /// Application.Current.MainPage.Dispatcher.Dispatch(async () => await DatabaseFile.Create());
+        /// </code>
+        /// Alternatively, you can invoke it on the main thread using the following sample:
+        /// <code>
+        /// MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
+        /// </code>
         /// <para>
         /// <see href="https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/storage/file-system-helpers?tabs=android"/>
         /// </para>
