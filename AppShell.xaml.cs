@@ -11,6 +11,7 @@ public partial class AppShell : Shell
 		//Route registries for different pages
 		Routing.RegisterRoute(nameof(QuickCalculator), typeof(QuickCalculator));
 		Routing.RegisterRoute(nameof(LedgerPage), typeof(LedgerPage));
+		Routing.RegisterRoute(nameof(LedgerRecordPage), typeof(LedgerRecordPage));
 		Routing.RegisterRoute(nameof(DebugPage), typeof(DebugPage));
 	}
 }

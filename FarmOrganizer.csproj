@@ -120,6 +120,9 @@
 	  <MauiXaml Update="Views\LedgerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\LedgerRecordPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -140,6 +143,6 @@
 	  </MauiAsset>
 	</ItemGroup>
 
-	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionfarmorganizerHideInfoBar="True" XamarinHotReloadWrongLinkerErrorInfoBarFarmOrganizerHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionfarmorganizerHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarFarmOrganizerHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionFarmOrganizerHideInfoBar="True" XamarinHotReloadWrongLinkerErrorInfoBarFarmOrganizerHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

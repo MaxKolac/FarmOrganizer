@@ -32,6 +32,8 @@ public static class MauiProgram
         builder.Services.AddTransient<QuickCalculatorViewModel>();
         builder.Services.AddTransient<LedgerPage>();
         builder.Services.AddTransient<LedgerPageViewModel>();
+        builder.Services.AddTransient<LedgerRecordPage>();
+        builder.Services.AddTransient<LedgerRecordPageViewModel>();
         builder.Services.AddTransient<DebugPage>();
         builder.Services.AddTransient<DebugPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();

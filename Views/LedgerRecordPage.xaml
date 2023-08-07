@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             x:Class="FarmOrganizer.Views.LedgerRecordPage"
+             x:DataType="viewmodel:LedgerRecordPageViewModel"
+             Title="{Binding TitleText}">
+    <Grid RowDefinitions="auto,auto,auto,auto,auto,*">
+        <Entry Text="{Binding IdCostType}" />
+        <Entry Text="{Binding IdCropField}" Grid.Row="1"/>
+        <DatePicker Date="{Binding DateAdded}" Grid.Row="2"/>
+        <Entry Text="{Binding BalanceChange}" Grid.Row="3"/>
+        <Editor Text="{Binding Notes}" Grid.Row="4"/>
+        <HorizontalStackLayout Grid.Row="5">
+            <Button Text="Anuluj" 
+                    HorizontalOptions="Start"
+                    Command="{Binding ReturnToPreviousPageCommand}"/>
+            <Button Text="{Binding SaveButtonText}"
+                    HorizontalOptions="End"
+                    Command="{Binding SaveCommand}"/>
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>
