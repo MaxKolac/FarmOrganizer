@@ -7,11 +7,8 @@ using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
-    //[QueryProperty(nameof(PassedQuery), "query")]
     public partial class LedgerPageViewModel : ObservableObject
     {
-        //[ObservableProperty]
-        //string passedQuery;
         [ObservableProperty]
         List<BalanceLedger> ledgerList = new();
 

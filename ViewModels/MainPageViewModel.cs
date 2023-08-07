@@ -6,22 +6,12 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class MainPageViewModel : ObservableObject
     {
-        //[ObservableProperty]
-        //public string someText = "test";
-
-        [RelayCommand]
-        void ChangeText()
-        {
-        //    SomeText = String.Empty;
-        }
-
         [RelayCommand]
         static async Task OpenPage(string s) => 
             await Shell.Current.GoToAsync(s);
 
         [RelayCommand]
         async Task OpenDatabasePage() => 
-            //await Shell.Current.GoToAsync($"{nameof(LedgerPage)}?query=SomeText");
             await Shell.Current.GoToAsync(nameof(LedgerPage));
     }
 }
