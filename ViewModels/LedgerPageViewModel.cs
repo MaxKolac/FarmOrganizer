@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
+using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.Views;
 using Microsoft.Data.Sqlite;
@@ -11,24 +12,12 @@ namespace FarmOrganizer.ViewModels
     {
         [ObservableProperty]
         List<BalanceLedger> ledgerList = new();
+        [ObservableProperty]
+        List<CropField> cropFieldList = new();
 
         public LedgerPageViewModel()
         {
-            using var context = new DatabaseContext();
-            try
-            {
-                ledgerList = context.BalanceLedger.ToList();
-            } 
-            catch (SqliteException ex)
-            {
-                App.AlertSvc.ShowAlert(
-                    "Coś poszło nie tak",
-                    $"Program zwrócił błąd związany z bazą danych. Nie udało się załadować rekordów z tabeli BalanceLedger. Kod błędu SQLite: {ex.SqliteErrorCode}, {ex.SqliteExtendedErrorCode}.");
-                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
-                {
-                    await Shell.Current.GoToAsync("..");
-                });
-            }
+            RequeryAllLists();
         }
 
         [RelayCommand]
@@ -51,18 +40,53 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
+        private void FilterRecords()
+        {
+
+        }
+
+        [RelayCommand]
         private void GenerateAndCalculate()
         {
 
         }
 
-        [RelayCommand]
-        private void EditRecord()
-        {
 
+        [RelayCommand]
+        private void DeleteRecord(BalanceLedger record) 
+        {
+            try
+            { 
+                using var context = new DatabaseContext();
+                context.BalanceLedger.Remove(record);
+                context.SaveChanges();
+            }
+            catch (SqliteException ex)
+            {
+                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericMessage(ex));
+            }
+            finally
+            {
+                RequeryAllLists();
+            }
         }
 
-        [RelayCommand]
-        private void DeleteRecord() { }
+        private void RequeryAllLists()
+        {
+            using var context = new DatabaseContext();
+            try
+            {
+                LedgerList = context.BalanceLedger.ToList();
+                CropFieldList = context.CropField.ToList();
+            }
+            catch (SqliteException ex)
+            {
+                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericMessage(ex));
+                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
+                {
+                    await Shell.Current.GoToAsync("..");
+                });
+            }
+        }
     }
 }
