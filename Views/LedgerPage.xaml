@@ -3,6 +3,7 @@
     Useful resources used when developing:
     .NET MAUI SwipeView by Programming with Pragnesh - https://www.youtube.com/watch?v=WAVeY8ySGY4
     Stringformatting a Datetime type by csharpcorner - https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
+    SwipeViewItem GitHub examples by Microsoft - https://learn.microsoft.com/en-us/samples/dotnet/maui-samples/userinterface-swipeview/
 -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -11,38 +12,62 @@
              x:Class="FarmOrganizer.Views.LedgerPage"
              x:DataType="viewmodel:LedgerPageViewModel"
              Title="Tabela kosztów">
-    <Grid RowDefinitions=".05*,*,.1*"
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Dodaj nowy wpis" Command="{Binding AddRecordCommand}"/>
+    </ContentPage.ToolbarItems>
+    
+    <Grid RowDefinitions="auto,*,.1*"
           Padding="5">
-        <HorizontalStackLayout>
-            <Label Text="Wybrane pole:" HorizontalOptions="Start"/>
-            <Picker HorizontalOptions="FillAndExpand"/>
-        </HorizontalStackLayout>
-
+        <Picker Title="Wybierz pole uprawne"/>
         <CollectionView Grid.Row="1" ItemsSource="{Binding LedgerList}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:BalanceLedger">
                     <SwipeView>
                         <SwipeView.LeftItems>
                             <SwipeItems>
-                                <SwipeItem Text="Edytuj"
-                                           BackgroundColor="YellowGreen"
-                                           Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}"/>
+                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}},                  Path=EditRecordCommand}"
+                                           CommandParameter="{Binding .}">
+                                    <Frame BackgroundColor="LightYellow">
+                                        <Label Text="Edytuj"
+                                               FontAttributes="Bold"/>
+                                    </Frame>
+                                </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.LeftItems>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Usuń"
-                                           BackgroundColor="Firebrick"
-                                           Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"/>
+                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}},                      Path=DeleteRecordCommand}"
+                                               CommandParameter="{Binding .}">
+                                    <Frame BackgroundColor="Firebrick">
+                                        <Label Text="Usuń"
+                                               TextColor="White"
+                                               FontAttributes="Bold"/>
+                                    </Frame>
+                                </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.RightItems>
 
-                        <Frame Margin="5,2,5,2" Padding="8">
-                            <Grid ColumnDefinitions="*, *, *" RowDefinitions=".5*, .5*">
-                                <Label FontSize="20" Text="{Binding BalanceChange, StringFormat='{0:F2}'}"/>
-                                <Label Grid.Column="1" FontSize="16" HorizontalTextAlignment="End" Text="{Binding IdCostType}"/>
-                                <Label Grid.Column="2" FontSize="16" Text="{Binding DateAdded, StringFormat='{0:d MMMM yy}'}" FontAttributes="Italic"/>
-                                <Label Grid.Row="1" Grid.ColumnSpan="2" FontAttributes="Italic" Text="{Binding Notes}"/>
+                        <Frame Margin="5,2,5,2" 
+                               Padding="8"
+                               BackgroundColor="LightGray"
+                               BorderColor="DarkGrey">
+                            <Grid ColumnDefinitions="*, *, *" 
+                                  RowDefinitions=".5*, .5*">
+                                <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
+                                       HorizontalTextAlignment="Start"
+                                       FontSize="20" />
+                                <Label Text="{Binding IdCostType}"
+                                       Grid.Column="1" 
+                                       FontSize="16" 
+                                       HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy}'}" 
+                                       Grid.Column="2"
+                                       FontSize="16" 
+                                       HorizontalTextAlignment="End" />
+                                <Label Text="{Binding Notes}"
+                                       Grid.Row="1" 
+                                       Grid.ColumnSpan="2" 
+                                       FontAttributes="Italic" />
                             </Grid>
                         </Frame>
                     </SwipeView>
@@ -52,12 +77,15 @@
 
         <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
             <Button Text="Sortuj" 
+                    LineBreakMode="CharacterWrap"
                     Command="{Binding SortRecordsCommand}"
                     Margin="2"/>
-            <Button Text="Dodaj wpis" 
-                    Command="{Binding AddRecordCommand}"
+            <Button Text="Filtruj" 
+                    LineBreakMode="CharacterWrap"
+                    Command="{Binding FilterRecordsCommand}"
                     Margin="2"/>
             <Button Text="Generuj raport i oblicz" 
+                    LineBreakMode="CharacterWrap"
                     Command="{Binding GenerateAndCalculateCommand}"
                     Margin="2"/>
         </HorizontalStackLayout>
