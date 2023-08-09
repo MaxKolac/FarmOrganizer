@@ -5,6 +5,11 @@
     /// </summary>
     public static class DatabaseFile
     {
+        //TODO: VERY WEIRD ISSUES
+        //DebugPage's DBFileTest has showcased that a theoretical "reset" of DB just doesn't work.
+        //Deleting records and querying yields same results as querying a "resetted" DB. 
+        //WHich shouldn't be happening. More tests required
+        
         /// <summary>
         /// The name of the database's file. It needs to be the same as the DB file in the <c>Resources</c> folder.
         /// </summary>

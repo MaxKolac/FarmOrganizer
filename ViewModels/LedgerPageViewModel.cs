@@ -53,7 +53,6 @@ namespace FarmOrganizer.ViewModels
                 { "cropFieldId", SelectedCropField.Id }
             };
             await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}", query);
-            //await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}?mode=add&id=0&cropFieldId={SelectedCropField.Id}");
         }
 
         [RelayCommand]
@@ -66,7 +65,6 @@ namespace FarmOrganizer.ViewModels
                 { "cropFieldId", 0 }
             };
             await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}", query);
-            //await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}?mode=edit&id={record.Id}&cropFieldId=0");
         }
 
         [RelayCommand]
@@ -89,7 +87,7 @@ namespace FarmOrganizer.ViewModels
 
 
         [RelayCommand]
-        private void DeleteRecord(BalanceLedger record) 
+        private void DeleteRecord(BalanceLedger record)
         {
             try
             { 
