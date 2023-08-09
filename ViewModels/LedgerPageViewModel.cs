@@ -35,7 +35,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericMessage(ex));
+                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericSqliteMessage(ex));
                 Application.Current.MainPage.Dispatcher.Dispatch(async () =>
                 {
                     await Shell.Current.GoToAsync("..");
@@ -44,17 +44,30 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static async Task AddRecord(BalanceLedger record) => 
-            await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}?mode=add&id=0&cropFieldId=" +
-                $"{record.IdCropField}");
-        //TODO: record object is obviously empty, because this isnt a CollectionItem, its a Toolbar... bruh
-        //VM needs to have a property which keeps track of which CropField has been selected in the Picker
-        //Also it needs to be set to the first field or smthing like that, so theres no need to select the same field
-        //everytime the ledgerPage is opened that'd be annoying
+        private async Task AddRecord()
+        {
+            var query = new Dictionary<string, object>
+            {
+                { "mode", "add" },
+                { "id", 0 },
+                { "cropFieldId", SelectedCropField.Id }
+            };
+            await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}", query);
+            //await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}?mode=add&id=0&cropFieldId={SelectedCropField.Id}");
+        }
 
         [RelayCommand]
-        private static async Task EditRecord(BalanceLedger record) =>
-            await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}?mode=edit&id={record.Id}&cropFieldId=0");
+        private static async Task EditRecord(BalanceLedger record)
+        {
+            var query = new Dictionary<string, object>
+            {
+                { "mode", "edit" },
+                { "id", record.Id },
+                { "cropFieldId", 0 }
+            };
+            await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}", query);
+            //await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}?mode=edit&id={record.Id}&cropFieldId=0");
+        }
 
         [RelayCommand]
         private void SortRecords()
@@ -86,7 +99,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericMessage(ex));
+                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericSqliteMessage(ex));
             }
             finally
             {
@@ -106,7 +119,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericMessage(ex));
+                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericSqliteMessage(ex));
                 Application.Current.MainPage.Dispatcher.Dispatch(async () =>
                 {
                     await Shell.Current.GoToAsync("..");

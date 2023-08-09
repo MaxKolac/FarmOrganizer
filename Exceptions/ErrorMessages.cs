@@ -12,7 +12,7 @@ namespace FarmOrganizer.Exceptions
         /// Provided message contains the simple and extended SQLite error codes.
         /// </summary>
         /// <param name="exception">An SqliteException object containing simple and extended error codes.</param>
-        public static string GenericMessage(SqliteException exception) =>
+        public static string GenericSqliteMessage(SqliteException exception) =>
             $"Program zwrócił błąd związany z bazą danych. Kod błędu SQLite: {exception.SqliteErrorCode}, {exception.SqliteExtendedErrorCode}.";
 
         public static string InvalidPropertyQueries(string queryVarName, string queryValue) =>
