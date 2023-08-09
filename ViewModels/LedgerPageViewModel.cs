@@ -5,19 +5,42 @@ using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.Views;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class LedgerPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        List<BalanceLedger> ledgerList = new();
+        List<BalanceLedger> ledgerEntries = new();
         [ObservableProperty]
-        List<CropField> cropFieldList = new();
+        List<CostType> costTypes = new();
+        [ObservableProperty]
+        List<CropField> cropFields = new();
+
+        [ObservableProperty]
+        CropField selectedCropField;
 
         public LedgerPageViewModel()
         {
-            RequeryAllLists();
+            using var context = new DatabaseContext();
+            try
+            {
+                CostTypes = context.CostType.ToList();
+                CropFields = context.CropField.ToList();
+                SelectedCropField = CropFields.First();
+                LedgerEntries = context.BalanceLedger
+                    .Where(entry => entry.IdCropField == SelectedCropField.Id)
+                    .ToList();
+            }
+            catch (SqliteException ex)
+            {
+                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericMessage(ex));
+                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
+                {
+                    await Shell.Current.GoToAsync("..");
+                });
+            }
         }
 
         [RelayCommand]
@@ -67,17 +90,19 @@ namespace FarmOrganizer.ViewModels
             }
             finally
             {
-                RequeryAllLists();
+                QueryLedgerEntries();
             }
         }
 
-        private void RequeryAllLists()
+        private void QueryLedgerEntries()
         {
             using var context = new DatabaseContext();
             try
             {
-                LedgerList = context.BalanceLedger.ToList();
-                CropFieldList = context.CropField.ToList();
+                LedgerEntries = context.BalanceLedger
+                    .Include(entry => entry.IdCostTypeNavigation)
+                    .Where(entry => entry.IdCropField == SelectedCropField.Id)
+                    .ToList();
             }
             catch (SqliteException ex)
             {
@@ -88,5 +113,8 @@ namespace FarmOrganizer.ViewModels
                 });
             }
         }
+
+        partial void OnSelectedCropFieldChanged(CropField value)
+            => QueryLedgerEntries();
     }
 }

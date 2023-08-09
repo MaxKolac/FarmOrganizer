@@ -15,20 +15,25 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Dodaj nowy wpis" Command="{Binding AddRecordCommand}"/>
     </ContentPage.ToolbarItems>
-    
+
     <Grid RowDefinitions="auto,*,.1*"
           Padding="5">
-        <Picker Title="Wybierz pole uprawne"/>
-        <CollectionView Grid.Row="1" ItemsSource="{Binding LedgerList}">
+        <!-- AFAIK, there is no way to apply DataTemplate's magic to items present inside a Picker. This might become an issue if ToString() override for CropField class needs to be different. -->
+        <Picker Title="Wybierz pole uprawne" 
+                ItemsSource="{Binding CropFields}"
+                SelectedItem="{Binding SelectedCropField}">
+        </Picker>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding LedgerEntries}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:BalanceLedger">
                     <SwipeView>
                         <SwipeView.LeftItems>
                             <SwipeItems>
-                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}},                  Path=EditRecordCommand}"
-                                           CommandParameter="{Binding .}">
+                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}" 
+                                               CommandParameter="{Binding .}">
                                     <Frame BackgroundColor="LightYellow">
-                                        <Label Text="Edytuj"
+                                        <Label Text="Edytuj" 
                                                FontAttributes="Bold"/>
                                     </Frame>
                                 </SwipeItemView>
@@ -36,7 +41,7 @@
                         </SwipeView.LeftItems>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}},                      Path=DeleteRecordCommand}"
+                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"
                                                CommandParameter="{Binding .}">
                                     <Frame BackgroundColor="Firebrick">
                                         <Label Text="Usuń"
@@ -51,15 +56,16 @@
                                Padding="8"
                                BackgroundColor="LightGray"
                                BorderColor="DarkGrey">
-                            <Grid ColumnDefinitions="*, *, *" 
+                            <Grid ColumnDefinitions="auto, *, Auto" 
                                   RowDefinitions=".5*, .5*">
                                 <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
                                        HorizontalTextAlignment="Start"
+                                       FontAttributes="Bold"
                                        FontSize="20" />
-                                <Label Text="{Binding IdCostType}"
+                                <Label Text="{Binding IdCostTypeNavigation.Name}"
                                        Grid.Column="1" 
-                                       FontSize="16" 
-                                       HorizontalTextAlignment="Start" />
+                                       FontSize="16"
+                                       HorizontalTextAlignment="Center" />
                                 <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy}'}" 
                                        Grid.Column="2"
                                        FontSize="16" 

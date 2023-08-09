@@ -17,5 +17,10 @@ namespace FarmOrganizer.Models
         public double Hectares { get; set; }
 
         public virtual ICollection<BalanceLedger> BalanceLedger { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Name} ({Hectares} ha)";
+        }
     }
 }
