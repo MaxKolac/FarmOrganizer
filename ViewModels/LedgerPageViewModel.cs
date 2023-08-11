@@ -105,7 +105,7 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
-        private void QueryLedgerEntries()
+        public void QueryLedgerEntries()
         {
             using var context = new DatabaseContext();
             try

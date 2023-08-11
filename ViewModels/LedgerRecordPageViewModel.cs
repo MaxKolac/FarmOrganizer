@@ -35,10 +35,6 @@ namespace FarmOrganizer.ViewModels
 
         #region Record Properties
         [ObservableProperty]
-        int idCostType;
-        [ObservableProperty]
-        int idCropField;
-        [ObservableProperty]
         DateTime dateAdded;
         [ObservableProperty]
         double balanceChange;
@@ -53,18 +49,45 @@ namespace FarmOrganizer.ViewModels
         string saveButtonText;
         #endregion
 
+        #region Picker ItemSources
+        [ObservableProperty]
+        List<CropField> cropFields;
+        [ObservableProperty]
+        CropField selectedCropField;
+
+        [ObservableProperty]
+        List<CostType> costTypes;
+        [ObservableProperty]
+        CostType selectedCostType;
+        #endregion
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             PageMode = query["mode"] as string;
             RecordId = (int)query["id"];
             QuerriedCropFieldId = (int)query["cropFieldId"];
+
+            try
+            {
+                using var context = new DatabaseContext();
+                CostTypes = context.CostType.ToList();
+                CropFields = context.CropField.ToList();
+            }
+            catch (SqliteException ex)
+            {
+                App.AlertSvc.ShowAlert(
+                    ErrorMessages.GenericTitle,
+                    ErrorMessages.GenericSqliteMessage(ex));
+                ReturnToPreviousPage();
+            }
+
             switch (PageMode)
             {
                 case "add":
                     TitleText = "Dodawanie nowego wpisu";
                     SaveButtonText = "Dodaj i zapisz";
-                    IdCostType = 0;
-                    IdCropField = QuerriedCropFieldId;
+                    SelectedCostType = CostTypes.First();
+                    SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
                     DateAdded = DateTime.Now;
                     BalanceChange = 0;
                     Notes = string.Empty;
@@ -76,14 +99,16 @@ namespace FarmOrganizer.ViewModels
                     {
                         using var context = new DatabaseContext();
                         BalanceLedger result = context.BalanceLedger.Find(RecordId);
-                        IdCostType = result.IdCostType;
-                        IdCropField = result.IdCropField;
+                        SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
+                        SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
                         DateAdded = result.DateAdded;
-                        BalanceChange = result.BalanceChange;
+                        BalanceChange = Math.Round(result.BalanceChange, 2);
                         Notes = result.Notes;
                     }
                     catch (NullReferenceException)
                     {
+                        //Should be thrown when:
+                        //No record was found - result is returned as null
                         App.AlertSvc.ShowAlert(
                             ErrorMessages.GenericTitle,
                             ErrorMessages.RecordNotFound(nameof(BalanceLedger), RecordId));
@@ -117,10 +142,10 @@ namespace FarmOrganizer.ViewModels
                     case "add":
                         BalanceLedger newRecord = new()
                         {
-                            IdCostType = this.IdCostType,
-                            IdCropField = this.IdCropField,
+                            IdCostType = SelectedCostType.Id,
+                            IdCropField = SelectedCropField.Id,
                             DateAdded = this.DateAdded,
-                            BalanceChange = this.BalanceChange,
+                            BalanceChange = Math.Round(this.BalanceChange, 2),
                             Notes = this.Notes
                         };
                         context.BalanceLedger.Add(newRecord);
@@ -129,10 +154,10 @@ namespace FarmOrganizer.ViewModels
                         break;
                     case "edit":
                         BalanceLedger existingRecord = context.BalanceLedger.Find(RecordId);
-                        existingRecord.IdCostType = IdCostType;
-                        existingRecord.IdCropField = IdCropField;
+                        existingRecord.IdCostType = SelectedCostType.Id;
+                        existingRecord.IdCropField = SelectedCropField.Id;
                         existingRecord.DateAdded = DateAdded;
-                        existingRecord.BalanceChange = BalanceChange;
+                        existingRecord.BalanceChange = Math.Round(BalanceChange, 2);
                         existingRecord.Notes = Notes;
                         context.SaveChanges();
                         ReturnToPreviousPage();
@@ -142,7 +167,7 @@ namespace FarmOrganizer.ViewModels
             catch (DbUpdateException ex)
             {
                 //Thrown when:
-                //Constraint is failed - Base 19
+                //Constraint is failed - basic code 19
                 App.AlertSvc.ShowAlert(
                     ErrorMessages.GenericTitle,
                     ErrorMessages.GenericSqliteMessage((SqliteException)ex.InnerException)

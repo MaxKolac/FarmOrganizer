@@ -5,13 +5,23 @@
              x:Class="FarmOrganizer.Views.LedgerRecordPage"
              x:DataType="viewmodel:LedgerRecordPageViewModel"
              Title="{Binding TitleText}">
-    <Grid RowDefinitions="auto,auto,auto,auto,auto,*">
-        <Entry Text="{Binding IdCostType}" />
-        <Entry Text="{Binding IdCropField}" Grid.Row="1"/>
-        <DatePicker Date="{Binding DateAdded}" Grid.Row="2"/>
-        <Entry Text="{Binding BalanceChange}" Grid.Row="3"/>
-        <Editor Text="{Binding Notes}" Grid.Row="4"/>
-        <HorizontalStackLayout Grid.Row="5">
+    <VerticalStackLayout Padding="5">
+        <Label Text="Pole uprawne" FontAttributes="Bold"/>
+        <Picker ItemsSource="{Binding CropFields}" SelectedItem="{Binding SelectedCropField}"/>
+        
+        <Label Text="Rodzaj kosztu" FontAttributes="Bold"/>
+        <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
+
+        <Label Text="Data dodania wpisu" FontAttributes="Bold"/>
+        <DatePicker Date="{Binding DateAdded}"/>
+
+        <Label Text="Zysk/koszt w złotych" FontAttributes="Bold"/>
+        <Entry Text="{Binding BalanceChange}" Keyboard="Numeric"/>
+
+        <Label Text="(Opcjonalne) Notatka" FontAttributes="Bold"/>
+        <Editor Text="{Binding Notes}" AutoSize="TextChanges"/>
+
+        <HorizontalStackLayout Spacing="5">
             <Button Text="Anuluj" 
                     HorizontalOptions="Start"
                     Command="{Binding ReturnToPreviousPageCommand}"/>
@@ -19,5 +29,5 @@
                     HorizontalOptions="End"
                     Command="{Binding SaveCommand}"/>
         </HorizontalStackLayout>
-    </Grid>
+    </VerticalStackLayout>
 </ContentPage>
