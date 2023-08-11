@@ -1,18 +1,15 @@
-﻿using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text;
 
 namespace FarmOrganizer.ViewModels
 {
     internal static class Utils
     {
-
         /// <summary>
-        /// <para>Android's Numeric Keyboard has the period hardcoded into it and C#'s <see cref="float.TryParse(string?, out float)">float.TryParse</see> breaks when it receives a string with a dot, instead of a comma. This allows the number to have a comma from a previous calculation and a dot from the keyboard, which breaks calculations of the third value.</para>
-        /// <para>This method is a workaround of this problem. Despite it being overly engineered and probably in need of refactoring, at the moment it's the only solution which works and can handle both commas and dots. It can even verify and modify a number with both a comma and dot to be correct.</para>
+        /// <para>Android's Numeric Keyboard has the period hardcoded into it and C#'s <see cref="double.TryParse(string?, out double)">double.TryParse</see> breaks when it receives a string with a period, instead of a comma. Under a few circumstances, it's possible for the input value to even contain both a period and a comma.</para>
+        /// <para>This method converts all input numbers to only include the first left-most separator, be it either comma or period. If the separator happened to be a period, it's swapped out for a comma</para>
         /// </summary>
         /// <returns>A floating point value of the input string. If the input is not a valid number, 0 is returned instead.</returns>
-        public static float CastToValue(string input)
+        public static double CastToValue(string input)
         {
             //im gonna loose my god damn mind with this goofy ass keyboard
             //the comma is literally RIGHT there, its just greyed out, god dammit
@@ -24,17 +21,17 @@ namespace FarmOrganizer.ViewModels
             bool commaDetected = false;
             for (int i = 0; i < inputChars.Count; i++)
             {
-                char c = inputChars[i];
-                if (c == '.')
+                if (inputChars[i] == '.')
                 {
-                    c = ',';
+                    inputChars[i] = ',';
                 }
 
-                if (c == ',')
+                if (inputChars[i] == ',')
                 {
                     if (commaDetected)
                     {
                         inputChars.RemoveAt(i);
+                        i--;
                     }
                     commaDetected = true;
                 }
@@ -44,21 +41,7 @@ namespace FarmOrganizer.ViewModels
             foreach (char c in inputChars)
                 builder.Append(c);
             string sanitazitedString = builder.ToString();
-
-            //https://stackoverflow.com/questions/29452263/make-tryparse-compatible-with-comma-or-dot-decimal-separator
-            var cultureInfo = CultureInfo.InvariantCulture;
-            // if the first regex matches, the number string is in us culture
-            if (Regex.IsMatch(sanitazitedString, @"^(:?[\d,]+\.)*\d+$"))
-            {
-                cultureInfo = new CultureInfo("en-US");
-            }
-            // if the second regex matches, the number string is in de culture
-            else if (Regex.IsMatch(sanitazitedString, @"^(:?[\d.]+,)*\d+$"))
-            {
-                cultureInfo = new CultureInfo("de-DE");
-            }
-            NumberStyles styles = NumberStyles.Number;
-            return float.TryParse(sanitazitedString, styles, cultureInfo, out float value) ? value : 0;
+            return double.TryParse(sanitazitedString, out double result) ? result : 0;
         }
     }
 }

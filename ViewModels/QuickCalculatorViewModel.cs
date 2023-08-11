@@ -29,9 +29,9 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         void TextChanged()
         {
-            float CropAmount = Utils.CastToValue(CropAmountValue);
-            float SellRate = Utils.CastToValue(SellRateValue);
-            float PureIncome = Utils.CastToValue(PureIncomeValue);
+            double CropAmount = Utils.CastToValue(CropAmountValue);
+            double SellRate = Utils.CastToValue(SellRateValue);
+            double PureIncome = Utils.CastToValue(PureIncomeValue);
 
             if (CropAmountReadOnly)
             {
