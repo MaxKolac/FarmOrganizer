@@ -37,7 +37,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         DateTime dateAdded;
         [ObservableProperty]
-        double balanceChange;
+        string balanceChange;
         [ObservableProperty]
         string notes;
         #endregion
@@ -89,7 +89,7 @@ namespace FarmOrganizer.ViewModels
                     SelectedCostType = CostTypes.First();
                     SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
                     DateAdded = DateTime.Now;
-                    BalanceChange = 0;
+                    BalanceChange = "0";
                     Notes = string.Empty;
                     break;
                 case "edit":
@@ -102,7 +102,7 @@ namespace FarmOrganizer.ViewModels
                         SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
                         SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
                         DateAdded = result.DateAdded;
-                        BalanceChange = Math.Round(result.BalanceChange, 2);
+                        BalanceChange = result.BalanceChange.ToString();
                         Notes = result.Notes;
                     }
                     catch (NullReferenceException)
@@ -145,7 +145,7 @@ namespace FarmOrganizer.ViewModels
                             IdCostType = SelectedCostType.Id,
                             IdCropField = SelectedCropField.Id,
                             DateAdded = this.DateAdded,
-                            BalanceChange = Math.Round(this.BalanceChange, 2),
+                            BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2),
                             Notes = this.Notes
                         };
                         context.BalanceLedger.Add(newRecord);
@@ -157,7 +157,7 @@ namespace FarmOrganizer.ViewModels
                         existingRecord.IdCostType = SelectedCostType.Id;
                         existingRecord.IdCropField = SelectedCropField.Id;
                         existingRecord.DateAdded = DateAdded;
-                        existingRecord.BalanceChange = Math.Round(BalanceChange, 2);
+                        existingRecord.BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2);
                         existingRecord.Notes = Notes;
                         context.SaveChanges();
                         ReturnToPreviousPage();
