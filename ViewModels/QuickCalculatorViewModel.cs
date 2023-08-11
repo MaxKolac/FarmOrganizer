@@ -18,7 +18,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         public string pureIncomeValue;
 
-        private readonly Queue<string> lastEditedControls = new();
+        protected readonly Queue<string> lastEditedControls = new();
 
         public QuickCalculatorViewModel()
         {
@@ -27,7 +27,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        void TextChanged()
+        protected void TextChanged()
         {
             double CropAmount = Utils.CastToValue(CropAmountValue);
             double SellRate = Utils.CastToValue(SellRateValue);
@@ -48,7 +48,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        void LastTappedControlsChanged(string caller)
+        protected void LastTappedControlsChanged(string caller)
         {
             lastEditedControls.Enqueue(caller);
             lastEditedControls.Dequeue();

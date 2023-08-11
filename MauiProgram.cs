@@ -34,6 +34,8 @@ public static class MauiProgram
         builder.Services.AddTransient<LedgerPageViewModel>();
         builder.Services.AddTransient<LedgerRecordPage>();
         builder.Services.AddTransient<LedgerRecordPageViewModel>();
+        builder.Services.AddTransient<ReportPage>();
+        builder.Services.AddTransient<ReportPageViewModel>();
         builder.Services.AddTransient<DebugPage>();
         builder.Services.AddTransient<DebugPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
