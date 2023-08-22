@@ -108,6 +108,9 @@
 	  <Compile Update="Views\LedgerPage.xaml.cs">
 	    <DependentUpon>LedgerPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\ReportPage.xaml.cs">
+	    <DependentUpon>ReportPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\QuickCalculator.xaml.cs">
 	    <DependentUpon>QuickCalculator.xaml</DependentUpon>
 	  </Compile>
@@ -124,6 +127,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MainPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ReportPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\QuickCalculator.xaml">
