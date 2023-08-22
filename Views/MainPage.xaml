@@ -29,16 +29,11 @@
             Text="Szybki kalkulator" 
             Command="{Binding OpenPageCommand}"
             CommandParameter="QuickCalculator"/>
-        <!--<Button 
-            x:Name="DisableThatFuck"
-            Grid.Row="3" 
-            Text="Holy shit" 
-            IsEnabled="{Binding IsToggled, Source={x:Reference TheFunnySwitch}}"/>-->
-        
+
         <Button 
             Grid.Row="1"  
             Grid.Column="0" 
-            Text="DEBUG PAGE" 
+            Text="Ustawienia" 
             Command="{Binding OpenPageCommand}"
             CommandParameter="DebugPage"/>
         <Button
@@ -46,8 +41,5 @@
             Grid.Column="1" 
             Text="Zarządzaj polami i rodzajami kosztów" 
             LineBreakMode="CharacterWrap"/>
-        <!--<Switch x:Name="TheFunnySwitch"
-                Grid.Column="1"
-                Grid.Row="3"/>-->
     </Grid>
 </ContentPage>
