@@ -10,6 +10,12 @@
              x:Class="FarmOrganizer.Views.MainPage"
              x:DataType="viewmodel:MainPageViewModel"
              Title="Menu główne">
+    <ContentPage.Resources>
+        <Style TargetType="Button" ApplyToDerivedTypes="True">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+        </Style>
+    </ContentPage.Resources>
     <Grid 
         ColumnDefinitions="*, *"
         RowDefinitions="*, *, *"
@@ -26,20 +32,21 @@
         <Button 
             Grid.Row="0" 
             Grid.Column="1"
-            Text="Szybki kalkulator" 
+            Text="Szybki kalkulator"
             Command="{Binding OpenPageCommand}"
             CommandParameter="QuickCalculator"/>
 
         <Button 
             Grid.Row="1"  
             Grid.Column="0" 
-            Text="Ustawienia" 
+            Text="Ustawienia"
             Command="{Binding OpenPageCommand}"
             CommandParameter="DebugPage"/>
         <Button
             Grid.Row="1" 
             Grid.Column="1" 
-            Text="Zarządzaj polami i rodzajami kosztów" 
-            LineBreakMode="CharacterWrap"/>
+            Text="Zarządzaj polami i rodzajami kosztów"
+            Command="{Binding OpenPageCommand}"
+            CommandParameter="DebugPage"/>
     </Grid>
 </ContentPage>
