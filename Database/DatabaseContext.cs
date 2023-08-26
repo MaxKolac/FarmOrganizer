@@ -26,7 +26,7 @@ public partial class DatabaseContext : DbContext
         base.OnConfiguring(optionsBuilder);
         SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder()
         {
-            DataSource = Path.Combine(FileSystem.Current.AppDataDirectory, "database.sqlite3"),
+            DataSource = DatabaseFile.FullPath,
             Mode = SqliteOpenMode.ReadWriteCreate,
             ForeignKeys = true
         };

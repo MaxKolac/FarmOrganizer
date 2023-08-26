@@ -20,9 +20,9 @@ namespace FarmOrganizer.ViewModels
         public void PutPause() => DebugText += "\n=========\n";
 
         [RelayCommand]
-        void PerformTest() =>
+        async Task PerformTest() =>
             //PerformCRUDTests();
-            PerformDatabaseFileTests();
+            //await PerformDatabaseFileTests();
 
         [RelayCommand]
         void PerformCRUDTests()
@@ -99,7 +99,7 @@ namespace FarmOrganizer.ViewModels
                 AppendText(qr.ToString());
         }
         [RelayCommand]
-        void PerformDatabaseFileTests()
+        async Task PerformDatabaseFileTests()
         {
             ClearText();
             try
@@ -109,12 +109,12 @@ namespace FarmOrganizer.ViewModels
 
                 //Delete it and check if it deleted
                 AppendText("DELETING DB FILE...");
-                DatabaseFile.Delete();
+                await DatabaseFile.Delete();
                 AppendText($"DATABASE FILE EXISTS: {DatabaseFile.Exists()}");
 
                 //Create it again
                 AppendText("CREATING DB FILE...");
-                MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
+                await MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
                 AppendText($"DATABASE FILE EXISTS: {DatabaseFile.Exists()}");
             }
             catch (Exception ex)
