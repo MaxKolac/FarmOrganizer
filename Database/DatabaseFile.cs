@@ -5,11 +5,6 @@
     /// </summary>
     public static class DatabaseFile
     {
-        //TODO: VERY WEIRD ISSUES
-        //DebugPage's DBFileTest has showcased that a theoretical "reset" of DB just doesn't work.
-        //Deleting records and querying yields same results as querying a "resetted" DB. 
-        //WHich shouldn't be happening. More tests required
-        
         /// <summary>
         /// The name of the database's file. It needs to be the same as the DB file in the <c>Resources</c> folder.
         /// </summary>
@@ -41,12 +36,12 @@
         }
 
         /// <summary>
-        /// Removes the database's file from the app's <c>AppDataDirectory, assuming it exists.</c>.
+        /// Removes the database's file from the app's <c>AppDataDirectory.</c>.
         /// </summary>
-        public static void Delete()
+        public static async Task Delete()
         {
-            if (Exists()) 
-                File.Delete(FullPath);
+            using var context = new DatabaseContext();
+            await context.Database.EnsureDeletedAsync();
         }
 
         /// <summary>
