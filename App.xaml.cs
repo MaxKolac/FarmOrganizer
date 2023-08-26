@@ -13,6 +13,7 @@ public partial class App : Application
 
         Services = provider;
         AlertSvc = Services.GetService<IAlertService>();
+        Current.UserAppTheme = AppTheme.Dark;
 
         MainPage = new AppShell();
 	}
