@@ -5,32 +5,37 @@
              x:Class="FarmOrganizer.Views.ReportPage"
              x:DataType="viewmodel:ReportPageViewModel"
              Title="Szybki kalkulator">
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="Medium"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+        <Style TargetType="Entry">
+            <Setter Property="Keyboard" Value="Numeric"/>
+            <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
+            <Setter Property="FontSize" Value="Medium"/>
+        </Style>
+    </ContentPage.Resources>
     
     <Grid ColumnDefinitions="*"
-          RowDefinitions=".25*, Auto, Auto, Auto, Auto, Auto, Auto, *"
+          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, *"
           Padding="10">
-        
-        <Label Text="Dwie ostatnio kliknięte liczby są użyte do obliczenia trzeciej. Wciśnij OK aby zatwierdzić wpisaną liczbę."
+
+        <Label Text="Dwie ostatnio kliknięte liczby (zaznaczone na żółto) są użyte do obliczenia trzeciej. Po wpisaniu liczby, wciśnij OK aby ją zatwierdzić."
                Grid.ColumnSpan="2"
                HorizontalTextAlignment="Center"
-               VerticalTextAlignment="Center"
                Margin="10"
                FontSize="18"/>
 
         <Label Text="Ilość plonów (kg):"
                Grid.Row="1"
-               Grid.ColumnSpan="2"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="Start"
-               FontSize="Medium"
-               FontAttributes="Bold"/>
+               Grid.ColumnSpan="2"/>
         <Entry x:Name="cropAmount"
                Grid.Row="2"
-               Keyboard="Numeric"
-               ClearButtonVisibility="WhileEditing"
-               FontSize="Medium"
-               IsReadOnly="{Binding CropAmountReadOnly}"
                Text="{Binding CropAmountValue}"
+               BackgroundColor="{Binding CropAmountColor}"
                ReturnCommand="{Binding TextChangedCommand}">
             <Entry.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
@@ -40,18 +45,11 @@
 
         <Label Text="Cena za kilogram (zł):"
                Grid.Row="3"
-               Grid.ColumnSpan="2"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="Start"
-               FontSize="Medium"
-               FontAttributes="Bold"/>
+               Grid.ColumnSpan="2"/>
         <Entry x:Name="sellRate"
                Grid.Row="4"
-               Keyboard="Numeric"
-               ClearButtonVisibility="WhileEditing"
-               FontSize="Medium"
-               IsReadOnly="{Binding SellRateReadOnly}"
                Text="{Binding SellRateValue}"
+               BackgroundColor="{Binding SellRateColor}"
                ReturnCommand="{Binding TextChangedCommand}">
             <Entry.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
@@ -61,18 +59,11 @@
 
         <Label Text="Zysk ze sprzedaży (zł):"
                Grid.Row="5"
-               Grid.ColumnSpan="2"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="Start"
-               FontSize="Medium"
-               FontAttributes="Bold"/>
+               Grid.ColumnSpan="2"/>
         <Entry x:Name="pureIncome"
                Grid.Row="6"
-               Keyboard="Numeric"
-               ClearButtonVisibility="WhileEditing"
-               FontSize="Medium"
-               IsReadOnly="{Binding PureIncomeReadOnly}"
                Text="{Binding PureIncomeValue}"
+               BackgroundColor="{Binding PureIncomeColor}"
                ReturnCommand="{Binding TextChangedCommand}">
             <Entry.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"

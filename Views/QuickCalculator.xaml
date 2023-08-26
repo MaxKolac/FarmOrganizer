@@ -34,8 +34,8 @@
                Grid.ColumnSpan="2"/>
         <Entry x:Name="cropAmount"
                Grid.Row="2"
-               IsReadOnly="{Binding CropAmountReadOnly}"
                Text="{Binding CropAmountValue}"
+               BackgroundColor="{Binding CropAmountColor}"
                ReturnCommand="{Binding TextChangedCommand}">
             <Entry.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
@@ -48,8 +48,8 @@
                Grid.ColumnSpan="2"/>
         <Entry x:Name="sellRate"
                Grid.Row="4"
-               IsReadOnly="{Binding SellRateReadOnly}"
                Text="{Binding SellRateValue}"
+               BackgroundColor="{Binding SellRateColor}"
                ReturnCommand="{Binding TextChangedCommand}">
             <Entry.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
@@ -62,8 +62,8 @@
                Grid.ColumnSpan="2"/>
         <Entry x:Name="pureIncome"
                Grid.Row="6"
-               IsReadOnly="{Binding PureIncomeReadOnly}"
                Text="{Binding PureIncomeValue}"
+               BackgroundColor="{Binding PureIncomeColor}"
                ReturnCommand="{Binding TextChangedCommand}">
             <Entry.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
