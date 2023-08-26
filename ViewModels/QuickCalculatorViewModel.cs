@@ -5,26 +5,23 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class QuickCalculatorViewModel : ObservableObject
     {
-        private readonly Color defaultColor = Color.FromRgb(255, 255, 255);
-        private readonly Color selectedColor = Color.FromRgb(166, 158, 45);
-
         private const string cropAmountName = "cropAmount";
         [ObservableProperty]
         public string cropAmountValue;
         [ObservableProperty]
-        public Color cropAmountColor;
+        public bool cropAmountFocused;
 
         private const string sellRateName = "sellRate";
         [ObservableProperty]
         public string sellRateValue;
         [ObservableProperty]
-        public Color sellRateColor;
+        public bool sellRateFocused;
 
         private const string pureIncomeName = "pureIncome";
         [ObservableProperty]
         public string pureIncomeValue;
         [ObservableProperty]
-        public Color pureIncomeColor;
+        public bool pureIncomeFocused;
 
         protected readonly Queue<string> lastEditedControls = new();
 
@@ -32,8 +29,7 @@ namespace FarmOrganizer.ViewModels
         {
             lastEditedControls.Enqueue(cropAmountName);
             lastEditedControls.Enqueue(sellRateName);
-            CropAmountColor = selectedColor;
-            SellRateColor = selectedColor;
+            cropAmountFocused = sellRateFocused = true;
         }
 
         [RelayCommand]
@@ -60,34 +56,40 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         protected void LastTappedControlsChanged(string caller)
         {
-            //TODO: backgroudn colors refuse to change once they turn yello
+            //int maui_entries_suck = 0;
+            //Increment this value if you ever feel like trying to implement the whole idea of dynamic background colors on entries, and (shock!) it doesn't work.
+
+            //Upon debugging at runtime, these values are modified correctly, but once the
+            //app is allowed to continue execution, SOMETHING is changing it back to (1,1,1,1)
+            //Task.Delaying and Async keywords didnt do anything
+            //VisualStates of Normal and Focus also dont fully work, one time Normal only works, the other Focused only works
+
+            //UPDATE: I have had enough of this Entry's bullcrap... I'm resorting to just showing which label will be used in calculation by displaying a disabled Checkbox next to it. Looks prettier imo.
+
             if (lastEditedControls.Contains(caller))
                 return;
             lastEditedControls.Enqueue(caller);
-            switch (lastEditedControls.Dequeue())
-            {
-                case cropAmountName:
-                    CropAmountColor = defaultColor;
-                    break;
-                case sellRateName:
-                    SellRateColor = defaultColor;
-                    break;
-                case pureIncomeName:
-                    PureIncomeColor = defaultColor;
-                    break;
-            }
-            switch (caller)
-            {
-                case cropAmountName:
-                    CropAmountColor = selectedColor;
-                    break;
-                case sellRateName:
-                    SellRateColor = selectedColor;
-                    break;
-                case pureIncomeName:
-                    PureIncomeColor = selectedColor;
-                    break;
-            }
+            lastEditedControls.Dequeue();
+            CropAmountFocused = lastEditedControls.Contains(cropAmountName);
+            SellRateFocused = lastEditedControls.Contains(sellRateName);
+            PureIncomeFocused = lastEditedControls.Contains(pureIncomeName);
+
+            //CropAmountColor = SellRateColor = PureIncomeColor = Colors.White;
+            //if (lastEditedControls.Contains(cropAmountName))
+            //    CropAmountColor = selectedColor;
+            //if (lastEditedControls.Contains(sellRateName))
+            //    SellRateColor = selectedColor;
+            //if (lastEditedControls.Contains(pureIncomeName))
+            //    SellRateColor = selectedColor;
+
+            //The below stuff was used while debugging and losing sanity
+            //CropAmountColor = SellRateColor = PureIncomeColor = Colors.White;
+            //if (caller.Equals(cropAmountName))
+            //    CropAmountColor = selectedColor;
+            //if (caller.Equals(sellRateName))
+            //    SellRateColor = selectedColor;
+            //if (caller.Equals(pureIncomeName))
+            //    SellRateColor = selectedColor;
         }
     }
 }
