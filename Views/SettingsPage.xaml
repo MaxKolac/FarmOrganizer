@@ -27,13 +27,21 @@
         </Style>
     </ContentPage.Resources>
     
-    <VerticalStackLayout>
+    <VerticalStackLayout Margin="10">
         <Label Text="Wygląd" Style="{StaticResource GroupTitle}"/>
         <Grid>
-            <Label Style="{StaticResource BaseLabelStyle}" Text="Tryb kolorystyczny"/>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Motyw"/>
             <Picker Grid.Column="1" 
                     ItemsSource="{Binding AppThemes}" 
                     SelectedItem="{Binding SelectedTheme, Converter={StaticResource StringToAppThemeConverter}}"/>
+        </Grid>
+        <Label Text="Baza danych" Style="{StaticResource GroupTitle}"/>
+        <Grid>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Zresetuj bazę danych"/>
+            <Button Grid.Column="1"
+                    BackgroundColor="Red"
+                    Command="{Binding ResetDatabaseCommand}"
+                    Text="Resetuj"/>
         </Grid>
     </VerticalStackLayout>
 </ContentPage>
