@@ -38,6 +38,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ReportPageViewModel>();
         builder.Services.AddTransient<DebugPage>();
         builder.Services.AddTransient<DebugPageViewModel>();
+        builder.Services.AddTransient<SettingsPage>();
+        builder.Services.AddTransient<SettingsPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
 
