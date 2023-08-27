@@ -5,10 +5,31 @@
              x:Class="FarmOrganizer.Views.SettingsPage"
              x:DataType="viewmodel:SettingsPageViewModel"
              Title="Ustawienia">
+    <ContentPage.Resources>
+        <Style TargetType="Label" x:Key="BaseLabelStyle">
+            <Setter Property="HorizontalOptions" Value="Start"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style TargetType="Label" x:Key="GroupTitle" BasedOn="{StaticResource BaseLabelStyle}">
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+        <Style TargetType="Grid">
+            <Setter Property="ColumnDefinitions" Value="Auto, *"/>
+            <Setter Property="RowDefinitions" Value="Auto"/>
+        </Style>
+        <Style TargetType="Picker">
+            <Setter Property="HorizontalTextAlignment" Value="End"/>
+        </Style>
+    </ContentPage.Resources>
+    
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Label Text="Wygląd" Style="{StaticResource GroupTitle}"/>
+        <Grid>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Tryb kolorystyczny"/>
+            <Picker Grid.Column="1" ItemsSource="{Binding AppThemes}" SelectedIndexChanged="Picker_SelectedIndexChanged"/>
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>
