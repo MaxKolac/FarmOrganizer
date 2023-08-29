@@ -35,6 +35,8 @@ namespace FarmOrganizer.ViewModels
 
         #region Record Properties
         [ObservableProperty]
+        Season season;
+        [ObservableProperty]
         DateTime dateAdded;
         [ObservableProperty]
         string balanceChange;
@@ -72,6 +74,7 @@ namespace FarmOrganizer.ViewModels
                 using var context = new DatabaseContext();
                 CostTypes = context.CostTypes.ToList();
                 CropFields = context.CropFields.ToList();
+                Season = context.Seasons.First(season => !season.HasConcluded);
             }
             catch (SqliteException ex)
             {
@@ -144,6 +147,7 @@ namespace FarmOrganizer.ViewModels
                         {
                             IdCostType = SelectedCostType.Id,
                             IdCropField = SelectedCropField.Id,
+                            IdSeason = this.Season.Id,
                             DateAdded = this.DateAdded,
                             BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2),
                             Notes = this.Notes

@@ -5,20 +5,28 @@
              x:Class="FarmOrganizer.Views.LedgerRecordPage"
              x:DataType="viewmodel:LedgerRecordPageViewModel"
              Title="{Binding TitleText}">
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+    </ContentPage.Resources>
     <VerticalStackLayout Padding="5">
-        <Label Text="Pole uprawne" FontAttributes="Bold"/>
+        <Label Text="Pole uprawne"/>
         <Picker ItemsSource="{Binding CropFields}" SelectedItem="{Binding SelectedCropField}"/>
         
-        <Label Text="Rodzaj kosztu" FontAttributes="Bold"/>
+        <Label Text="Rodzaj kosztu"/>
         <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
 
-        <Label Text="Data dodania wpisu" FontAttributes="Bold"/>
+        <Label Text="Wpis podpięty pod sezon:"/>
+        <Label Text="{Binding Season}" FontAttributes="None"/>
+
+        <Label Text="Data dodania wpisu"/>
         <DatePicker Date="{Binding DateAdded}"/>
 
-        <Label Text="Zysk/koszt w złotych" FontAttributes="Bold"/>
+        <Label Text="Zysk/koszt w złotych"/>
         <Entry Text="{Binding BalanceChange}" Keyboard="Numeric"/>
 
-        <Label Text="(Opcjonalne) Notatka" FontAttributes="Bold"/>
+        <Label Text="(Opcjonalne) Notatka"/>
         <Editor Text="{Binding Notes}" AutoSize="TextChanges"/>
 
         <HorizontalStackLayout Spacing="5">
