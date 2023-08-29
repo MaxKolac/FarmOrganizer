@@ -130,6 +130,8 @@ public partial class DatabaseContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DateEnd)
+                .IsRequired()
+                .HasDefaultValueSql("DATE('now', 'start of year', '+1 year', '-1 day')")
                 .HasColumnType("DATETIME")
                 .HasColumnName("dateEnd");
             entity.Property(e => e.DateStart)
@@ -137,7 +139,9 @@ public partial class DatabaseContext : DbContext
                 .HasDefaultValueSql("datetime()")
                 .HasColumnType("DATETIME")
                 .HasColumnName("dateStart");
-            entity.Property(e => e.HasConcluded).HasColumnName("hasConcluded");
+            entity.Property(e => e.HasConcluded)
+                .HasDefaultValueSql("0")
+                .HasColumnName("hasConcluded");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasDefaultValueSql("\"Nowy sezon\"")
