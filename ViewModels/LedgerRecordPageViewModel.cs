@@ -70,8 +70,8 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 using var context = new DatabaseContext();
-                CostTypes = context.CostType.ToList();
-                CropFields = context.CropField.ToList();
+                CostTypes = context.CostTypes.ToList();
+                CropFields = context.CropFields.ToList();
             }
             catch (SqliteException ex)
             {
@@ -98,7 +98,7 @@ namespace FarmOrganizer.ViewModels
                     try
                     {
                         using var context = new DatabaseContext();
-                        BalanceLedger result = context.BalanceLedger.Find(RecordId);
+                        BalanceLedger result = context.BalanceLedgers.Find(RecordId);
                         SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
                         SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
                         DateAdded = result.DateAdded;
@@ -148,12 +148,12 @@ namespace FarmOrganizer.ViewModels
                             BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2),
                             Notes = this.Notes
                         };
-                        context.BalanceLedger.Add(newRecord);
+                        context.BalanceLedgers.Add(newRecord);
                         context.SaveChanges();
                         ReturnToPreviousPage();
                         break;
                     case "edit":
-                        BalanceLedger existingRecord = context.BalanceLedger.Find(RecordId);
+                        BalanceLedger existingRecord = context.BalanceLedgers.Find(RecordId);
                         existingRecord.IdCostType = SelectedCostType.Id;
                         existingRecord.IdCropField = SelectedCropField.Id;
                         existingRecord.DateAdded = DateAdded;

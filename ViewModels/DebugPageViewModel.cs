@@ -22,7 +22,7 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         async Task PerformTest() =>
             //PerformCRUDTests();
-            //await PerformDatabaseFileTests();
+            await PerformDatabaseFileTests();
 
         [RelayCommand]
         void PerformCRUDTests()
@@ -32,7 +32,7 @@ namespace FarmOrganizer.ViewModels
 
             //Query whole table
             AppendText("QUERY WHOLE TABLE");
-            var qr_fullTable = context.BalanceLedger.ToList();
+            var qr_fullTable = context.BalanceLedgers.ToList();
             foreach (var qr in qr_fullTable)
                 AppendText(qr.ToString());
 
@@ -46,17 +46,17 @@ namespace FarmOrganizer.ViewModels
                 BalanceChange = 1234.12,
                 Notes = "Created fresh new entry!"
             };
-            context.BalanceLedger.Add(newEntry);
+            context.BalanceLedgers.Add(newEntry);
             context.SaveChanges();
 
             //Read existing entry
             AppendText("READ EXISTING ENTRY");
-            var qr_existingEntry = context.BalanceLedger.Find(7);
+            var qr_existingEntry = context.BalanceLedgers.Find(7);
             AppendText(qr_existingEntry.ToString());
 
             //Read created entry
             AppendText("READ CREATED ENTRY");
-            var qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 1234.12).First();
+            var qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == 1234.12).First();
             AppendText(qr_createdEntry.ToString());
 
             //Update existing entry
@@ -72,29 +72,29 @@ namespace FarmOrganizer.ViewModels
 
             //Read existing entry again
             AppendText("READ EXISTING ENTRY AFTER UPDATE");
-            qr_existingEntry = context.BalanceLedger.Find(7);
+            qr_existingEntry = context.BalanceLedgers.Find(7);
             AppendText(qr_existingEntry.ToString());
 
             //Read created entry again
             AppendText("READ CREATED ENTRY AFTER UPDATE");
-            qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == 71.71).First();
+            qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == 71.71).First();
             AppendText(qr_createdEntry.ToString());
 
             //Delete existing entry
             AppendText("DELETE EXISTING ENTRY");
-            qr_existingEntry = context.BalanceLedger.Find(1);
-            context.BalanceLedger.Remove(qr_existingEntry);
+            qr_existingEntry = context.BalanceLedgers.Find(1);
+            context.BalanceLedgers.Remove(qr_existingEntry);
             context.SaveChanges();
 
             //Delete created entry
             AppendText("DELETE CREATED ENTRY");
-            qr_createdEntry = context.BalanceLedger.Where(b => b.BalanceChange == -12.99).First();
-            context.BalanceLedger.Remove(qr_createdEntry);
+            qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == -12.99).First();
+            context.BalanceLedgers.Remove(qr_createdEntry);
             context.SaveChanges();
 
             //Query whole table
             AppendText("QUERY WHOLE TABLE - CRUD OPERATIONS RESULT");
-            qr_fullTable = context.BalanceLedger.ToList();
+            qr_fullTable = context.BalanceLedgers.ToList();
             foreach (var qr in qr_fullTable)
                 AppendText(qr.ToString());
         }

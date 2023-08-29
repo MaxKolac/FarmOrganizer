@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using FarmOrganizer.Database;
+using FarmOrganizer.Models;
 
-namespace FarmOrganizer.Models;
+namespace FarmOrganizer.Database;
 
 public partial class DatabaseContext : DbContext
 {
@@ -24,7 +24,7 @@ public partial class DatabaseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder()
+        SqliteConnectionStringBuilder builder = new()
         {
             DataSource = DatabaseFile.FullPath,
             Mode = SqliteOpenMode.ReadWriteCreate,

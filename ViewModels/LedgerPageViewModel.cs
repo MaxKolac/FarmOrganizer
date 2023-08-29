@@ -26,10 +26,10 @@ namespace FarmOrganizer.ViewModels
             using var context = new DatabaseContext();
             try
             {
-                CostTypes = context.CostType.ToList();
-                CropFields = context.CropField.ToList();
+                CostTypes = context.CostTypes.ToList();
+                CropFields = context.CropFields.ToList();
                 SelectedCropField = CropFields.First();
-                LedgerEntries = context.BalanceLedger
+                LedgerEntries = context.BalanceLedgers
                     .Where(entry => entry.IdCropField == SelectedCropField.Id)
                     .ToList();
             }
@@ -68,19 +68,19 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void SortRecords()
+        private static void SortRecords()
         {
 
         }
 
         [RelayCommand]
-        private void FilterRecords()
+        private static void FilterRecords()
         {
 
         }
 
         [RelayCommand]
-        private void GenerateAndCalculate()
+        private static void GenerateAndCalculate()
         {
 
         }
@@ -92,7 +92,7 @@ namespace FarmOrganizer.ViewModels
             try
             { 
                 using var context = new DatabaseContext();
-                context.BalanceLedger.Remove(record);
+                context.BalanceLedgers.Remove(record);
                 context.SaveChanges();
             }
             catch (SqliteException ex)
@@ -110,7 +110,7 @@ namespace FarmOrganizer.ViewModels
             using var context = new DatabaseContext();
             try
             {
-                LedgerEntries = context.BalanceLedger
+                LedgerEntries = context.BalanceLedgers
                     .Include(entry => entry.IdCostTypeNavigation)
                     .Where(entry => entry.IdCropField == SelectedCropField.Id)
                     .ToList();
