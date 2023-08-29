@@ -72,7 +72,7 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 using var context = new DatabaseContext();
-                CostTypes = context.CostTypes.ToList();
+                CostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
                 CropFields = context.CropFields.ToList();
                 Season = context.Seasons.First(season => !season.HasConcluded);
             }

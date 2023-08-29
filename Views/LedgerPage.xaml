@@ -92,7 +92,7 @@
                     Margin="2"/>
             <Button Text="Generuj raport i oblicz" 
                     LineBreakMode="CharacterWrap"
-                    Command="{Binding GenerateAndCalculateCommand}"
+                    Command="{Binding GenerateReportCommand}"
                     Margin="2"/>
         </HorizontalStackLayout>
     </Grid>

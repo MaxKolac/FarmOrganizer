@@ -80,11 +80,10 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static void GenerateAndCalculate()
+        private static async Task GenerateReport()
         {
-
+            await Shell.Current.GoToAsync(nameof(ReportPage));
         }
-
 
         [RelayCommand]
         private void DeleteRecord(BalanceLedger record)
