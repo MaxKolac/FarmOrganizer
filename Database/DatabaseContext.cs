@@ -43,13 +43,12 @@ public partial class DatabaseContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BalanceChange)
-                .IsRequired()
                 .HasDefaultValueSql("0.0")
-                .HasColumnType("MONEY (8, 2)")
+                .HasColumnType("REAL (8, 2)")
                 .HasColumnName("balanceChange");
             entity.Property(e => e.DateAdded)
                 .IsRequired()
-                .HasDefaultValueSql("datetime()")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("DATETIME")
                 .HasColumnName("dateAdded");
             entity.Property(e => e.IdCostType).HasColumnName("id_costType");
@@ -75,9 +74,7 @@ public partial class DatabaseContext : DbContext
             entity.HasIndex(e => e.Id, "IX_costType_id").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.IsExpense)
-                .HasDefaultValueSql("1")
-                .HasColumnName("isExpense");
+            entity.Property(e => e.IsExpense).HasColumnName("isExpense");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasColumnName("name");
@@ -140,14 +137,11 @@ public partial class DatabaseContext : DbContext
                 .HasDefaultValueSql("datetime()")
                 .HasColumnType("DATETIME")
                 .HasColumnName("dateStart");
+            entity.Property(e => e.HasConcluded).HasColumnName("hasConcluded");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasDefaultValueSql("\"Nowy sezon\"")
                 .HasColumnName("name");
-            entity.Property(e => e.HasConcluded)
-                .HasDefaultValueSql("0")
-                .HasColumnName("hasConcluded")
-                .HasColumnType("INTEGER");
         });
 
         OnModelCreatingPartial(modelBuilder);

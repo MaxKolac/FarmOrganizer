@@ -151,7 +151,10 @@
 
 	<ItemGroup>
 	  <MauiAsset Update="Resources\Raw\database.sqlite3">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\database_old.sqlite3">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </MauiAsset>
 	</ItemGroup>
 
