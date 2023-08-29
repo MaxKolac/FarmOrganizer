@@ -16,8 +16,8 @@ public partial class Season
     public override string ToString()
     {
         StringBuilder builder = new();
-        builder.Append(Name + " (" + DateStart.Date + " - ");
-        builder.Append(HasConcluded ? DateEnd.Date + ")" : "dzisiaj) - Zakończony");
+        builder.Append(Name + " (" + DateStart.ToString("dd.MM.yy") + " - ");
+        builder.Append(HasConcluded ? "dzisiaj) - Zakończony" : DateEnd.ToString("dd.MM.yy") + ")");
         return builder.ToString();
     }
 }
