@@ -161,7 +161,10 @@ namespace FarmOrganizer.ViewModels
                         existingRecord.IdCostType = SelectedCostType.Id;
                         existingRecord.IdCropField = SelectedCropField.Id;
                         existingRecord.DateAdded = DateAdded;
-                        existingRecord.BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2);
+                        existingRecord.BalanceChange = 
+                            Math.Abs(
+                                Math.Round(
+                                    Utils.CastToValue(this.BalanceChange.ToString()), 2));
                         existingRecord.Notes = Notes;
                         context.SaveChanges();
                         ReturnToPreviousPage();
