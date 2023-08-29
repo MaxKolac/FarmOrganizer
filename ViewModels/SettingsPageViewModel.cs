@@ -28,7 +28,7 @@ namespace FarmOrganizer.ViewModels
                 "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?", 
                 "Tak", "Nie"))
             {
-                DatabaseFile.Delete();
+                await DatabaseFile.Delete();
                 await MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
             }
         }
