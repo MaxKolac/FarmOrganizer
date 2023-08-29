@@ -55,9 +55,9 @@
 
                         <Frame Margin="5,2,5,2" 
                                Padding="8"
-                               BackgroundColor="LightGray"
+                               BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"
                                BorderColor="DarkGrey">
-                            <Grid ColumnDefinitions="auto, *, Auto" 
+                            <Grid ColumnDefinitions="Auto, *, Auto" 
                                   RowDefinitions=".5*, .5*">
                                 <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
                                        HorizontalTextAlignment="Start"

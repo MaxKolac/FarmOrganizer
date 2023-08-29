@@ -1,11 +1,15 @@
 ﻿using FarmOrganizer.Services;
+using FarmOrganizer.ViewModels;
 
 namespace FarmOrganizer;
 
 public partial class App : Application
 {
-    public static IServiceProvider Services;
-    public static IAlertService AlertSvc;
+    private static IServiceProvider services;
+    private static IAlertService alertSvc;
+
+    public static IServiceProvider Services { get => services; set => services = value; }
+    public static IAlertService AlertSvc { get => alertSvc; set => alertSvc = value; }
 
     public App(IServiceProvider provider)
 	{
@@ -13,6 +17,7 @@ public partial class App : Application
 
         Services = provider;
         AlertSvc = Services.GetService<IAlertService>();
+        SettingsPageViewModel.ApplyPreferences();
 
         MainPage = new AppShell();
 	}

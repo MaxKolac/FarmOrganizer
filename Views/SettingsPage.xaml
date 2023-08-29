@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             x:Class="FarmOrganizer.Views.SettingsPage"
+             x:DataType="viewmodel:SettingsPageViewModel"
+             Title="Ustawienia">
+    <ContentPage.Resources>
+        <viewmodel:StringToAppThemeConverter x:Key="StringToAppThemeConverter"/>
+
+        <Style TargetType="Label" x:Key="BaseLabelStyle">
+            <Setter Property="HorizontalOptions" Value="Start"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style TargetType="Label" x:Key="GroupTitle" BasedOn="{StaticResource BaseLabelStyle}">
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+        <Style TargetType="Grid">
+            <Setter Property="ColumnDefinitions" Value="Auto, *"/>
+            <Setter Property="RowDefinitions" Value="Auto"/>
+        </Style>
+        <Style TargetType="Picker">
+            <Setter Property="HorizontalTextAlignment" Value="End"/>
+        </Style>
+    </ContentPage.Resources>
+    
+    <VerticalStackLayout Margin="10">
+        <Label Text="Wygląd" Style="{StaticResource GroupTitle}"/>
+        <Grid>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Motyw"/>
+            <Picker Grid.Column="1" 
+                    ItemsSource="{Binding AppThemes}" 
+                    SelectedItem="{Binding SelectedTheme, Converter={StaticResource StringToAppThemeConverter}}"/>
+        </Grid>
+        <Label Text="Baza danych" Style="{StaticResource GroupTitle}"/>
+        <Grid>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Zresetuj bazę danych"/>
+            <Button Grid.Column="1"
+                    BackgroundColor="Red"
+                    Command="{Binding ResetDatabaseCommand}"
+                    Text="Resetuj"/>
+        </Grid>
+    </VerticalStackLayout>
+</ContentPage>

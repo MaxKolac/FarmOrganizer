@@ -5,79 +5,70 @@
              x:Class="FarmOrganizer.Views.ReportPage"
              x:DataType="viewmodel:ReportPageViewModel"
              Title="Szybki kalkulator">
-    
-    <Grid ColumnDefinitions="*"
-          RowDefinitions=".25*, Auto, Auto, Auto, Auto, Auto, Auto, *"
-          Padding="10">
-        
-        <Label Text="Dwie ostatnio kliknięte liczby są użyte do obliczenia trzeciej. Wciśnij OK aby zatwierdzić wpisaną liczbę."
-               Grid.ColumnSpan="2"
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="Medium"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+        <Style TargetType="Entry">
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="Keyboard" Value="Numeric"/>
+            <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
+            <Setter Property="FontSize" Value="Medium"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="IsEnabled" Value="False"/>
+        </Style>
+        <Style TargetType="HorizontalStackLayout">
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Margin="10">
+        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej.Po wpisaniu liczby, wciśnij OK aby ją zatwierdzić."
                HorizontalTextAlignment="Center"
-               VerticalTextAlignment="Center"
                Margin="10"
                FontSize="18"/>
 
-        <Label Text="Ilość plonów (kg):"
-               Grid.Row="1"
-               Grid.ColumnSpan="2"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="Start"
-               FontSize="Medium"
-               FontAttributes="Bold"/>
-        <Entry x:Name="cropAmount"
-               Grid.Row="2"
-               Keyboard="Numeric"
-               ClearButtonVisibility="WhileEditing"
-               FontSize="Medium"
-               IsReadOnly="{Binding CropAmountReadOnly}"
+        <Label Text="Ilość plonów (kg):"/>
+        <HorizontalStackLayout>
+            <Entry x:Name="cropAmount"
                Text="{Binding CropAmountValue}"
                ReturnCommand="{Binding TextChangedCommand}">
-            <Entry.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
-                                      CommandParameter="cropAmount"/>
-            </Entry.GestureRecognizers>
-        </Entry>
+                <Entry.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
+                                          CommandParameter="cropAmount"/>
+                </Entry.GestureRecognizers>
+            </Entry>
+            <CheckBox IsChecked="{Binding CropAmountFocused}"/>
+        </HorizontalStackLayout>
 
-        <Label Text="Cena za kilogram (zł):"
-               Grid.Row="3"
-               Grid.ColumnSpan="2"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="Start"
-               FontSize="Medium"
-               FontAttributes="Bold"/>
-        <Entry x:Name="sellRate"
-               Grid.Row="4"
-               Keyboard="Numeric"
-               ClearButtonVisibility="WhileEditing"
-               FontSize="Medium"
-               IsReadOnly="{Binding SellRateReadOnly}"
+        <Label Text="Cena za kilogram (zł):"/>
+        <HorizontalStackLayout>
+            <Entry x:Name="sellRate"
                Text="{Binding SellRateValue}"
                ReturnCommand="{Binding TextChangedCommand}">
-            <Entry.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
+                <Entry.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
                                       CommandParameter="sellRate"/>
-            </Entry.GestureRecognizers>
-        </Entry>
+                </Entry.GestureRecognizers>
+            </Entry>
+            <CheckBox IsChecked="{Binding SellRateFocused}"/>
+        </HorizontalStackLayout>
 
-        <Label Text="Zysk ze sprzedaży (zł):"
-               Grid.Row="5"
-               Grid.ColumnSpan="2"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="Start"
-               FontSize="Medium"
-               FontAttributes="Bold"/>
-        <Entry x:Name="pureIncome"
-               Grid.Row="6"
-               Keyboard="Numeric"
-               ClearButtonVisibility="WhileEditing"
-               FontSize="Medium"
-               IsReadOnly="{Binding PureIncomeReadOnly}"
+        <Label Text="Zysk ze sprzedaży (zł):"/>
+        <HorizontalStackLayout>
+            <Entry x:Name="pureIncome"
                Text="{Binding PureIncomeValue}"
                ReturnCommand="{Binding TextChangedCommand}">
-            <Entry.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}"
-                                      CommandParameter="pureIncome"/>
-            </Entry.GestureRecognizers>
-        </Entry>
-    </Grid>
+                <Entry.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
+                                          CommandParameter="pureIncome"/>
+                </Entry.GestureRecognizers>
+            </Entry>
+            <CheckBox IsChecked="{Binding PureIncomeFocused}"/>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
 </ContentPage>

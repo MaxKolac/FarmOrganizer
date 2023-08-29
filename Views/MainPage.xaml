@@ -10,6 +10,12 @@
              x:Class="FarmOrganizer.Views.MainPage"
              x:DataType="viewmodel:MainPageViewModel"
              Title="Menu główne">
+    <ContentPage.Resources>
+        <Style TargetType="Button" ApplyToDerivedTypes="True">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+        </Style>
+    </ContentPage.Resources>
     <Grid 
         ColumnDefinitions="*, *"
         RowDefinitions="*, *, *"
@@ -26,28 +32,21 @@
         <Button 
             Grid.Row="0" 
             Grid.Column="1"
-            Text="Szybki kalkulator" 
+            Text="Szybki kalkulator"
             Command="{Binding OpenPageCommand}"
             CommandParameter="QuickCalculator"/>
-        <!--<Button 
-            x:Name="DisableThatFuck"
-            Grid.Row="3" 
-            Text="Holy shit" 
-            IsEnabled="{Binding IsToggled, Source={x:Reference TheFunnySwitch}}"/>-->
-        
+
         <Button 
             Grid.Row="1"  
             Grid.Column="0" 
-            Text="DEBUG PAGE" 
+            Text="Ustawienia"
             Command="{Binding OpenPageCommand}"
-            CommandParameter="DebugPage"/>
+            CommandParameter="SettingsPage"/>
         <Button
             Grid.Row="1" 
             Grid.Column="1" 
-            Text="Zarządzaj polami i rodzajami kosztów" 
-            LineBreakMode="CharacterWrap"/>
-        <!--<Switch x:Name="TheFunnySwitch"
-                Grid.Column="1"
-                Grid.Row="3"/>-->
+            Text="Zarządzaj polami i rodzajami kosztów"
+            Command="{Binding OpenPageCommand}"
+            CommandParameter="DebugPage"/>
     </Grid>
 </ContentPage>
