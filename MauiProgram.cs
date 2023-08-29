@@ -40,6 +40,8 @@ public static class MauiProgram
         builder.Services.AddTransient<DebugPageViewModel>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<SettingsPageViewModel>();
+        builder.Services.AddTransient<SeasonsPage>();
+        builder.Services.AddTransient<SeasonsPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
 
