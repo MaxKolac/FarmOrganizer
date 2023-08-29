@@ -144,6 +144,10 @@ public partial class DatabaseContext : DbContext
                 .IsRequired()
                 .HasDefaultValueSql("\"Nowy sezon\"")
                 .HasColumnName("name");
+            entity.Property(e => e.HasConcluded)
+                .HasDefaultValueSql("0")
+                .HasColumnName("hasConcluded")
+                .HasColumnType("INTEGER");
         });
 
         OnModelCreatingPartial(modelBuilder);
