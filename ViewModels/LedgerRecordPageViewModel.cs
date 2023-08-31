@@ -78,10 +78,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(
-                    ErrorMessages.GenericTitle,
-                    ErrorMessages.GenericSqliteMessage(ex));
-                ReturnToPreviousPage();
+                new ExceptionHandler(ex).ShowAlert();
             }
 
             switch (PageMode)
@@ -112,24 +109,22 @@ namespace FarmOrganizer.ViewModels
                     {
                         //Should be thrown when:
                         //No record was found - result is returned as null
-                        App.AlertSvc.ShowAlert(
-                            ErrorMessages.GenericTitle,
-                            ErrorMessages.RecordNotFound(nameof(BalanceLedger), RecordId));
-                        ReturnToPreviousPage();
+                        NoRecordFoundException ex = new(
+                            nameof(DatabaseContext.BalanceLedgers), 
+                            $"Id = {RecordId}"
+                            );
+                        new ExceptionHandler(ex).ShowAlert();
                     }
-                    catch (SqliteException ex)
+                    catch (SqliteException ex1)
                     {
-                        App.AlertSvc.ShowAlert(
-                            ErrorMessages.GenericTitle,
-                            ErrorMessages.GenericSqliteMessage(ex));
-                        ReturnToPreviousPage();
+                        new ExceptionHandler(ex1).ShowAlert();
                     }
                     break;
                 default:
-                    App.AlertSvc.ShowAlert(
-                        ErrorMessages.GenericTitle,
-                        ErrorMessages.InvalidPropertyQueries(nameof(PageMode), PageMode));
-                    ReturnToPreviousPage();
+                    InvalidPageQueryException ex2 = new(
+                        new Dictionary<string, string>(){ { nameof(PageMode), PageMode } }
+                        );
+                    new ExceptionHandler(ex2).ShowAlert();
                     break;
             }
         }
@@ -175,22 +170,19 @@ namespace FarmOrganizer.ViewModels
             {
                 //Thrown when:
                 //Constraint is failed - basic code 19
-                App.AlertSvc.ShowAlert(
-                    ErrorMessages.GenericTitle,
-                    ErrorMessages.GenericSqliteMessage((SqliteException)ex.InnerException)
-                    );
+                new ExceptionHandler((SqliteException)ex.InnerException).ShowAlert();
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(
-                    ErrorMessages.GenericTitle,
-                    ErrorMessages.GenericSqliteMessage(ex));
+                new ExceptionHandler(ex).ShowAlert();
             }
             catch (NullReferenceException)
             {
-                App.AlertSvc.ShowAlert(
-                    ErrorMessages.GenericTitle,
-                    ErrorMessages.RecordNotFound(nameof(BalanceLedger), RecordId));
+                NoRecordFoundException ex = new(
+                    nameof(DatabaseContext.BalanceLedgers),
+                    $"If = {RecordId}"
+                    );
+                new ExceptionHandler(ex).ShowAlert();
             }
         }
 

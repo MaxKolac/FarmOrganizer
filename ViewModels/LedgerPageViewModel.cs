@@ -35,11 +35,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericSqliteMessage(ex));
-                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
-                {
-                    await Shell.Current.GoToAsync("..");
-                });
+                new ExceptionHandler(ex).ShowAlert();
             }
         }
 
@@ -96,7 +92,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericSqliteMessage(ex));
+                new ExceptionHandler(ex).ShowAlert();
             }
             finally
             {
@@ -116,11 +112,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (SqliteException ex)
             {
-                App.AlertSvc.ShowAlert(ErrorMessages.GenericTitle, ErrorMessages.GenericSqliteMessage(ex));
-                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
-                {
-                    await Shell.Current.GoToAsync("..");
-                });
+                new ExceptionHandler(ex).ShowAlert();
             }
         }
 
