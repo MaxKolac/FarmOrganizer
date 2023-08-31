@@ -2,5 +2,11 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-
+    <Style TargetType="Frame" x:Key="TableEntryFrame">
+        <Setter Property="Margin" Value="5,2,5,2"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="BackgroundColor" 
+                Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"/>
+        <Setter Property="BorderColor" Value="DarkGrey"/>
+    </Style>
 </ResourceDictionary>

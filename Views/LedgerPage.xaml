@@ -53,10 +53,7 @@
                             </SwipeItems>
                         </SwipeView.RightItems>
 
-                        <Frame Margin="5,2,5,2" 
-                               Padding="8"
-                               BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"
-                               BorderColor="DarkGrey">
+                        <Frame Style="{StaticResource TableEntryFrame}">
                             <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, Auto">
                                 <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
                                        HorizontalTextAlignment="Start"
