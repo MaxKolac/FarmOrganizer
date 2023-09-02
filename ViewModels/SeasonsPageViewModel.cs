@@ -32,7 +32,7 @@ namespace FarmOrganizer.ViewModels
             {
                 Seasons = context.Seasons.ToList();
             }
-            catch (SqliteException ex)
+            catch (Exception ex)
             {
                 new ExceptionHandler(ex).ShowAlert();
             }

@@ -33,7 +33,7 @@ namespace FarmOrganizer.ViewModels
                     .Where(entry => entry.IdCropField == SelectedCropField.Id)
                     .ToList();
             }
-            catch (SqliteException ex)
+            catch (Exception ex)
             {
                 new ExceptionHandler(ex).ShowAlert();
             }
@@ -90,7 +90,7 @@ namespace FarmOrganizer.ViewModels
                 context.BalanceLedgers.Remove(record);
                 context.SaveChanges();
             }
-            catch (SqliteException ex)
+            catch (Exception ex)
             {
                 new ExceptionHandler(ex).ShowAlert();
             }
@@ -110,7 +110,7 @@ namespace FarmOrganizer.ViewModels
                     .Where(entry => entry.IdCropField == SelectedCropField.Id)
                     .ToList();
             }
-            catch (SqliteException ex)
+            catch (Exception ex)
             {
                 new ExceptionHandler(ex).ShowAlert();
             }

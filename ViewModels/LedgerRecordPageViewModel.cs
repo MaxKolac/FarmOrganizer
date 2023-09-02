@@ -76,7 +76,7 @@ namespace FarmOrganizer.ViewModels
                 CropFields = context.CropFields.ToList();
                 Season = context.Seasons.First(season => !season.HasConcluded);
             }
-            catch (SqliteException ex)
+            catch (Exception ex)
             {
                 new ExceptionHandler(ex).ShowAlert();
             }
@@ -115,7 +115,7 @@ namespace FarmOrganizer.ViewModels
                             );
                         new ExceptionHandler(ex).ShowAlert();
                     }
-                    catch (SqliteException ex1)
+                    catch (Exception ex1)
                     {
                         new ExceptionHandler(ex1).ShowAlert();
                     }
@@ -172,16 +172,16 @@ namespace FarmOrganizer.ViewModels
                 //Constraint is failed - basic code 19
                 new ExceptionHandler((SqliteException)ex.InnerException).ShowAlert();
             }
-            catch (SqliteException ex)
-            {
-                new ExceptionHandler(ex).ShowAlert();
-            }
             catch (NullReferenceException)
             {
                 NoRecordFoundException ex = new(
                     nameof(DatabaseContext.BalanceLedgers),
                     $"If = {RecordId}"
                     );
+                new ExceptionHandler(ex).ShowAlert();
+            }
+            catch (Exception ex)
+            {
                 new ExceptionHandler(ex).ShowAlert();
             }
         }
