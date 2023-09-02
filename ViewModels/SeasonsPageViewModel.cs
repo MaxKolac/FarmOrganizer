@@ -41,6 +41,9 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void StartNewSeason()
         {
+                //New season cannot start before the previous one started
+                if (seasonToEnd.DateStart >= newSeason.DateStart)
+                    throw new InvalidRecordException("Data rozpoczęcia", newSeason.DateStart.ToShortDateString());
 
         }
 

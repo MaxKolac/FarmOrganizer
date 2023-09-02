@@ -38,6 +38,12 @@ namespace FarmOrganizer.Exceptions
                 _title = "Błąd podczas ładowania nowej strony";
                 _message = $"Program próbował przejść do strony z nieprawidłowymi atrybutami: {ex}";
             }
+            else if (exception is InvalidRecordException)
+            {
+                InvalidRecordException ex = exception as InvalidRecordException;
+                _title = "Nieprawidłowe dane";
+                _message = $"W rekordzie znajduje się niedozwolona wartość: {ex.InvalidProperty} = {ex.InvalidValue}";
+            }
             else
             {
                 _title = "Coś poszło nie tak - Nieobsługiwany błąd";
