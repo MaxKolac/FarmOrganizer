@@ -45,20 +45,20 @@
         <Button
             Grid.Row="1" 
             Grid.Column="1" 
-            Text="Zarządzaj polami i rodzajami kosztów"
+            Text="Zarządzaj polami"
             Command="{Binding OpenPageCommand}"
             CommandParameter="DebugPage"/>
 
         <Button 
             Grid.Row="2"  
             Grid.Column="0" 
-            Text="Ustawienia"
+            Text="Zarządzaj rodzajami kosztów"
             Command="{Binding OpenPageCommand}"
             CommandParameter="SettingsPage"/>
         <Button 
             Grid.Row="2"  
             Grid.Column="1" 
-            Text="Placeholder"
+            Text="Ustawienia"
             Command="{Binding OpenPageCommand}"
             CommandParameter="SettingsPage"/>
     </Grid>

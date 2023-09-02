@@ -9,4 +9,7 @@
                 Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"/>
         <Setter Property="BorderColor" Value="DarkGrey"/>
     </Style>
+    <Style TargetType="Entry">
+        <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
+    </Style>
 </ResourceDictionary>
