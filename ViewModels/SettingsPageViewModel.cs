@@ -1,6 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core.Primitives;
+using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
+using FarmOrganizer.Exceptions;
 using System.Globalization;
 
 namespace FarmOrganizer.ViewModels
@@ -30,6 +33,42 @@ namespace FarmOrganizer.ViewModels
             {
                 await DatabaseFile.Delete();
                 await MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
+            }
+        }
+
+        [RelayCommand]
+        private async static Task ExportDatabase()
+        {
+            try
+            {
+                var folder = await FolderPicker.PickAsync(default);
+                await DatabaseFile.ExportTo(folder.Folder.Path);
+                App.AlertSvc.ShowAlert(
+                    "Sukces",
+                    $"Baza danych została pomyślnie wyeksportowana do lokalizacji: {folder.Folder.Path}"
+                    );
+            }
+            catch (Exception ex)
+            {
+                new ExceptionHandler(ex).ShowAlert(false);
+            }
+        }
+
+        [RelayCommand]
+        private async static Task ImportDatabase()
+        {
+            try
+            {
+                var file = await FilePicker.PickAsync();
+                await DatabaseFile.ImportFrom(file.FullPath);
+                App.AlertSvc.ShowAlert(
+                    "Sukces",
+                    $"Baza danych została pomyślnie importowana z pliku {file.FileName}"
+                    );
+            }
+            catch (Exception ex)
+            {
+                new ExceptionHandler(ex).ShowAlert(false);
             }
         }
 

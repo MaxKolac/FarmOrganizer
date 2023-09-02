@@ -27,7 +27,7 @@
         </Style>
     </ContentPage.Resources>
     
-    <VerticalStackLayout Margin="10">
+    <VerticalStackLayout Margin="10" Spacing="2">
         <Label Text="Wygląd" Style="{StaticResource GroupTitle}"/>
         <Grid>
             <Label Style="{StaticResource BaseLabelStyle}" Text="Motyw"/>
@@ -35,7 +35,12 @@
                     ItemsSource="{Binding AppThemes}" 
                     SelectedItem="{Binding SelectedTheme, Converter={StaticResource StringToAppThemeConverter}}"/>
         </Grid>
+        
         <Label Text="Baza danych" Style="{StaticResource GroupTitle}"/>
+        <Button Text="Eksportuj bazę danych"
+                Command="{Binding ExportDatabaseCommand}"/>
+        <Button Text="Importuj bazę danych"
+                Command="{Binding ImportDatabaseCommand}"/>
         <Grid>
             <Label Style="{StaticResource BaseLabelStyle}" Text="Zresetuj bazę danych"/>
             <Button Grid.Column="1"
