@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Core.Primitives;
-using CommunityToolkit.Maui.Storage;
+﻿using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
@@ -41,7 +40,9 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                var folder = await FolderPicker.PickAsync(default);
+                FolderPickerResult folder = await FolderPicker.PickAsync(default);
+                if (!folder.IsSuccessful)
+                    return;
                 await DatabaseFile.ExportTo(folder.Folder.Path);
                 App.AlertSvc.ShowAlert(
                     "Sukces",
@@ -59,15 +60,23 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                var file = await FilePicker.PickAsync();
+                await DatabaseFile.CreateBackup();
+                FileResult file = await FilePicker.PickAsync();
+                if (file == null)
+                {
+                    DatabaseFile.DeleteBackup();
+                    return;
+                }
                 await DatabaseFile.ImportFrom(file.FullPath);
                 App.AlertSvc.ShowAlert(
                     "Sukces",
                     $"Baza danych została pomyślnie importowana z pliku {file.FileName}"
                     );
+                DatabaseFile.DeleteBackup();
             }
             catch (Exception ex)
             {
+                await DatabaseFile.RestoreBackup();
                 new ExceptionHandler(ex).ShowAlert(false);
             }
         }

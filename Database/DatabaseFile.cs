@@ -1,5 +1,4 @@
-﻿using FarmOrganizer.Exceptions;
-using FarmOrganizer.Models;
+﻿using FarmOrganizer.Models;
 
 namespace FarmOrganizer.Database
 {
@@ -26,7 +25,7 @@ namespace FarmOrganizer.Database
         public static string FullPath => Path.Combine(FileSystem.Current.AppDataDirectory, Filename);
 
         /// <summary>
-        /// Copy the read-only fresh database file bundled with the APK to app's local storage to be editable.
+        /// Copy the read-only fresh database file bundled with the APK to app's external storage to be editable.
         /// You can dispatch the creation of a new file with the following sample:
         /// <code>
         /// Application.Current.MainPage.Dispatcher.Dispatch(async () => await DatabaseFile.Create());
@@ -73,31 +72,29 @@ namespace FarmOrganizer.Database
         }
 
         /// <summary>
+        /// <para>
         /// Creates or overwrites database's file with the one provided in the source path. It also creates a new DatabaseContext instance and runs basic read tests to check for consistency with the schema.
+        /// </para>
+        /// <para>
+        /// It is highly recommended to first create an emergency back up of the database with <see cref="CreateBackup"/> method, and in case of an import failure, restore the contents with <see cref="RestoreBackup(bool)"/>.
+        /// </para>
         /// </summary>
         /// <param name="sourceFilePath">The file which should be imported as the database.</param>
+        /// <exception cref="IOException"/>
+        /// <exception cref="Microsoft.EntityFrameworkCore.DbUpdateException"/>
         public static async Task ImportFrom(string sourceFilePath)
         {
-            await CreateBackup();
-            try
-            {
-                using Stream sourceFile = File.OpenRead(sourceFilePath);
-                using FileStream destinationFile = File.Create(FullPath);
-                await sourceFile.CopyToAsync(destinationFile);
+            using Stream sourceFile = File.OpenRead(sourceFilePath);
+            using FileStream destinationFile = File.Create(FullPath);
+            await sourceFile.CopyToAsync(destinationFile);
 
-                using var context = new DatabaseContext();
-                List<BalanceLedger> ledger = context.BalanceLedgers.ToList();
-                List<CostType> costTypes = context.CostTypes.ToList();
-                List<CropField> cropFields = context.CropFields.ToList();
-                List<FieldEfficiency> fieldEfficiencies = context.FieldEfficiencies.ToList();
-                List<Season> seasons = context.Seasons.ToList();
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                await RestoreBackup();
-                new ExceptionHandler(ex).ShowAlert(false);
-            }
+            using var context = new DatabaseContext();
+            List<BalanceLedger> ledger = context.BalanceLedgers.ToList();
+            List<CostType> costTypes = context.CostTypes.ToList();
+            List<CropField> cropFields = context.CropFields.ToList();
+            List<FieldEfficiency> fieldEfficiencies = context.FieldEfficiencies.ToList();
+            List<Season> seasons = context.Seasons.ToList();
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -122,7 +119,13 @@ namespace FarmOrganizer.Database
                 await dbBackupFile.CopyToAsync(database);
             }
             if (deleteOnCompletion)
-                File.Delete(Path.Combine(Location, BackupFilename));
+                DeleteBackup();
         }
+
+        /// <summary>
+        /// Deletes the backup file of the database.
+        /// </summary>
+        public static void DeleteBackup() =>
+            File.Delete(Path.Combine(Location, BackupFilename));
     }
 }
