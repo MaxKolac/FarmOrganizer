@@ -5,23 +5,23 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class QuickCalculatorViewModel : ObservableObject
     {
-        private const string cropAmountName = "cropAmount";
+        protected const string cropAmountName = "cropAmount";
         [ObservableProperty]
-        public string cropAmountValue;
+        private string cropAmountValue;
         [ObservableProperty]
-        public bool cropAmountFocused;
+        protected bool cropAmountFocused;
 
-        private const string sellRateName = "sellRate";
+        protected const string sellRateName = "sellRate";
         [ObservableProperty]
-        public string sellRateValue;
+        private string sellRateValue;
         [ObservableProperty]
-        public bool sellRateFocused;
+        protected bool sellRateFocused;
 
-        private const string pureIncomeName = "pureIncome";
+        protected const string pureIncomeName = "pureIncome";
         [ObservableProperty]
-        public string pureIncomeValue;
+        private string pureIncomeValue;
         [ObservableProperty]
-        public bool pureIncomeFocused;
+        protected bool pureIncomeFocused;
 
         protected readonly Queue<string> lastEditedControls = new();
 
@@ -91,5 +91,12 @@ namespace FarmOrganizer.ViewModels
             //if (caller.Equals(pureIncomeName))
             //    SellRateColor = selectedColor;
         }
+
+        //Class over-coupling? Never heard of it *shrug*
+        //I blame partial methods not being inherited
+        partial void OnPureIncomeValueChanged(string value) =>
+            OnIncomeChanged(value);
+
+        protected virtual void OnIncomeChanged(string value) { }
     }
 }
