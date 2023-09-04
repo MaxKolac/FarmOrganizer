@@ -76,9 +76,13 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static async Task GenerateReport()
+        private async Task GenerateReport()
         {
-            await Shell.Current.GoToAsync(nameof(ReportPage));
+            var query = new Dictionary<string, object>()
+            {
+                { "entries", FilteredLedgerEntries }
+            };
+            await Shell.Current.GoToAsync(nameof(ReportPage), query);
         }
 
         [RelayCommand]

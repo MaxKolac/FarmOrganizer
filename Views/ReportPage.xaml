@@ -4,71 +4,167 @@
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              x:Class="FarmOrganizer.Views.ReportPage"
              x:DataType="viewmodel:ReportPageViewModel"
-             Title="Szybki kalkulator">
+             Title="Raport wydatków i przychodów">
     <ContentPage.Resources>
-        <Style TargetType="Label">
+        <Style TargetType="CheckBox">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="Grid.Column" Value="1"/>
+        </Style>
+        <Style TargetType="Entry" x:Key="QuickCalcEntry">
+            <Setter Property="MaxLength" Value="9"/>
+            <Setter Property="VerticalOptions" Value="Fill"/>
+            <Setter Property="Keyboard" Value="Numeric"/>
+            <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
+            <Setter Property="FontSize" Value="Medium"/>
+        </Style>
+
+        <Style TargetType="Frame" x:Key="CostTypeEntryFrame">
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="BorderColor" Value="Transparent"/>
+        </Style>
+        <Style TargetType="Frame" x:Key="TotalAmountFrame" BasedOn="{StaticResource CostTypeEntryFrame}">
+            
+        </Style>
+
+        <Style TargetType="Label" x:Key="CollectionViewTitleLabel">
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+        <Style TargetType="Label" x:Key="CostTypeEntryLabel">
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
+        <Style TargetType="Label" x:Key="InstructionStyleLabel">
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
+        <Style TargetType="Label" x:Key="TotalAmountLabel" BasedOn="{StaticResource CostTypeEntryLabel}">
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+        <Style TargetType="Label" x:Key="QuickCalcLabel">
             <Setter Property="HorizontalTextAlignment" Value="Start"/>
             <Setter Property="VerticalTextAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="Medium"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
-        <Style TargetType="Entry">
-            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
-            <Setter Property="Keyboard" Value="Numeric"/>
-            <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
-            <Setter Property="FontSize" Value="Medium"/>
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="IsEnabled" Value="False"/>
-        </Style>
-        <Style TargetType="HorizontalStackLayout">
-            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
-        </Style>
+
+        <DataTemplate x:DataType="viewmodel:CostTypeReportEntry" x:Key="CostTypeReportEntryTemplate">
+            <Frame Style="{StaticResource CostTypeEntryFrame}">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Label Grid.Column="0" 
+                           Text="{Binding Name}"
+                           Style="{StaticResource CostTypeEntryLabel}"
+                           HorizontalOptions="Start"/>
+                    <Label Grid.Column="1" 
+                           Text="{Binding Amount, StringFormat='{0:F2}'}" 
+                           Style="{StaticResource CostTypeEntryLabel}"
+                           HorizontalOptions="End"/>
+                </Grid>
+            </Frame>
+        </DataTemplate>
     </ContentPage.Resources>
 
-    <VerticalStackLayout Margin="10">
-        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej.Po wpisaniu liczby, wciśnij OK aby ją zatwierdzić."
-               HorizontalTextAlignment="Center"
-               Margin="10"
-               FontSize="18"/>
+    <ScrollView>
+        <StackLayout Margin="10">
+            <!-- Header info -->
+            <VerticalStackLayout>
+                
+            </VerticalStackLayout>
+            
+            <!-- Expense list by categories -->
+            <VerticalStackLayout>
+                <Label Text="Zestawienie wydatków" Style="{StaticResource CollectionViewTitleLabel}"/>
+                <CollectionView ItemsSource="{Binding ExpenseEntries}"
+                                ItemTemplate="{StaticResource CostTypeReportEntryTemplate}"/>
+                <Frame Style="{StaticResource TotalAmountFrame}">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Grid.Column="0" 
+                               Text="Wydatki razem:" 
+                               Style="{StaticResource TotalAmountLabel}"
+                               HorizontalOptions="Start"/>
+                        <Label Grid.Column="1" 
+                               Text="{Binding TotalExpense, StringFormat='{0:F2}'}" 
+                               Style="{StaticResource TotalAmountLabel}"
+                               HorizontalOptions="End"/>
+                    </Grid>
+                </Frame>
+            </VerticalStackLayout>
 
-        <Label Text="Ilość plonów (kg):"/>
-        <HorizontalStackLayout>
-            <Entry x:Name="cropAmount"
-               Text="{Binding CropAmountValue}"
-               ReturnCommand="{Binding TextChangedCommand}">
-                <Entry.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                          CommandParameter="cropAmount"/>
-                </Entry.GestureRecognizers>
-            </Entry>
-            <CheckBox IsChecked="{Binding CropAmountFocused}"/>
-        </HorizontalStackLayout>
+            <!-- Profit list by categories -->
+            <VerticalStackLayout>
+                <Label Text="Zestawienie przychodów" Style="{StaticResource CollectionViewTitleLabel}"/>
+                <CollectionView ItemsSource="{Binding ProfitEntries}"
+                                ItemTemplate="{StaticResource CostTypeReportEntryTemplate}"/>
+                <Frame Style="{StaticResource TotalAmountFrame}">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Grid.Column="0" 
+                               Text="Przychody razem:" 
+                               Style="{StaticResource TotalAmountLabel}"
+                               HorizontalOptions="Start"/>
+                        <Label Grid.Column="1"
+                               Text="{Binding TotalProfit, StringFormat='{0:F2}'}" 
+                               Style="{StaticResource TotalAmountLabel}"
+                               HorizontalOptions="End"/>
+                    </Grid>
+                </Frame>
+            </VerticalStackLayout>
 
-        <Label Text="Cena za kilogram (zł):"/>
-        <HorizontalStackLayout>
-            <Entry x:Name="sellRate"
-               Text="{Binding SellRateValue}"
-               ReturnCommand="{Binding TextChangedCommand}">
-                <Entry.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                      CommandParameter="sellRate"/>
-                </Entry.GestureRecognizers>
-            </Entry>
-            <CheckBox IsChecked="{Binding SellRateFocused}"/>
-        </HorizontalStackLayout>
+            <!-- QuickCalculator Copy -->
+            <VerticalStackLayout>
+                <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej."
+                       Style="{StaticResource InstructionStyleLabel}"/>
+                <Label Text="Po wpisaniu liczby, wciśnij OK aby ją zatwierdzić."
+                       Style="{StaticResource InstructionStyleLabel}"/>
 
-        <Label Text="Zysk ze sprzedaży (zł):"/>
-        <HorizontalStackLayout>
-            <Entry x:Name="pureIncome"
-               Text="{Binding PureIncomeValue}"
-               ReturnCommand="{Binding TextChangedCommand}">
-                <Entry.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                          CommandParameter="pureIncome"/>
-                </Entry.GestureRecognizers>
-            </Entry>
-            <CheckBox IsChecked="{Binding PureIncomeFocused}"/>
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+                <Grid ColumnDefinitions=".9*, Auto"
+                      RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
+
+                    <Label Grid.ColumnSpan="2"  
+                           Text="Ilość plonów (kg):"
+                           Style="{StaticResource QuickCalcLabel}"/>
+                    <Entry x:Name="cropAmount"
+                           Grid.Row="1"
+                           Text="{Binding CropAmountValue}"
+                           ReturnCommand="{Binding TextChangedCommand}"
+                           Style="{StaticResource QuickCalcEntry}">
+                        <Entry.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" CommandParameter="cropAmount"/>
+                        </Entry.GestureRecognizers>
+                    </Entry>
+                    <CheckBox Grid.Row="1" IsChecked="{Binding CropAmountFocused}"/>
+
+                    <Label Grid.Row="2" 
+                           Grid.ColumnSpan="2" 
+                           Text="Cena za kilogram (zł):"
+                           Style="{StaticResource QuickCalcLabel}"/>
+                    <Entry x:Name="sellRate"
+                           Grid.Row="3"
+                           Text="{Binding SellRateValue}"
+                           ReturnCommand="{Binding TextChangedCommand}"
+                           Style="{StaticResource QuickCalcEntry}">
+                        <Entry.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" CommandParameter="sellRate"/>
+                        </Entry.GestureRecognizers>
+                    </Entry>
+                    <CheckBox Grid.Row="3" IsChecked="{Binding SellRateFocused}"/>
+
+                    <Label Grid.Row="4" 
+                           Grid.ColumnSpan="2" 
+                           Text="Zysk ze sprzedaży (zł):"
+                           Style="{StaticResource QuickCalcLabel}"/>
+                    <Entry x:Name="pureIncome"
+                           Grid.Row="5"
+                           Text="{Binding PureIncomeValue}"
+                           ReturnCommand="{Binding TextChangedCommand}"
+                           Style="{StaticResource QuickCalcEntry}">
+                        <Entry.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" CommandParameter="pureIncome"/>
+                        </Entry.GestureRecognizers>
+                    </Entry>
+                    <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
+                </Grid>
+            </VerticalStackLayout>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
