@@ -4,9 +4,9 @@ namespace FarmOrganizer.Exceptions
 {
     internal class InvalidPageQueryException : Exception
     {
-        public Dictionary<string, string> Queries { get; } = new();
+        public IDictionary<string, object> Queries { get; }
 
-        public InvalidPageQueryException(Dictionary<string, string> query) 
+        public InvalidPageQueryException(IDictionary<string, object> query) 
         {
             Queries = query;
         }

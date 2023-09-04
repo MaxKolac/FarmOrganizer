@@ -121,9 +121,7 @@ namespace FarmOrganizer.ViewModels
                     }
                     break;
                 default:
-                    InvalidPageQueryException ex2 = new(
-                        new Dictionary<string, string>(){ { nameof(PageMode), PageMode } }
-                        );
+                    InvalidPageQueryException ex2 = new(query);
                     new ExceptionHandler(ex2).ShowAlert();
                     break;
             }
