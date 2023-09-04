@@ -35,8 +35,6 @@ namespace FarmOrganizer.ViewModels
 
         #region Record Properties
         [ObservableProperty]
-        Season season;
-        [ObservableProperty]
         DateTime dateAdded;
         [ObservableProperty]
         string balanceChange;
@@ -61,6 +59,11 @@ namespace FarmOrganizer.ViewModels
         List<CostType> costTypes;
         [ObservableProperty]
         CostType selectedCostType;
+
+        [ObservableProperty]
+        List<Season> seasons;
+        [ObservableProperty]
+        Season selectedSeason;
         #endregion
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -74,7 +77,7 @@ namespace FarmOrganizer.ViewModels
                 using var context = new DatabaseContext();
                 CostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
                 CropFields = context.CropFields.ToList();
-                Season = context.Seasons.First(season => !season.HasConcluded);
+                Seasons = context.Seasons.ToList();
             }
             catch (Exception ex)
             {
@@ -88,6 +91,8 @@ namespace FarmOrganizer.ViewModels
                     SaveButtonText = "Dodaj i zapisz";
                     SelectedCostType = CostTypes.First();
                     SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
+                    //This isnt showing ???? burh
+                    SelectedSeason = SeasonsPageViewModel.GetCurrentSeason();
                     DateAdded = DateTime.Now;
                     BalanceChange = "0";
                     Notes = string.Empty;
@@ -101,6 +106,7 @@ namespace FarmOrganizer.ViewModels
                         BalanceLedger result = context.BalanceLedgers.Find(RecordId);
                         SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
                         SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
+                        SelectedSeason = Seasons.Find(season => season.Id == result.IdSeason);
                         DateAdded = result.DateAdded;
                         BalanceChange = result.BalanceChange.ToString();
                         Notes = result.Notes;
@@ -140,7 +146,7 @@ namespace FarmOrganizer.ViewModels
                         {
                             IdCostType = SelectedCostType.Id,
                             IdCropField = SelectedCropField.Id,
-                            IdSeason = this.Season.Id,
+                            IdSeason = SelectedSeason.Id,
                             DateAdded = this.DateAdded,
                             BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2),
                             Notes = this.Notes
@@ -153,6 +159,7 @@ namespace FarmOrganizer.ViewModels
                         BalanceLedger existingRecord = context.BalanceLedgers.Find(RecordId);
                         existingRecord.IdCostType = SelectedCostType.Id;
                         existingRecord.IdCropField = SelectedCropField.Id;
+                        existingRecord.IdSeason = SelectedSeason.Id;
                         existingRecord.DateAdded = DateAdded;
                         existingRecord.BalanceChange = 
                             Math.Abs(

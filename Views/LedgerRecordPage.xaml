@@ -18,7 +18,7 @@
         <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
 
         <Label Text="Wpis podpięty pod sezon:"/>
-        <Label Text="{Binding Season}" FontAttributes="None" Margin="0,10,0,10"/>
+        <Picker ItemsSource="{Binding Seasons}" SelectedItem="{Binding SelectedSeason}" IsEnabled="False"/>
 
         <Label Text="Data dodania wpisu"/>
         <DatePicker Date="{Binding DateAdded}"/>
