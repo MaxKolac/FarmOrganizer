@@ -4,7 +4,6 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.Views;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace FarmOrganizer.ViewModels
@@ -12,14 +11,14 @@ namespace FarmOrganizer.ViewModels
     public partial class LedgerPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        List<BalanceLedger> ledgerEntries = new();
+        private List<BalanceLedger> filteredLedgerEntries = new();
         [ObservableProperty]
-        List<CostType> costTypes = new();
+        private List<CostType> costTypes = new();
         [ObservableProperty]
-        List<CropField> cropFields = new();
+        private List<CropField> cropFields = new();
 
         [ObservableProperty]
-        CropField selectedCropField;
+        private CropField selectedCropField;
 
         public LedgerPageViewModel()
         {
@@ -48,7 +47,7 @@ namespace FarmOrganizer.ViewModels
                 { "id", 0 },
                 { "cropFieldId", SelectedCropField.Id }
             };
-            await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}", query);
+            await Shell.Current.GoToAsync(nameof(LedgerRecordPage), query);
         }
 
         [RelayCommand]
@@ -60,7 +59,7 @@ namespace FarmOrganizer.ViewModels
                 { "id", record.Id },
                 { "cropFieldId", 0 }
             };
-            await Shell.Current.GoToAsync($"{nameof(LedgerRecordPage)}", query);
+            await Shell.Current.GoToAsync(nameof(LedgerRecordPage), query);
         }
 
         [RelayCommand]
