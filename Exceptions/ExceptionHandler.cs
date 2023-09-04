@@ -7,7 +7,6 @@ namespace FarmOrganizer.Exceptions
     /// </summary>
     public class ExceptionHandler
     {
-        private readonly Exception _exception;
         private readonly string _title;
         private readonly string _message;
         private const string _genericTitle = "Coś poszło nie tak";
@@ -18,7 +17,6 @@ namespace FarmOrganizer.Exceptions
         /// <param name="exception">The exception to handle.</param>
         public ExceptionHandler(Exception exception)
         {
-            _exception = exception;
             if (exception is SqliteException)
             {
                 SqliteException ex = exception as SqliteException;
