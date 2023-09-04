@@ -12,34 +12,23 @@ namespace FarmOrganizer.ViewModels
         private Season currentlyOpenSeason;
 
         [ObservableProperty]
-        List<Season> seasons;
+        private List<Season> seasons = new();
         [ObservableProperty]
-        bool addingNewSeason = false;
+        private bool addingNewSeason = false;
 
         #region New Season Details
         [ObservableProperty]
-        string newSeasonName;
+        private string newSeasonName;
         [ObservableProperty]
-        DateTime newSeasonDateStart;
+        private DateTime newSeasonDateStart;
         #endregion
 
         public SeasonsPageViewModel()
         {
-            using var context = new DatabaseContext();
             try
             {
-                Seasons = context.Seasons.ToList();
-                //Check if there is at least 1 season; it needs to be open.
-                if (Seasons.Count == 0)
-                    throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "*");
-                //Check if the only season is concluded
-                if (Seasons.Count == 1 && Seasons[0].HasConcluded)
-                    throw new Exception("W tabeli nie może znajdować się tylko jeden sezon, który jest zamknięty.");
-                //Check if there's more than 1 open season.
-                if (Seasons.FindAll(e => !e.HasConcluded).Count > 1)
-                    throw new Exception("W tabeli sezonów odnaleziono więcej niż jeden otwarty sezon.");
-
-                currentlyOpenSeason = Seasons.Find(e => !e.HasConcluded);
+                CheckForConsistency(out List<Season> allSeasons, out currentlyOpenSeason);
+                Seasons.AddRange(allSeasons);
                 NewSeasonName = "Nowy sezon " + DateTime.Now.Year.ToString();
                 NewSeasonDateStart = DateTime.Now;
             }
@@ -83,7 +72,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void ResumePreviousSeason()
+        private static void ResumePreviousSeason()
         {
 
         }
@@ -91,6 +80,47 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void ToggleNewSeasonFrame() =>
             AddingNewSeason = !AddingNewSeason;
+
+        /// <summary>
+        /// Retrieves all Season records from the database and validates their consistency.
+        /// <para>
+        /// An exception will be thrown if:
+        /// <list type="bullet">
+        /// <item>No entries in the table exist</item>
+        /// <item>There exists one Season, but it has concluded</item>
+        /// <item>There exist more than 1 or no open Seasons in the table</item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        /// <exception cref="NoRecordFoundException"></exception>
+        /// <exception cref="InvalidRecordException"></exception>
+        private static void CheckForConsistency(out List<Season> allSeasons, out Season currentSeason)
+        {
+            using var context = new DatabaseContext();
+            allSeasons = context.Seasons.ToList();
+            //Check if there is at least 1 season; it needs to be open.
+            if (allSeasons.Count == 0)
+                throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "*");
+            //Check if the only season is concluded
+            if (allSeasons.Count == 1 && allSeasons[0].HasConcluded)
+                throw new InvalidRecordException("W tabeli nie może znajdować się tylko jeden sezon, który jest zamknięty.", allSeasons[0].ToString());
+
+            List<Season> openSeasons = allSeasons.FindAll(e => !e.HasConcluded);
+            //Check if there are any open seasons
+            if (openSeasons.Count == 0)
+                throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "W tabeli nie odnaleziono żadnych otwartych sezonów.");
+            //Check if there's more than 1 open season.
+            if (openSeasons.Count > 1)
+                throw new InvalidRecordException("W tabeli sezonów odnaleziono więcej niż jeden otwarty sezon.", openSeasons.ToString());
+
+            currentSeason = openSeasons[0];
+        }
+
+        public static Season GetCurrentSeason()
+        {
+            CheckForConsistency(out _, out Season season);
+            return season;
+        }
     }
 
     internal class HasConcludedConverter : IValueConverter
