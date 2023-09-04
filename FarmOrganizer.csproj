@@ -157,9 +157,6 @@
 	  <MauiAsset Update="Resources\Raw\database.sqlite3">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </MauiAsset>
-	  <MauiAsset Update="Resources\Raw\database_old.sqlite3">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </MauiAsset>
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionfarmorganizerHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarFarmOrganizerHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionFarmOrganizerHideInfoBar="True" XamarinHotReloadWrongLinkerErrorInfoBarFarmOrganizerHideInfoBar="True" /></VisualStudio></ProjectExtensions>
