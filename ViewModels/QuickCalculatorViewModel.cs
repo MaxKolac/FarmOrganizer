@@ -35,9 +35,9 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         protected void TextChanged()
         {
-            double CropAmount = Utils.CastToValue(CropAmountValue);
-            double SellRate = Utils.CastToValue(SellRateValue);
-            double PureIncome = Utils.CastToValue(PureIncomeValue);
+            decimal CropAmount = Utils.CastToValue(CropAmountValue);
+            decimal SellRate = Utils.CastToValue(SellRateValue);
+            decimal PureIncome = Utils.CastToValue(PureIncomeValue);
 
             if (lastEditedControls.Contains(pureIncomeName) && lastEditedControls.Contains(sellRateName))
             {

@@ -13,14 +13,14 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private List<CostTypeReportEntry> profitEntries = new();
         [ObservableProperty]
-        private double totalExpense = 0.0f;
+        private decimal totalExpense = 0.0m;
         [ObservableProperty]
-        private double totalProfit = 0.0f;
+        private decimal profitAfterExpenses = 0.0m;
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             passedLedgerEntries = query["entries"] as List<BalanceLedger>;
-            var costDictionary = new Dictionary<CostType, double>();
+            var costDictionary = new Dictionary<CostType, decimal>();
 
             foreach (BalanceLedger entry in passedLedgerEntries)
             {
@@ -36,7 +36,7 @@ namespace FarmOrganizer.ViewModels
                     costDictionary.Add(cost, entry.BalanceChange);
             }
 
-            foreach (KeyValuePair<CostType, double> kvp in costDictionary)
+            foreach (KeyValuePair<CostType, decimal> kvp in costDictionary)
             {
                 CostTypeReportEntry entry = new()
                 {
@@ -56,6 +56,6 @@ namespace FarmOrganizer.ViewModels
     public class CostTypeReportEntry
     {
         public string Name { get; set; }
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
     }
 }

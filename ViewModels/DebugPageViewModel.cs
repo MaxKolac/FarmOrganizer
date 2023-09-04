@@ -43,7 +43,7 @@ namespace FarmOrganizer.ViewModels
                 IdCostType = 2,
                 IdCropField = 2,
                 DateAdded = DateTime.Now,
-                BalanceChange = 1234.12,
+                BalanceChange = 1234.12m,
                 Notes = "Created fresh new entry!"
             };
             context.BalanceLedgers.Add(newEntry);
@@ -56,18 +56,18 @@ namespace FarmOrganizer.ViewModels
 
             //Read created entry
             AppendText("READ CREATED ENTRY");
-            var qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == 1234.12).First();
+            var qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == 1234.12m).First();
             AppendText(qr_createdEntry.ToString());
 
             //Update existing entry
             //this is a bit more complicated, because of Tracked Untracked attributes attachted to entities
             AppendText("UPDATE EXISTING ENTRY");
-            qr_existingEntry.BalanceChange = 69.69;
+            qr_existingEntry.BalanceChange = 69.69m;
             context.SaveChanges();
 
             //Update created entry
             AppendText("UPDATE CREATED ENTRY");
-            qr_createdEntry.BalanceChange = 71.71;
+            qr_createdEntry.BalanceChange = 71.71m;
             context.SaveChanges();
 
             //Read existing entry again
@@ -77,7 +77,7 @@ namespace FarmOrganizer.ViewModels
 
             //Read created entry again
             AppendText("READ CREATED ENTRY AFTER UPDATE");
-            qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == 71.71).First();
+            qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == 71.71m).First();
             AppendText(qr_createdEntry.ToString());
 
             //Delete existing entry
@@ -88,7 +88,7 @@ namespace FarmOrganizer.ViewModels
 
             //Delete created entry
             AppendText("DELETE CREATED ENTRY");
-            qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == -12.99).First();
+            qr_createdEntry = context.BalanceLedgers.Where(b => b.BalanceChange == -12.99m).First();
             context.BalanceLedgers.Remove(qr_createdEntry);
             context.SaveChanges();
 
