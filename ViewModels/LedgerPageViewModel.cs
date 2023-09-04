@@ -80,7 +80,9 @@ namespace FarmOrganizer.ViewModels
         {
             var query = new Dictionary<string, object>()
             {
-                { "entries", FilteredLedgerEntries }
+                { "entries", FilteredLedgerEntries },
+                { "cropfield", SelectedCropField },
+                { "season", SeasonsPageViewModel.GetCurrentSeason() }
             };
             await Shell.Current.GoToAsync(nameof(ReportPage), query);
         }

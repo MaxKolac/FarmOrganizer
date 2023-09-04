@@ -121,6 +121,34 @@ namespace FarmOrganizer.ViewModels
             CheckForConsistency(out _, out Season season);
             return season;
         }
+
+        /// <summary>
+        /// Attempts to start a new Season and end the currently open season.
+        /// </summary>
+        /// <param name="newSeasonName">The name of the new Season.</param>
+        /// <param name="startDate">The start date to assign to the new Season.</param>
+        /// <exception cref="InvalidRecordException"></exception>
+        public static void StartNewSeason(string newSeasonName, DateTime startDate)
+        {
+            using var context = new DatabaseContext();
+            Season seasonToEnd = context.Seasons.Find(GetCurrentSeason().Id);
+            Season seasonToAdd = new()
+            {
+                Name = newSeasonName,
+                DateStart = startDate,
+                DateEnd = DateTime.MaxValue,
+                HasConcluded = false
+            };
+
+            //New season cannot start before the previous one started
+            if (seasonToEnd.DateStart >= seasonToAdd.DateStart)
+                throw new InvalidRecordException("Data rozpoczęcia", seasonToAdd.DateStart.ToShortDateString());
+
+            seasonToEnd.HasConcluded = true;
+            seasonToEnd.DateEnd = seasonToAdd.DateStart;
+            context.Seasons.Add(seasonToAdd);
+            context.SaveChanges();
+        }
     }
 
     internal class HasConcludedConverter : IValueConverter

@@ -229,15 +229,26 @@
                 </Grid>
             </VerticalStackLayout>
 
-            <!-- Buttons at the bottom -->
+            <!-- Options at the bottom -->
             <VerticalStackLayout>
-                <HorizontalStackLayout>
-                    <CheckBox/>
-                    <Label Text="Przy zapisywaniu, rozpocznij nowy sezon"/>
-                </HorizontalStackLayout>
-                <Label Text="Nazwa nowego sezonu:" LineBreakMode="WordWrap"/>
-                <Entry/>
-                <Button Text="Zapisz jako wpis przychodu"/>
+                <Grid ColumnDefinitions="Auto, *"
+                      RowDefinitions="Auto">
+                    <CheckBox Grid.Row="0"
+                              Grid.Column="0"
+                              x:Name="AddNewSeasonAfterSavingCheckBox"
+                              IsChecked="{Binding AddNewSeasonAfterSaving}"
+                              IsEnabled="True"/>
+                    <Label Grid.Column="1" 
+                           Text="Po zapisaniu wpisu, rozpocznij nowy sezon"/>
+                </Grid>
+                <Label Text="Nazwa nowego sezonu:"
+                       IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
+                <Entry Text="{Binding NewSeasonName}"
+                       IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
+                <Label Text="Kategoria nowego wpisu:"/>
+                <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
+                <Button Text="Dodaj zysk po wydatkach jako wpis"
+                        Command="{Binding AddNewLedgerEntryCommand}"/>
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>
