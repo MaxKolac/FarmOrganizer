@@ -9,11 +9,27 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class SettingsPageViewModel : ObservableObject
     {
+        private const string appThemeKey = "appTheme";
+
         [ObservableProperty]
-        private List<string> appThemes = Enum.GetNames<AppTheme>().ToList();
+        private List<string> appThemes;
         [ObservableProperty]
-        private AppTheme selectedTheme = 
-            Enum.Parse<AppTheme>(Preferences.Get("appTheme", Enum.GetName(AppTheme.Unspecified)));
+        private AppTheme selectedTheme = Enum.Parse<AppTheme>(Preferences.Get(appThemeKey, Enum.GetName(AppTheme.Unspecified)));
+
+        public SettingsPageViewModel()
+        {
+            AppThemes = new()
+            {
+                AppThemeToStringConverter.Default,
+                AppThemeToStringConverter.Light,
+                AppThemeToStringConverter.Dark
+            };
+        }
+
+        public static void ApplyPreferences()
+        {
+            Application.Current.UserAppTheme = Enum.Parse<AppTheme>(Preferences.Get(appThemeKey, Enum.GetName(AppTheme.Unspecified)));
+        }
 
         partial void OnSelectedThemeChanging(AppTheme oldValue, AppTheme newValue)
         {
@@ -80,15 +96,14 @@ namespace FarmOrganizer.ViewModels
                 new ExceptionHandler(ex).ShowAlert(false);
             }
         }
-
-        public static void ApplyPreferences()
-        {
-            Application.Current.UserAppTheme = Enum.Parse<AppTheme>(Preferences.Get("appTheme", Enum.GetName(AppTheme.Unspecified)));
-        }
     }
 
-    internal class StringToAppThemeConverter : IValueConverter
+    internal class AppThemeToStringConverter : IValueConverter
     {
+        public const string Default = "Obecny motyw urządzenia";
+        public const string Light = "Jasny";
+        public const string Dark = "Ciemny";
+
         /// <summary>
         /// Converts an AppTheme enum into a string, containing its name.
         /// </summary>
@@ -96,7 +111,13 @@ namespace FarmOrganizer.ViewModels
         {
             if (value is not AppTheme)
                 return string.Empty;
-            return Enum.GetName((AppTheme)value);
+            return (AppTheme)value switch
+            {
+                AppTheme.Unspecified => Default,
+                AppTheme.Light => Light,
+                AppTheme.Dark => Dark,
+                _ => string.Empty,
+            };
         }
 
         /// <summary>
@@ -106,12 +127,13 @@ namespace FarmOrganizer.ViewModels
         {
             if (value is not string)
                 return AppTheme.Unspecified;
-            foreach (string theme in Enum.GetNames<AppTheme>().ToList())
+            return (string)value switch
             {
-                if (theme == (string)value)
-                    return Enum.Parse<AppTheme>(theme);
-            }
-            return AppTheme.Unspecified;
+                Default => AppTheme.Unspecified,
+                Light => AppTheme.Light,
+                Dark => AppTheme.Dark,
+                _ => AppTheme.Unspecified
+            };
         }
     }
 }

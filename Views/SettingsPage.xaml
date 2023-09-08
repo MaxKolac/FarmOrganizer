@@ -6,7 +6,7 @@
              x:DataType="viewmodel:SettingsPageViewModel"
              Title="Ustawienia">
     <ContentPage.Resources>
-        <viewmodel:StringToAppThemeConverter x:Key="StringToAppThemeConverter"/>
+        <viewmodel:AppThemeToStringConverter x:Key="AppThemeToStringConverter"/>
 
         <Style TargetType="Label" x:Key="BaseLabelStyle">
             <Setter Property="HorizontalOptions" Value="Start"/>
@@ -33,7 +33,7 @@
             <Label Style="{StaticResource BaseLabelStyle}" Text="Motyw"/>
             <Picker Grid.Column="1" 
                     ItemsSource="{Binding AppThemes}" 
-                    SelectedItem="{Binding SelectedTheme, Converter={StaticResource StringToAppThemeConverter}}"/>
+                    SelectedItem="{Binding SelectedTheme, Converter={StaticResource AppThemeToStringConverter}}"/>
         </Grid>
         
         <Label Text="Baza danych" Style="{StaticResource GroupTitle}"/>
