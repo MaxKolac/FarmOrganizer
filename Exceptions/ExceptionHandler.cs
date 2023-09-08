@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace FarmOrganizer.Exceptions
 {
@@ -41,6 +42,12 @@ namespace FarmOrganizer.Exceptions
                 InvalidRecordException ex = exception as InvalidRecordException;
                 _title = "Nieprawidłowe dane";
                 _message = $"W rekordzie znajduje się niedozwolona wartość: {ex.InvalidProperty} = {ex.InvalidValue}";
+            }
+            else if (exception is DbUpdateException)
+            {
+                DbUpdateException ex = exception as DbUpdateException;
+                _title = "Bład podczas aktualizacji bazy";
+                _message = ex.InnerException.Message;
             }
             else
             {
