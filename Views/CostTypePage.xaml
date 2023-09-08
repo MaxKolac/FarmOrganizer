@@ -26,11 +26,11 @@
                         <SwipeView>
                             <SwipeView.LeftItems>
                                 <SwipeItems>
-                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCostTypeCommand}" 
+                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=EditCommand}" 
                                                    CommandParameter="{Binding .}">
-                                        <Frame BackgroundColor="Firebrick">
-                                            <Label Text="Usuń"
-                                                   TextColor="White"
+                                        <Frame BackgroundColor="LightYellow">
+                                            <Label Text="Edytuj" 
+                                                   TextColor="Black"
                                                    FontAttributes="Bold"/>
                                         </Frame>
                                     </SwipeItemView>
@@ -38,7 +38,7 @@
                             </SwipeView.LeftItems>
                             <SwipeView.RightItems>
                                 <SwipeItems>
-                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCostTypeCommand}" 
+                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCommand}" 
                                                    CommandParameter="{Binding .}">
                                         <Frame BackgroundColor="Firebrick">
                                             <Label Text="Usuń"
@@ -50,11 +50,12 @@
                             </SwipeView.RightItems>
 
                             <Frame Style="{StaticResource TableEntryFrame}">
-                                <Grid RowDefinitions="40" ColumnDefinitions="*, Auto">
+                                <Grid RowDefinitions="45" ColumnDefinitions="*, Auto">
                                     <Label Text="{Binding Name}"
                                            FontAttributes="Bold"
                                            FontSize="20"/>
                                     <Label Grid.Column="1"
+                                           FontSize="20"
                                            Text="{Binding IsExpense, Converter={StaticResource IsExpenseConverter}, StringFormat='{Kategoria: {0}}'}"/>
                                 </Grid>
                             </Frame>
@@ -63,12 +64,12 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!-- New Season Creator Frame -->
+            <!-- New Cost Type Creator Frame -->
             <Frame Grid.Row="1"
                    Margin="5,0,5,0"
                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
                    BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                   IsVisible="{Binding AddingNewCostType}">
+                   IsVisible="{Binding ShowCreatorFrame}">
                 <Grid RowDefinitions="Auto, Auto, Auto"
                       ColumnDefinitions="Auto, *">
                     <HorizontalStackLayout>
@@ -76,28 +77,28 @@
                         <Entry Grid.Column="1"
                                Margin="0,-11,0,0"
                                HorizontalOptions="Fill"
-                               Text="{Binding NewCostName}"/>
+                               Text="{Binding CostTypeName}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="1">
-                        <Label Text="Czy kategorię traktować jako wydatek?"/>
+                        <Label Text="Traktuj rodzaj jako wydatek:"/>
                         <CheckBox Margin="0,-11,0,0"
-                                  IsChecked="{Binding NewCostIsExpense}"/>
+                                  IsChecked="{Binding CostTypeIsExpense}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">
                         <Button Text="Dodaj kategorię i zapisz"
-                                Command="{Binding AddNewCostTypeCommand}"/>
+                                Command="{Binding AddOrSaveCommand}"/>
                     </HorizontalStackLayout>
                 </Grid>
             </Frame>
 
-            <!-- Two buttons at bottom -->
+            <!-- Button at bottom -->
             <HorizontalStackLayout Grid.Row="2" 
                                    Margin="5"
                                    Spacing="5" 
                                    HorizontalOptions="Center">
                 <Button Text="Stwórz nową kategorię" 
                         HorizontalOptions="Start"
-                        Command="{Binding ToggleAddingNewCostTypeCommand}"/>
+                        Command="{Binding ToggleAddingCommand}"/>
             </HorizontalStackLayout>
         </Grid>
     </ScrollView>

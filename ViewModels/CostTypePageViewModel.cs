@@ -12,14 +12,18 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private List<CostType> costTypes;
         [ObservableProperty]
-        private bool addingNewCostType;
+        private bool showCreatorFrame = false;
+        [ObservableProperty]
+        private string saveButtonText = "Dodaj koszt i zapisz";
 
-        #region Cost Type Properties
+        private bool addingEntry = false;
+        private bool editingEntry = false;
+        private int editedEntryId;
+
         [ObservableProperty]
-        private string newCostName;
+        private string costTypeName = "Nowy rodzaj kosztu";
         [ObservableProperty]
-        private bool newCostIsExpense;
-        #endregion
+        private bool costTypeIsExpense;
 
         public CostTypePageViewModel()
         {
@@ -27,7 +31,7 @@ namespace FarmOrganizer.ViewModels
             {
                 using var context = new DatabaseContext();
                 CostTypes = context.CostTypes.ToList();
-                //There needs to be at least 1 costToRemove and 1 income category
+                //There needs to be at least 1 expense and 1 income category
                 bool expenseFound = false;
                 bool incomeFound = false;
                 foreach (CostType type in CostTypes)
@@ -49,20 +53,29 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void AddNewCostType()
+        private void AddOrSave()
         {
             try
             {
                 using var context = new DatabaseContext();
-                CostType newCostType = new()
+                if (addingEntry)
                 {
-                    Name = NewCostName,
-                    IsExpense = NewCostIsExpense
-                };
-                context.CostTypes.Add(newCostType);
+                    CostType newCostType = new()
+                    {
+                        Name = CostTypeName,
+                        IsExpense = CostTypeIsExpense
+                    };
+                    context.CostTypes.Add(newCostType); 
+                }
+                else if (editingEntry)
+                {
+                    CostType existingCostType = context.CostTypes.Find(editedEntryId);
+                    existingCostType.Name = CostTypeName;
+                    existingCostType.IsExpense = CostTypeIsExpense;
+                }
                 context.SaveChanges();
                 CostTypes = context.CostTypes.ToList();
-                ToggleAddingNewCostType();
+                ToggleAdding();
             }
             catch (Exception ex)
             {
@@ -71,7 +84,19 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async Task RemoveCostType(CostType costToRemove)
+        private void Edit(CostType costToEdit)
+        {
+            editedEntryId = costToEdit.Id;
+            CostTypeName = costToEdit.Name;
+            CostTypeIsExpense = costToEdit.IsExpense;
+            editingEntry = true;
+            addingEntry = false;
+            SaveButtonText = "Zapisz zmiany";
+            ShowCreatorFrame = true;
+        }
+
+        [RelayCommand]
+        private async Task Remove(CostType costToRemove)
         {
             using var context = new DatabaseContext();
             List<CostType> allExpenses = new();
@@ -113,8 +138,13 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleAddingNewCostType() =>
-            AddingNewCostType = !AddingNewCostType;
+        private void ToggleAdding() 
+        {
+            editingEntry = false;
+            addingEntry = true;
+            SaveButtonText = "Dodaj koszt i zapisz";
+            ShowCreatorFrame = !ShowCreatorFrame;
+        }
     }
 
     internal class IsExpenseConverter : IValueConverter
@@ -124,7 +154,7 @@ namespace FarmOrganizer.ViewModels
             if (value is not bool)
                 return string.Empty;
             bool isExpense = (bool)value;
-            return isExpense ? "Wydatek" : "Zarobek";
+            return isExpense ? "Wydatek" : "Przychód";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

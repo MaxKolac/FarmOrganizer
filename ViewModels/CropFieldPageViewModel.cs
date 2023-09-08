@@ -10,13 +10,20 @@ namespace FarmOrganizer.ViewModels
     {
         [ObservableProperty]
         private List<CropField> cropFields;
-        [ObservableProperty]
-        private bool addingNewCropField = false;
 
         [ObservableProperty]
-        private string newCropFieldName = "Nowe pole";
+        private bool showCreatorFrame = false;
         [ObservableProperty]
-        private string newCropFieldHectares;
+        private string saveButtonText = "Dodaj pole i zapisz";
+
+        private bool addingEntry = false;
+        private bool editingEntry = false;
+        private int editedEntryId;
+
+        [ObservableProperty]
+        private string cropFieldName = "Nowe pole";
+        [ObservableProperty]
+        private string cropFieldHectares;
 
         public CropFieldPageViewModel()
         {
@@ -32,26 +39,34 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void OpenEfficiencyPage(CropField cropField)
-        {
-
-        }
-
-        [RelayCommand]
-        private void AddNewCropField()
+        private void AddOrSave()
         {
             try
             {
                 using var context = new DatabaseContext();
-                CropField newField = new()
+                decimal hectares = Utils.CastToValue(CropFieldHectares);
+                if (hectares <= 0)
+                    throw new InvalidRecordException("Pole powierzchni", hectares.ToString());
+
+                if (addingEntry)
                 {
-                    Name = NewCropFieldName,
-                    Hectares = Utils.CastToValue(NewCropFieldHectares)
-                };
-                context.CropFields.Add(newField);
+                    CropField newField = new()
+                    {
+                        Name = CropFieldName,
+                        Hectares = hectares
+                    };
+                    context.CropFields.Add(newField); 
+                }
+                else if (editingEntry)
+                {
+                    CropField existingField = context.CropFields.Find(editedEntryId);
+                    existingField.Name = CropFieldName;
+                    existingField.Hectares = hectares;
+                }
+
                 context.SaveChanges();
                 CropFields = context.CropFields.ToList();
-                ToggleAddingNewCropField();
+                ToggleAdding();
             }
             catch (Exception ex)
             {
@@ -60,7 +75,19 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async Task RemoveCropField(CropField cropFieldToRemove)
+        private void Edit(CropField cropFieldToEdit)
+        {
+            editedEntryId = cropFieldToEdit.Id;
+            CropFieldName = cropFieldToEdit.Name;
+            CropFieldHectares = cropFieldToEdit.Hectares.ToString();
+            editingEntry = true;
+            addingEntry = false;
+            SaveButtonText = "Zapisz zmiany";
+            ShowCreatorFrame = true;
+        }
+
+        [RelayCommand]
+        private async Task Remove(CropField cropFieldToRemove)
         {
             if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
@@ -82,7 +109,12 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleAddingNewCropField() =>
-            AddingNewCropField = !AddingNewCropField;
+        private void ToggleAdding()
+        {
+            editingEntry = false;
+            addingEntry = true;
+            SaveButtonText = "Dodaj pole i zapisz";
+            ShowCreatorFrame = !ShowCreatorFrame;
+        }
     }
 }
