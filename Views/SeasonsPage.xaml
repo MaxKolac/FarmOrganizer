@@ -81,7 +81,7 @@
                         Command="{Binding ToggleNewSeasonFrameCommand}"/>
                 <Button Text="Wznów poprzedni sezon" 
                         HorizontalOptions="End"
-                        IsEnabled="False"
+                        IsVisible="False"
                         Command="{Binding ResumePreviousSeasonCommand}"/>
             </HorizontalStackLayout>
         </Grid>
