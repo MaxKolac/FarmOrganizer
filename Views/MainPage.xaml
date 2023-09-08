@@ -16,12 +16,11 @@
             <Setter Property="LineBreakMode" Value="CharacterWrap"/>
         </Style>
     </ContentPage.Resources>
-    <Grid 
-        ColumnDefinitions="*, *"
-        RowDefinitions="*, *, *"
-        Margin="10" 
-        ColumnSpacing="6"
-        RowSpacing="6" >
+    <Grid ColumnDefinitions="*, *"
+          RowDefinitions="*, *, *"
+          Margin="10" 
+          ColumnSpacing="6"
+          RowSpacing="6" >
 
         <Button 
             Grid.Row="0"
@@ -47,7 +46,7 @@
             Grid.Column="1" 
             Text="Zarządzaj polami"
             Command="{Binding OpenPageCommand}"
-            CommandParameter="DebugPage"/>
+            CommandParameter="CropFieldPage"/>
 
         <Button 
             Grid.Row="2"  

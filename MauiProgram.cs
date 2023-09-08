@@ -45,6 +45,8 @@ public static class MauiProgram
         builder.Services.AddTransient<SeasonsPageViewModel>();
         builder.Services.AddTransient<CostTypePage>();
         builder.Services.AddTransient<CostTypePageViewModel>();
+        builder.Services.AddTransient<CropFieldPage>();
+        builder.Services.AddTransient<CropFieldPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
 

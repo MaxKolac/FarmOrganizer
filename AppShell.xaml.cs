@@ -17,5 +17,6 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
 		Routing.RegisterRoute(nameof(SeasonsPage), typeof(SeasonsPage));
 		Routing.RegisterRoute(nameof(CostTypePage), typeof(CostTypePage));
+		Routing.RegisterRoute(nameof(CropFieldPage), typeof(CropFieldPage));
 	}
 }
