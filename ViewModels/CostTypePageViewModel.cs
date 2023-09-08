@@ -27,7 +27,7 @@ namespace FarmOrganizer.ViewModels
             {
                 using var context = new DatabaseContext();
                 CostTypes = context.CostTypes.ToList();
-                //There needs to be at least 1 cost and 1 income category
+                //There needs to be at least 1 costToRemove and 1 income category
                 bool expenseFound = false;
                 bool incomeFound = false;
                 foreach (CostType type in CostTypes)
@@ -71,8 +71,29 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async Task RemoveCostType(CostType cost)
+        private async Task RemoveCostType(CostType costToRemove)
         {
+            using var context = new DatabaseContext();
+            List<CostType> allExpenses = new();
+            List<CostType> allProfits = new();
+            foreach (CostType cost in CostTypes)
+            {
+                if (cost.IsExpense)
+                    allExpenses.Add(cost);
+                else
+                    allProfits.Add(cost);
+            }
+            if (allExpenses.Count == 1 && costToRemove.IsExpense)
+            {
+                App.AlertSvc.ShowAlert("Wystąpił błąd", "Nie można usunąć ostatniego rodzaju kosztu, który jest wydatkiem. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden taki rodzaj kosztu.");
+                return;
+            }
+            if (allProfits.Count == 1 && !costToRemove.IsExpense)
+            {
+                App.AlertSvc.ShowAlert("Wystąpił błąd", "Nie można usunąć ostatniego rodzaju kosztu, który jest przychodem. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden taki rodzaj kosztu.");
+                return;
+            }
+
             if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
                 "Usunięcie rodzaju kosztu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany rodzaj. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
@@ -81,8 +102,7 @@ namespace FarmOrganizer.ViewModels
                 return;
             try
             {
-                using var context = new DatabaseContext();
-                context.CostTypes.Remove(cost);
+                context.CostTypes.Remove(costToRemove);
                 context.SaveChanges();
                 CostTypes = context.CostTypes.ToList();
             }
