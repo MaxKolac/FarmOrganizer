@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             xmlns:model="clr-namespace:FarmOrganizer.Models"
+             x:Class="FarmOrganizer.Views.CostTypePage"
+             x:DataType="viewmodel:CostTypePageViewModel"
+             Title="Rodzaje kosztów">
+    <ContentPage.Resources>
+        <viewmodel:IsExpenseConverter x:Key="IsExpenseConverter"/>
+
+        <Style TargetType="Label" x:Key="CostTypeMediumLabel">
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </ContentPage.Resources>
+    
+    <ScrollView>
+        <Grid RowDefinitions=".8*, Auto, 65"
+              RowSpacing="5"
+              Margin="5">
+
+            <!-- CostTypes CollectionView -->
+            <CollectionView ItemsSource="{Binding CostTypes}" VerticalOptions="Fill">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:CostType">
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems>
+                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCostTypeCommand}" 
+                                                   CommandParameter="{Binding .}">
+                                        <Frame BackgroundColor="Firebrick">
+                                            <Label Text="Usuń"
+                                                   TextColor="White"
+                                                   FontAttributes="Bold"/>
+                                        </Frame>
+                                    </SwipeItemView>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCostTypeCommand}" 
+                                                   CommandParameter="{Binding .}">
+                                        <Frame BackgroundColor="Firebrick">
+                                            <Label Text="Usuń"
+                                                   TextColor="White"
+                                                   FontAttributes="Bold"/>
+                                        </Frame>
+                                    </SwipeItemView>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Frame Style="{StaticResource TableEntryFrame}">
+                                <Grid RowDefinitions="40" ColumnDefinitions="*, Auto">
+                                    <Label Text="{Binding Name}"
+                                           FontAttributes="Bold"
+                                           FontSize="20"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding IsExpense, Converter={StaticResource IsExpenseConverter}, StringFormat='{Kategoria: {0}}'}"/>
+                                </Grid>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- New Season Creator Frame -->
+            <Frame Grid.Row="1"
+                   Margin="5,0,5,0"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+                   BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                   IsVisible="{Binding AddingNewCostType}">
+                <Grid RowDefinitions="Auto, Auto, Auto"
+                      ColumnDefinitions="Auto, *">
+                    <HorizontalStackLayout>
+                        <Label Text="Nazwa:"/>
+                        <Entry Grid.Column="1"
+                               Margin="0,-11,0,0"
+                               HorizontalOptions="Fill"
+                               Text="{Binding NewCostName}"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Row="1">
+                        <Label Text="Czy kategorię traktować jako wydatek?"/>
+                        <CheckBox Margin="0,-11,0,0"
+                                  IsChecked="{Binding NewCostIsExpense}"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Row="2">
+                        <Button Text="Dodaj kategorię i zapisz"
+                                Command="{Binding AddNewCostTypeCommand}"/>
+                    </HorizontalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Two buttons at bottom -->
+            <HorizontalStackLayout Grid.Row="2" 
+                                   Margin="5"
+                                   Spacing="5" 
+                                   HorizontalOptions="Center">
+                <Button Text="Stwórz nową kategorię" 
+                        HorizontalOptions="Start"
+                        Command="{Binding ToggleAddingNewCostTypeCommand}"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
