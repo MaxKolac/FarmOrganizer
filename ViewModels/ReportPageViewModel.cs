@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels.HelperClasses;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -129,11 +130,5 @@ namespace FarmOrganizer.ViewModels
             decimal pureIncome = Utils.CastToValue(value);
             ProfitAfterExpenses = pureIncome + TotalChange;
         }
-    }
-
-    public class CostTypeReportEntry
-    {
-        public string Name { get; set; }
-        public decimal Amount { get; set; }
     }
 }

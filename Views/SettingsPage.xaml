@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              x:Class="FarmOrganizer.Views.SettingsPage"
              x:DataType="viewmodel:SettingsPageViewModel"
              Title="Ustawienia">
     <ContentPage.Resources>
-        <viewmodel:AppThemeToStringConverter x:Key="AppThemeToStringConverter"/>
+        <converter:AppThemeToStringConverter x:Key="AppThemeToStringConverter"/>
 
         <Style TargetType="Label" x:Key="BaseLabelStyle">
             <Setter Property="HorizontalOptions" Value="Start"/>

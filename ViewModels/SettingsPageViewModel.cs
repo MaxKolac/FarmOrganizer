@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
-using System.Globalization;
+using FarmOrganizer.ViewModels.Converters;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -95,45 +95,6 @@ namespace FarmOrganizer.ViewModels
                 await DatabaseFile.RestoreBackup();
                 new ExceptionHandler(ex).ShowAlert(false);
             }
-        }
-    }
-
-    internal class AppThemeToStringConverter : IValueConverter
-    {
-        public const string Default = "Obecny motyw urządzenia";
-        public const string Light = "Jasny";
-        public const string Dark = "Ciemny";
-
-        /// <summary>
-        /// Converts an AppTheme enum into a string, containing its name.
-        /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not AppTheme)
-                return string.Empty;
-            return (AppTheme)value switch
-            {
-                AppTheme.Unspecified => Default,
-                AppTheme.Light => Light,
-                AppTheme.Dark => Dark,
-                _ => string.Empty,
-            };
-        }
-
-        /// <summary>
-        /// Converts a string into an AppTheme enum with the matching name.
-        /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not string)
-                return AppTheme.Unspecified;
-            return (string)value switch
-            {
-                Default => AppTheme.Unspecified,
-                Light => AppTheme.Light,
-                Dark => AppTheme.Dark,
-                _ => AppTheme.Unspecified
-            };
         }
     }
 }

@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
-using System.Globalization;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -144,22 +143,6 @@ namespace FarmOrganizer.ViewModels
             addingEntry = true;
             SaveButtonText = "Dodaj koszt i zapisz";
             ShowCreatorFrame = !ShowCreatorFrame;
-        }
-    }
-
-    internal class IsExpenseConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not bool)
-                return string.Empty;
-            bool isExpense = (bool)value;
-            return isExpense ? "Wydatek" : "Przychód";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

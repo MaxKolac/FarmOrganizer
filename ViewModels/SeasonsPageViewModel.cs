@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
-using System.Globalization;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -148,47 +147,6 @@ namespace FarmOrganizer.ViewModels
             seasonToEnd.DateEnd = seasonToAdd.DateStart;
             context.Seasons.Add(seasonToAdd);
             context.SaveChanges();
-        }
-    }
-
-    internal class HasConcludedConverter : IValueConverter
-    {
-        private readonly string _done = "Zakończony";
-        private readonly string _inProgress = "W trakcie";
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not bool)
-                return "ERROR";
-            bool hasConcluded = (bool)value;
-            return hasConcluded ? _done : _inProgress;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not string)
-                return false;
-            string text = (string)value;
-            return text.Equals(_done);
-        }
-    }
-
-    internal class DateEndConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not DateTime)
-                return string.Empty;
-            DateTime date = (DateTime)value;
-            if (date > new DateTime(9999, 1, 1))
-                return string.Empty;
-            else
-                return " - " + date.ToString("d MMMM yy");
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

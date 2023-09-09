@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.SeasonsPage"
              x:DataType="viewmodel:SeasonsPageViewModel"
              Title="Sezony uprawne">
     <ContentPage.Resources>
-        <viewmodel:HasConcludedConverter x:Key="HasConcludedConverter"/>
-        <viewmodel:DateEndConverter x:Key="DateEndConverter"/>
+        <converter:HasConcludedConverter x:Key="HasConcludedConverter"/>
+        <converter:DateEndConverter x:Key="DateEndConverter"/>
 
         <Style TargetType="Label" x:Key="SeasonListMediumLabel">
             <Setter Property="FontSize" Value="16"/>
