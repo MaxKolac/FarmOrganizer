@@ -26,6 +26,7 @@
             <Setter Property="Padding" Value="2"/>
             <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="BorderColor" Value="Transparent"/>
+            <Setter Property="BackgroundColor" Value="Transparent"/>
         </Style>
 
         <Style TargetType="Label">
