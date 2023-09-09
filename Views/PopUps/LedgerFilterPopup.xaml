@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+                  xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+                  x:Class="FarmOrganizer.PopUps.LedgerFilterPopup"
+                  x:DataType="viewmodel:LedgerFilterPopupViewModel"
+                  Title="Ustawienia filtrów"
+                  BackgroundColor="#80000000"
+                  CloseWhenBackgroundIsClicked="True">
+    <ScrollView HorizontalOptions="Center" 
+                VerticalOptions="Center">
+        <Border WidthRequest="400"
+                HeightRequest="600">
+            <VerticalStackLayout>
+                <!-- CostTypes -->
+                <HorizontalStackLayout>
+                    <Label Text="Uwzględnij tylko typy kosztów:"/>
+                    <CollectionView SelectionMode="Multiple"
+                                    ItemsSource="{Binding AllCostTypes}"
+                                    SelectedItems="{Binding SelectedCostTypes}"/>
+                </HorizontalStackLayout>
+                <!-- Seasons -->
+                <HorizontalStackLayout>
+                    <Label Text="Uwzględnij tylko sezony:"/>
+                    <CollectionView SelectionMode="Multiple"
+                                    ItemsSource="{Binding AllSeasons}"
+                                    SelectedItems="{Binding SelectedSeasons}"/>
+                </HorizontalStackLayout>
+                <!-- Custom Dates -->
+                <Label Text="Z okresu czasowego:"/>
+                <HorizontalStackLayout>
+                    <Label Text="Od:"/>
+                    <DatePicker Date="{Binding SelectedEarliestDate}" 
+                                IsEnabled="{Binding UseCustomEarliestDate}"/>
+                    <CheckBox IsChecked="{Binding UseCustomEarliestDate}"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Do:"/>
+                    <DatePicker Date="{Binding SelectedLatestDate}" 
+                                IsEnabled="{Binding UseCustomLatestDate}"/>
+                    <CheckBox IsChecked="{Binding UseCustomLatestDate}"/>
+                </HorizontalStackLayout>
+                <!-- Custom BalanceChanges -->
+                <Label Text="Z zakresu pieniężnego:"/>
+                <HorizontalStackLayout>
+                    <Label Text="Od:"/>
+                    <Entry Keyboard="Numeric" 
+                           Text="{Binding SmallestBalanceChange}"
+                           IsEnabled="{Binding UseCustomSmallestChange}"/>
+                    <CheckBox IsChecked="{Binding UseCustomSmallestChange}"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Do:"/>
+                    <Entry Keyboard="Numeric" 
+                           Text="{Binding LargestBalanceChange}"
+                           IsEnabled="{Binding UseCustomLargestChange}"/>
+                    <CheckBox IsChecked="{Binding UseCustomLargestChange}"/>
+                </HorizontalStackLayout>
+                <!-- Sorting -->
+                <HorizontalStackLayout>
+                    <Label Text="Sortuj według:"/>
+                    <Picker ItemsSource="{Binding SortMethods}"
+                            SelectedItem="{Binding SelectedSortMethod}"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Sortuj malejąco:"/>
+                    <CheckBox IsChecked="{Binding UseDescendingSortOrder}"/>
+                </HorizontalStackLayout>
+                
+                <!-- Options at bottom -->
+                <HorizontalStackLayout>
+                    <Button Text="Anuluj" Command="{Binding CancelCommand}"/>
+                    <Button Text="Zastosuj filtry" Command="{Binding ApplyCommand}"/>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+    </ScrollView>
+</mopups:PopupPage>

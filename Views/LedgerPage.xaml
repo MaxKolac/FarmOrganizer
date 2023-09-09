@@ -4,6 +4,7 @@
     .NET MAUI SwipeView by Programming with Pragnesh - https://www.youtube.com/watch?v=WAVeY8ySGY4
     Stringformatting a Datetime type by csharpcorner - https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
     SwipeViewItem GitHub examples by Microsoft - https://learn.microsoft.com/en-us/samples/dotnet/maui-samples/userinterface-swipeview/
+    MopUps and their highly customizable pop-ups by Gerald Versluis - https://www.youtube.com/watch?v=OGWhgASmSto
 -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -79,13 +80,9 @@
         </CollectionView>
 
         <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
-            <Button Text="Sortuj" 
+            <Button Text="Filtruj i sortuj..." 
                     LineBreakMode="CharacterWrap"
-                    Command="{Binding SortRecordsCommand}"
-                    Margin="2"/>
-            <Button Text="Filtruj" 
-                    LineBreakMode="CharacterWrap"
-                    Command="{Binding FilterRecordsCommand}"
+                    Command="{Binding FilterAndSortRecordsCommand}"
                     Margin="2"/>
             <Button Text="Generuj raport i oblicz" 
                     LineBreakMode="CharacterWrap"

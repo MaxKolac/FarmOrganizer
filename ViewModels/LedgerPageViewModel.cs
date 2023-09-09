@@ -3,25 +3,35 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.PopUps;
 using FarmOrganizer.Views;
+using FarmOrganizer.Views.PopUps;
 using Microsoft.EntityFrameworkCore;
+using Mopups.Interfaces;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class LedgerPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private List<BalanceLedger> filteredLedgerEntries = new();
+        private List<BalanceLedger> ledgerEntries = new();
         [ObservableProperty]
         private List<CostType> costTypes = new();
         [ObservableProperty]
         private List<CropField> cropFields = new();
-
         [ObservableProperty]
         private CropField selectedCropField;
 
-        public LedgerPageViewModel()
+        private LedgerFilterSet _filterSet;
+        private readonly IPopupNavigation _popUpSvc;
+
+        public LedgerPageViewModel(IPopupNavigation popupNavigation)
         {
+            _popUpSvc = popupNavigation;
+            _filterSet = new();
+            //{
+            //    TODO: load default filters from Preferences
+            //};
             using var context = new DatabaseContext();
             try
             {
@@ -31,6 +41,8 @@ namespace FarmOrganizer.ViewModels
                 LedgerEntries = context.BalanceLedgers
                     .Where(entry => entry.IdCropField == SelectedCropField.Id)
                     .ToList();
+                LedgerEntries.Reverse();
+                //TODO: filters
             }
             catch (Exception ex)
             {
@@ -63,15 +75,10 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static void SortRecords()
+        private void FilterAndSortRecords()
         {
-
-        }
-
-        [RelayCommand]
-        private static void FilterRecords()
-        {
-
+            _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
+            //TODO: It needs to be somehow returned and their settings applied to a query
         }
 
         [RelayCommand]
@@ -79,7 +86,7 @@ namespace FarmOrganizer.ViewModels
         {
             var query = new Dictionary<string, object>()
             {
-                { "entries", FilteredLedgerEntries },
+                { "entries", LedgerEntries },
                 { "cropfield", SelectedCropField },
                 { "season", SeasonsPageViewModel.GetCurrentSeason() }
             };
@@ -110,10 +117,12 @@ namespace FarmOrganizer.ViewModels
             using var context = new DatabaseContext();
             try
             {
+                //TODO: filters
                 LedgerEntries = context.BalanceLedgers
                     .Include(entry => entry.IdCostTypeNavigation)
                     .Where(entry => entry.IdCropField == SelectedCropField.Id)
                     .ToList();
+                LedgerEntries.Reverse();
             }
             catch (Exception ex)
             {

@@ -4,6 +4,10 @@ using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+using Mopups.Hosting;
+using Mopups.Interfaces;
+using Mopups.Services;
+using FarmOrganizer.PopUps;
 
 namespace FarmOrganizer;
 public static class MauiProgram
@@ -14,6 +18,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .ConfigureMopups()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -24,7 +29,7 @@ public static class MauiProgram
         builder.Logging.AddDebug();
         #endif
 
-        //Register singletons of view and VM types to dependency inject into XAML code-behinds
+        //Register singletons of view and VM types to dependency inject into XAML code-behinds and VM constructors
         //Singletons are created only once and remain through app's lifetime
         //Transients are created and disposed repeatedly
         builder.Services.AddSingleton<MainPage>();
@@ -49,6 +54,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CropFieldPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
+        builder.Services.AddSingleton(MopupService.Instance);
 
         if (!DatabaseFile.Exists())
             MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
