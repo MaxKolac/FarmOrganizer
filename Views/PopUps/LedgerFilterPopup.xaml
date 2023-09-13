@@ -70,7 +70,7 @@
                 
                 <!-- Options at bottom -->
                 <HorizontalStackLayout>
-                    <Button Text="Anuluj" Command="{Binding CancelCommand}"/>
+                    <Button Text="Anuluj" Command="{Binding PopCommand}"/>
                     <Button Text="Zastosuj filtry" Command="{Binding ApplyCommand}"/>
                 </HorizontalStackLayout>
             </VerticalStackLayout>

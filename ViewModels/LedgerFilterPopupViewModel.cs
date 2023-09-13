@@ -10,8 +10,11 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class LedgerFilterPopupViewModel : ObservableObject
     {
-        private LedgerFilterSet _filterSet;
-        private IPopupNavigation _popUpSvc;
+        public delegate void LedgerFilterPopupEventHandler(FilterSetEventArgs args);
+        public static event LedgerFilterPopupEventHandler OnFilterSetCreated;
+
+        private readonly LedgerFilterSet _filterSet;
+        private readonly IPopupNavigation _popUpSvc;
 
         #region Collections and Choices Bindings
         [ObservableProperty]
@@ -124,10 +127,11 @@ namespace FarmOrganizer.ViewModels
         private void Apply()
         {
             //How to pass the ersulting LedgerFilterSet back to LedgerPageVM?
+            Pop();
         }
         
         [RelayCommand]
-        private void Cancel() => _popUpSvc.PopAsync();
+        private void Pop() => _popUpSvc.PopAsync();
 
         //TODO: applies to all partial methods below - load default timespan from Preferences
         partial void OnUseCustomEarliestDateChanged(bool oldValue, bool newValue)

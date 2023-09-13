@@ -27,6 +27,8 @@ namespace FarmOrganizer.ViewModels
 
         public LedgerPageViewModel(IPopupNavigation popupNavigation)
         {
+            LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
+            LedgerFilterPopupViewModel.OnFilterSetCreated += ApplyFilters;
             _popUpSvc = popupNavigation;
             _filterSet = new();
             //{
@@ -49,6 +51,12 @@ namespace FarmOrganizer.ViewModels
             {
                 new ExceptionHandler(ex).ShowAlert();
             }
+        }
+
+        ~LedgerPageViewModel()
+        {
+            LedgerRecordPageViewModel.OnPageQuit -= QueryLedgerEntries;
+            LedgerFilterPopupViewModel.OnFilterSetCreated -= ApplyFilters;
         }
 
         [RelayCommand]

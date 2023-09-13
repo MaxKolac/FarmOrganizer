@@ -67,6 +67,9 @@ namespace FarmOrganizer.ViewModels
         Season selectedSeason;
         #endregion
 
+        public delegate void LedgerRecordPageEventHandler();
+        public static event LedgerRecordPageEventHandler OnPageQuit;
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             PageMode = query["mode"] as string;
@@ -135,7 +138,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void Save()
+        private async Task Save()
         {
             try
             {
@@ -154,7 +157,7 @@ namespace FarmOrganizer.ViewModels
                         };
                         context.BalanceLedgers.Add(newRecord);
                         context.SaveChanges();
-                        ReturnToPreviousPage();
+                        await ReturnToPreviousPage();
                         break;
                     case "edit":
                         BalanceLedger existingRecord = context.BalanceLedgers.Find(RecordId);
@@ -162,13 +165,13 @@ namespace FarmOrganizer.ViewModels
                         existingRecord.IdCropField = SelectedCropField.Id;
                         existingRecord.IdSeason = SelectedSeason.Id;
                         existingRecord.DateAdded = DateAdded;
-                        existingRecord.BalanceChange = 
+                        existingRecord.BalanceChange =
                             Math.Abs(
                                 Math.Round(
                                     Utils.CastToValue(this.BalanceChange.ToString()), 2));
                         existingRecord.Notes = Notes;
                         context.SaveChanges();
-                        ReturnToPreviousPage();
+                        await ReturnToPreviousPage();
                         break;
                 }
             }
@@ -193,9 +196,10 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static void ReturnToPreviousPage() =>
-            Application.Current.MainPage.Dispatcher.Dispatch(
-                async () => { await Shell.Current.GoToAsync(".."); }
-            );
+        private static async Task ReturnToPreviousPage()
+        {
+            OnPageQuit?.Invoke();
+            await Shell.Current.GoToAsync("..");
+        }
     }
 }
