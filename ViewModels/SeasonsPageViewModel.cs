@@ -8,8 +8,6 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class SeasonsPageViewModel : ObservableObject
     {
-        private Season currentlyOpenSeason;
-
         [ObservableProperty]
         private List<Season> seasons = new();
         [ObservableProperty]
@@ -26,8 +24,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CheckForConsistency(out List<Season> allSeasons, out currentlyOpenSeason);
-                Seasons.AddRange(allSeasons);
+                Season.Validate();
+                Seasons.AddRange(new DatabaseContext().Seasons.ToList());
                 NewSeasonName = "Nowy sezon " + DateTime.Now.Year.ToString();
                 NewSeasonDateStart = DateTime.Now;
             }
@@ -40,10 +38,8 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void StartNewSeason()
         {
-            using var context = new DatabaseContext();
             try
             {
-                Season seasonToEnd = context.Seasons.Find(currentlyOpenSeason.Id);
                 Season newSeason = new()
                 {
                     Name = NewSeasonName,
@@ -51,17 +47,8 @@ namespace FarmOrganizer.ViewModels
                     DateEnd = DateTime.MaxValue,
                     HasConcluded = false
                 };
-
-                //New season cannot start before the previous one started
-                if (seasonToEnd.DateStart >= newSeason.DateStart)
-                    throw new InvalidRecordException("Data rozpoczęcia", newSeason.DateStart.ToShortDateString());
-
-                seasonToEnd.HasConcluded = true;
-                seasonToEnd.DateEnd = NewSeasonDateStart;
-                context.Seasons.Add(newSeason);
-                currentlyOpenSeason = newSeason;
-                context.SaveChanges();
-                Seasons = context.Seasons.ToList();
+                Season.AddEntry(newSeason);
+                Seasons = new DatabaseContext().Seasons.ToList();
                 ToggleNewSeasonFrame();
             }
             catch (Exception ex)
@@ -79,74 +66,5 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void ToggleNewSeasonFrame() =>
             AddingNewSeason = !AddingNewSeason;
-
-        /// <summary>
-        /// Retrieves all Season records from the database and validates their consistency.
-        /// <para>
-        /// An exception will be thrown if:
-        /// <list type="bullet">
-        /// <item>No entries in the table exist</item>
-        /// <item>There exists one Season, but it has concluded</item>
-        /// <item>There exist more than 1 or no open Seasons in the table</item>
-        /// </list>
-        /// </para>
-        /// </summary>
-        /// <exception cref="NoRecordFoundException"></exception>
-        /// <exception cref="InvalidRecordException"></exception>
-        private static void CheckForConsistency(out List<Season> allSeasons, out Season currentSeason)
-        {
-            using var context = new DatabaseContext();
-            allSeasons = context.Seasons.ToList();
-            //Check if there is at least 1 season; it needs to be open.
-            if (allSeasons.Count == 0)
-                throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "*");
-            //Check if the only season is concluded
-            if (allSeasons.Count == 1 && allSeasons[0].HasConcluded)
-                throw new InvalidRecordException("W tabeli nie może znajdować się tylko jeden sezon, który jest zamknięty.", allSeasons[0].ToString());
-
-            List<Season> openSeasons = allSeasons.FindAll(e => !e.HasConcluded);
-            //Check if there are any open seasons
-            if (openSeasons.Count == 0)
-                throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "W tabeli nie odnaleziono żadnych otwartych sezonów.");
-            //Check if there's more than 1 open season.
-            if (openSeasons.Count > 1)
-                throw new InvalidRecordException("W tabeli sezonów odnaleziono więcej niż jeden otwarty sezon.", openSeasons.ToString());
-
-            currentSeason = openSeasons[0];
-        }
-
-        public static Season GetCurrentSeason()
-        {
-            CheckForConsistency(out _, out Season season);
-            return season;
-        }
-
-        /// <summary>
-        /// Attempts to start a new Season and end the currently open season.
-        /// </summary>
-        /// <param name="newSeasonName">The name of the new Season.</param>
-        /// <param name="startDate">The start date to assign to the new Season.</param>
-        /// <exception cref="InvalidRecordException"></exception>
-        public static void StartNewSeason(string newSeasonName, DateTime startDate)
-        {
-            using var context = new DatabaseContext();
-            Season seasonToEnd = context.Seasons.Find(GetCurrentSeason().Id);
-            Season seasonToAdd = new()
-            {
-                Name = newSeasonName,
-                DateStart = startDate,
-                DateEnd = DateTime.MaxValue,
-                HasConcluded = false
-            };
-
-            //New season cannot start before the previous one started
-            if (seasonToEnd.DateStart >= seasonToAdd.DateStart)
-                throw new InvalidRecordException("Data rozpoczęcia", seasonToAdd.DateStart.ToShortDateString());
-
-            seasonToEnd.HasConcluded = true;
-            seasonToEnd.DateEnd = seasonToAdd.DateStart;
-            context.Seasons.Add(seasonToAdd);
-            context.SaveChanges();
-        }
     }
 }

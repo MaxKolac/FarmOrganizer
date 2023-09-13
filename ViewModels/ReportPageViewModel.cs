@@ -48,11 +48,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                using var context = new DatabaseContext();
-                CostTypes = context.CostTypes.Where(cost => !cost.IsExpense).ToList();
-                if (CostTypes.Count == 0)
-                    throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), 
-                        "Nie znaleziono żadnych rodzajów kosztów, które nie są wydatkami.");
+                CostType.Validate();
+                CostTypes = new DatabaseContext().CostTypes.Where(cost => !cost.IsExpense).ToList();
             }
             catch (Exception ex)
             {
@@ -116,7 +113,14 @@ namespace FarmOrganizer.ViewModels
                 context.BalanceLedgers.Add(newEntry);
                 context.SaveChanges();
                 if (AddNewSeasonAfterSaving)
-                    SeasonsPageViewModel.StartNewSeason(NewSeasonName, DateTime.Now);
+                    Season.AddEntry(new() 
+                    {
+                        Name = NewSeasonName, 
+                        DateStart = DateTime.Now,
+                        DateEnd = DateTime.MaxValue,
+                        HasConcluded = false
+                    }
+                    );
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)

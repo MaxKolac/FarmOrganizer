@@ -93,7 +93,7 @@ namespace FarmOrganizer.ViewModels
                     SelectedCostType = CostTypes.First();
                     SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
                     //This isnt showing ???? burh
-                    SelectedSeason = SeasonsPageViewModel.GetCurrentSeason();
+                    SelectedSeason = Season.GetCurrentSeason();
                     DateAdded = DateTime.Now;
                     BalanceChange = "0";
                     Notes = string.Empty;
@@ -117,7 +117,7 @@ namespace FarmOrganizer.ViewModels
                         //Should be thrown when:
                         //No record was found - result is returned as null
                         NoRecordFoundException ex = new(
-                            nameof(DatabaseContext.BalanceLedgers), 
+                            nameof(DatabaseContext.BalanceLedgers),
                             $"Id = {RecordId}"
                             );
                         new ExceptionHandler(ex).ShowAlert();

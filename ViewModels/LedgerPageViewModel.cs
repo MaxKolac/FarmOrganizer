@@ -32,9 +32,10 @@ namespace FarmOrganizer.ViewModels
             //{
             //    TODO: load default filters from Preferences
             //};
-            using var context = new DatabaseContext();
             try
             {
+                CostType.Validate();
+                using var context = new DatabaseContext();
                 CostTypes = context.CostTypes.ToList();
                 CropFields = context.CropFields.ToList();
                 SelectedCropField = CropFields.First();
@@ -75,25 +76,6 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void FilterAndSortRecords()
-        {
-            _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
-            //TODO: It needs to be somehow returned and their settings applied to a query
-        }
-
-        [RelayCommand]
-        private async Task GenerateReport()
-        {
-            var query = new Dictionary<string, object>()
-            {
-                { "entries", LedgerEntries },
-                { "cropfield", SelectedCropField },
-                { "season", SeasonsPageViewModel.GetCurrentSeason() }
-            };
-            await Shell.Current.GoToAsync(nameof(ReportPage), query);
-        }
-
-        [RelayCommand]
         private void DeleteRecord(BalanceLedger record)
         {
             try
@@ -110,6 +92,28 @@ namespace FarmOrganizer.ViewModels
             {
                 QueryLedgerEntries();
             }
+        }
+
+        [RelayCommand]
+        private async Task GenerateReport()
+        {
+            var query = new Dictionary<string, object>()
+            {
+                { "entries", LedgerEntries },
+                { "cropfield", SelectedCropField },
+                { "season", Season.GetCurrentSeason() }
+            };
+            await Shell.Current.GoToAsync(nameof(ReportPage), query);
+        }
+
+        [RelayCommand]
+        private void FilterAndSortRecords() => 
+            _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
+
+        private void ApplyFilters(FilterSetEventArgs args)
+        {
+            _filterSet = args.FilterSet;
+            QueryLedgerEntries();
         }
 
         public void QueryLedgerEntries()

@@ -28,22 +28,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                using var context = new DatabaseContext();
-                CostTypes = context.CostTypes.ToList();
-                //There needs to be at least 1 expense and 1 income category
-                bool expenseFound = false;
-                bool incomeFound = false;
-                foreach (CostType type in CostTypes)
-                {
-                    if (type.IsExpense)
-                        expenseFound = true;
-                    else
-                        incomeFound = true;
-                    if (expenseFound && incomeFound)
-                        break;
-                }
-                if (!expenseFound || !incomeFound)
-                    throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), "W tabeli nie znaleziono przynajmniej jednego kosztu traktowanego jako wydatek lub przynajmniej jednego kosztu traktowanego jako zysk.");
+                CostType.Validate();
+                CostTypes = new DatabaseContext().CostTypes.ToList();
             }
             catch (Exception ex)
             {
@@ -64,10 +50,11 @@ namespace FarmOrganizer.ViewModels
                         Name = CostTypeName,
                         IsExpense = CostTypeIsExpense
                     };
-                    context.CostTypes.Add(newCostType); 
+                    CostType.AddEntry(newCostType);
                 }
                 else if (editingEntry)
                 {
+                    //TODO: IValidatable.EditEntry
                     CostType existingCostType = context.CostTypes.Find(editedEntryId);
                     existingCostType.Name = CostTypeName;
                     existingCostType.IsExpense = CostTypeIsExpense;
