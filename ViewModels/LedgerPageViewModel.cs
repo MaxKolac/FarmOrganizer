@@ -4,6 +4,7 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.PopUps;
+using FarmOrganizer.ViewModels.HelperClasses;
 using FarmOrganizer.Views;
 using FarmOrganizer.Views.PopUps;
 using Microsoft.EntityFrameworkCore;
@@ -126,15 +127,39 @@ namespace FarmOrganizer.ViewModels
 
         public void QueryLedgerEntries()
         {
-            using var context = new DatabaseContext();
             try
             {
-                //TODO: filters
-                LedgerEntries = context.BalanceLedgers
-                    .Include(entry => entry.IdCostTypeNavigation)
-                    .Where(entry => entry.IdCropField == SelectedCropField.Id)
-                    .ToList();
-                LedgerEntries.Reverse();
+                using var context = new DatabaseContext();
+                IEnumerable<BalanceLedger> query =
+                    from entry in context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
+                                                        .Include(entry => entry.IdSeasonNavigation)
+                    where entry.IdCropField == SelectedCropField.Id
+                    && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
+                    && _filterSet.EarliestDate <= entry.DateAdded 
+                    && entry.DateAdded <= _filterSet.LatestDate
+                    && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
+                    && _filterSet.SmallestBalanceChange <= entry.BalanceChange 
+                    && entry.BalanceChange <= _filterSet.LargestBalanceChange
+                    select entry;
+                LedgerEntries = query.ToList();
+                
+                switch (_filterSet.SortingMethod)
+                {
+                    case LedgerFilterSet.SortBy.CostTypes:
+                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdCostTypeNavigation.Name).ToList();
+                        break;
+                    case LedgerFilterSet.SortBy.DateAdded:
+                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.DateAdded).ToList();
+                        break;
+                    case LedgerFilterSet.SortBy.SeasonStartDate:
+                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdSeasonNavigation.DateStart).ToList();
+                        break;
+                    case LedgerFilterSet.SortBy.BalanceChange:
+                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.BalanceChange).ToList();
+                        break;
+                }
+                if (_filterSet.DescendingSort)
+                    LedgerEntries.Reverse();
             }
             catch (Exception ex)
             {

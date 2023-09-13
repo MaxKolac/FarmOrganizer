@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels.HelperClasses;
 using FarmOrganizer.Views.PopUps;
 using Mopups.Interfaces;
 
@@ -112,6 +113,7 @@ namespace FarmOrganizer.ViewModels
             foreach (Season season in SelectedSeasons)
                 seasons.Add(season.Id);
 
+            //TODO: there's no input validation for dates, balance changes
             return new LedgerFilterSet(costTypeIds, seasons)
             {
                 EarliestDate = UseCustomEarliestDate ? SelectedEarliestDate : DateTime.MinValue,
@@ -126,7 +128,8 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void Apply()
         {
-            //How to pass the ersulting LedgerFilterSet back to LedgerPageVM?
+            LedgerFilterSet newFilterSet = PackFieldValuesToFilterSet();
+            OnFilterSetCreated?.Invoke(new FilterSetEventArgs(newFilterSet));
             Pop();
         }
         
