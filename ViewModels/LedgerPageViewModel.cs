@@ -41,12 +41,14 @@ namespace FarmOrganizer.ViewModels
                 using var context = new DatabaseContext();
                 CostTypes = context.CostTypes.ToList();
                 CropFields = context.CropFields.ToList();
-                SelectedCropField = CropFields.First();
-                LedgerEntries = context.BalanceLedgers
-                    .Where(entry => entry.IdCropField == SelectedCropField.Id)
-                    .ToList();
-                LedgerEntries.Reverse();
-                //TODO: filters
+                SelectedCropField = CropFields.Find(field =>
+                    field.Id == Preferences.Get(
+                        SettingsPageViewModel.LedgerPage_DefaultCropField,
+                        CropFields.First().Id
+                        )
+                    );
+                SelectedCropField ??= CropFields.First();
+                QueryLedgerEntries();
             }
             catch (Exception ex)
             {

@@ -3,37 +3,73 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
+using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class SettingsPageViewModel : ObservableObject
     {
-        private const string appThemeKey = "appTheme";
+        public const string AppThemeKey = "appTheme";
+        public const string LedgerPage_DefaultCropField = "ledger_defaultCropFieldKey";
 
         [ObservableProperty]
         private List<string> appThemes;
         [ObservableProperty]
-        private AppTheme selectedTheme = Enum.Parse<AppTheme>(Preferences.Get(appThemeKey, Enum.GetName(AppTheme.Unspecified)));
+        private AppTheme selectedTheme;
+
+        [ObservableProperty]
+        private List<CropField> cropFields;
+        [ObservableProperty]
+        private CropField defaultCropField;
 
         public SettingsPageViewModel()
         {
-            AppThemes = new()
+            try
             {
-                AppThemeToStringConverter.Default,
-                AppThemeToStringConverter.Light,
-                AppThemeToStringConverter.Dark
-            };
+                using var context = new DatabaseContext();
+                AppThemes = new()
+                {
+                    AppThemeToStringConverter.Default,
+                    AppThemeToStringConverter.Light,
+                    AppThemeToStringConverter.Dark
+                };
+                SelectedTheme = Enum.Parse<AppTheme>(
+                    Preferences.Get(
+                        AppThemeKey,
+                        Enum.GetName(AppTheme.Unspecified)
+                        )
+                    );
+
+                CropFields = context.CropFields.ToList();
+                DefaultCropField = context.CropFields.Find(
+                    Preferences.Get(
+                        LedgerPage_DefaultCropField,
+                        context.CropFields.First().Id
+                        )
+                    );
+                DefaultCropField ??= CropFields.First();
+            }
+            catch (Exception ex)
+            {
+                new ExceptionHandler(ex).ShowAlert();
+            }
         }
 
         public static void ApplyPreferences()
         {
-            Application.Current.UserAppTheme = Enum.Parse<AppTheme>(Preferences.Get(appThemeKey, Enum.GetName(AppTheme.Unspecified)));
+            Application.Current.UserAppTheme = Enum.Parse<AppTheme>(Preferences.Get(AppThemeKey, Enum.GetName(AppTheme.Unspecified)));
         }
 
         partial void OnSelectedThemeChanging(AppTheme oldValue, AppTheme newValue)
         {
-            Preferences.Set("appTheme", Enum.GetName(newValue));
+            Preferences.Set(AppThemeKey, Enum.GetName(newValue));
+            ApplyPreferences();
+        }
+
+        partial void OnDefaultCropFieldChanged(CropField oldValue, CropField newValue)
+        {
+            Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
             ApplyPreferences();
         }
 
@@ -43,7 +79,7 @@ namespace FarmOrganizer.ViewModels
             if (await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
                 "Za chwilę bezpowrotnie wyczyścisz wszystkie dane z bazy danych. " +
-                "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?", 
+                "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
                 "Tak", "Nie"))
             {
                 await DatabaseFile.Delete();

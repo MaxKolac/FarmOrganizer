@@ -36,7 +36,15 @@
                     ItemsSource="{Binding AppThemes}" 
                     SelectedItem="{Binding SelectedTheme, Converter={StaticResource AppThemeToStringConverter}}"/>
         </Grid>
-        
+
+        <Label Text="Tabela kosztów" Style="{StaticResource GroupTitle}"/>
+        <Grid>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Domyślne pole uprawne:"/>
+            <Picker Grid.Column="1"
+                    ItemsSource="{Binding CropFields}" 
+                    SelectedItem="{Binding DefaultCropField}"/>
+        </Grid>
+
         <Label Text="Baza danych" Style="{StaticResource GroupTitle}"/>
         <Button Text="Eksportuj bazę danych"
                 Command="{Binding ExportDatabaseCommand}"/>
