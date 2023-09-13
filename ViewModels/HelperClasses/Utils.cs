@@ -2,7 +2,7 @@
 
 namespace FarmOrganizer.ViewModels.HelperClasses
 {
-    internal static class Utils
+    public static class Utils
     {
         /// <summary>
         /// <para>Android's Numeric Keyboard has the period hardcoded into it and C#'s <see cref="decimal.TryParse(string, out decimal)">decimal.TryParse</see> breaks when it receives a string with a period, instead of a comma. Under a few circumstances, it's possible for the input value to even contain both a period and a comma.</para>
