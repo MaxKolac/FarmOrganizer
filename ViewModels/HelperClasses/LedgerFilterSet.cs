@@ -6,17 +6,17 @@ namespace FarmOrganizer.ViewModels.HelperClasses
 {
     public class LedgerFilterSet
     {
-        public List<int> SelectedCostTypeIds { get; set; }
+        public List<int> SelectedCostTypeIds { get; set; } = new();
         public DateTime EarliestDate { get; set; } = DateTime.MinValue;
         public DateTime LatestDate { get; set; } = DateTime.MaxValue;
-        public List<int> SelectedSeasonIds { get; set; }
+        public List<int> SelectedSeasonIds { get; set; } = new();
         public decimal SmallestBalanceChange { get; set; } = decimal.MinValue;
         public decimal LargestBalanceChange { get; set; } = decimal.MaxValue;
 
         public bool DescendingSort { get; set; } = true;
-        public SortBy SortingMethod { get; set; } = SortBy.DateAdded;
+        public SortingCriteria SortingMethod { get; set; } = SortingCriteria.DateAdded;
 
-        public enum SortBy
+        public enum SortingCriteria
         {
             CostTypes,
             DateAdded,
@@ -33,11 +33,9 @@ namespace FarmOrganizer.ViewModels.HelperClasses
             {
                 using var context = new DatabaseContext();
 
-                SelectedCostTypeIds = new();
                 foreach (CostType cost in context.CostTypes.ToList())
                     SelectedCostTypeIds.Add(cost.Id);
 
-                SelectedSeasonIds = new();
                 foreach (Season season in context.Seasons.ToList())
                     SelectedSeasonIds.Add(season.Id);
             }

@@ -31,10 +31,14 @@ namespace FarmOrganizer.ViewModels
             LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
             LedgerFilterPopupViewModel.OnFilterSetCreated += ApplyFilters;
             _popUpSvc = popupNavigation;
-            _filterSet = new();
-            //{
-            //    TODO: load default filters from Preferences
-            //};
+            _filterSet = new()
+            {
+                //TODO: load default filters from Preferences
+                SmallestBalanceChange = 0,
+                LargestBalanceChange = 100_000m,
+                EarliestDate = DateTime.Now.AddMonths(-1),
+                LatestDate = DateTime.Now
+            };
             try
             {
                 CostType.Validate(out List<CostType> allEntries);
@@ -147,16 +151,16 @@ namespace FarmOrganizer.ViewModels
                 
                 switch (_filterSet.SortingMethod)
                 {
-                    case LedgerFilterSet.SortBy.CostTypes:
+                    case LedgerFilterSet.SortingCriteria.CostTypes:
                         LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdCostTypeNavigation.Name).ToList();
                         break;
-                    case LedgerFilterSet.SortBy.DateAdded:
+                    case LedgerFilterSet.SortingCriteria.DateAdded:
                         LedgerEntries = LedgerEntries.OrderBy(entry => entry.DateAdded).ToList();
                         break;
-                    case LedgerFilterSet.SortBy.SeasonStartDate:
+                    case LedgerFilterSet.SortingCriteria.SeasonStartDate:
                         LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdSeasonNavigation.DateStart).ToList();
                         break;
-                    case LedgerFilterSet.SortBy.BalanceChange:
+                    case LedgerFilterSet.SortingCriteria.BalanceChange:
                         LedgerEntries = LedgerEntries.OrderBy(entry => entry.BalanceChange).ToList();
                         break;
                 }

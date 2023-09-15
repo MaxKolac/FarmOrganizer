@@ -9,68 +9,88 @@
                   Title="Ustawienia filtrów"
                   BackgroundColor="#80000000"
                   CloseWhenBackgroundIsClicked="True">
+    <ContentPage.Resources>
+        <converter:SortingCriteriaToStringConverter x:Key="SortingCriteriaToStringConverter"/>
+
+        <Style TargetType="Label" x:Key="BaseLabel">
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style TargetType="Label" x:Key="PickerLabel" BasedOn="{StaticResource BaseLabel}">
+            <Setter Property="Margin" Value="0,8,0,0"/>
+        </Style>
+    </ContentPage.Resources>
     <ScrollView HorizontalOptions="Center" 
                 VerticalOptions="Center">
         <Border WidthRequest="400"
-                HeightRequest="600">
+                HeightRequest="600"
+                Padding="10">
             <VerticalStackLayout>
                 <!-- CostTypes -->
-                <HorizontalStackLayout>
-                    <Label Text="Uwzględnij tylko typy kosztów:"/>
-                    <CollectionView SelectionMode="Multiple"
-                                    ItemsSource="{Binding AllCostTypes}"
-                                    SelectedItems="{Binding SelectedCostTypes}"/>
-                </HorizontalStackLayout>
+                <Label Text="Uwzględnij tylko typy kosztów:" 
+                       Style="{StaticResource BaseLabel}"/>
+                <CollectionView SelectionMode="Multiple"
+                                ItemsSource="{Binding AllCostTypes}"
+                                SelectedItems="{Binding SelectedCostTypes}"/>
+                
                 <!-- Seasons -->
-                <HorizontalStackLayout>
-                    <Label Text="Uwzględnij tylko sezony:"/>
-                    <CollectionView SelectionMode="Multiple"
-                                    ItemsSource="{Binding AllSeasons}"
-                                    SelectedItems="{Binding SelectedSeasons}"/>
-                </HorizontalStackLayout>
+                <Label Text="Uwzględnij tylko sezony:" 
+                       Style="{StaticResource BaseLabel}"/>
+                <CollectionView SelectionMode="Multiple"
+                                ItemsSource="{Binding AllSeasons}"
+                                SelectedItems="{Binding SelectedSeasons}"/>
+                
                 <!-- Custom Dates -->
-                <Label Text="Z okresu czasowego:"/>
+                <Label Text="Z okresu czasowego:" 
+                       Style="{StaticResource BaseLabel}"/>
                 <HorizontalStackLayout>
-                    <Label Text="Od:"/>
+                    <Label Text="Od:"
+                           Style="{StaticResource PickerLabel}"/>
                     <DatePicker Date="{Binding SelectedEarliestDate}" 
-                                IsEnabled="{Binding UseCustomEarliestDate}"/>
+                                IsEnabled="{Binding UseCustomEarliestDate}"
+                                MaximumDate="{Binding SelectedLatestDate}"/>
                     <CheckBox IsChecked="{Binding UseCustomEarliestDate}"/>
-                </HorizontalStackLayout>
-                <HorizontalStackLayout>
-                    <Label Text="Do:"/>
+                    <Label Text="Do:"
+                           Style="{StaticResource PickerLabel}"/>
                     <DatePicker Date="{Binding SelectedLatestDate}" 
-                                IsEnabled="{Binding UseCustomLatestDate}"/>
+                                IsEnabled="{Binding UseCustomLatestDate}"
+                                MinimumDate="{Binding SelectedEarliestDate}"/>
                     <CheckBox IsChecked="{Binding UseCustomLatestDate}"/>
                 </HorizontalStackLayout>
+                
                 <!-- Custom BalanceChanges -->
-                <Label Text="Z zakresu pieniężnego:"/>
+                <Label Text="Z zakresu pieniężnego:"
+                       Style="{StaticResource BaseLabel}"/>
                 <HorizontalStackLayout>
-                    <Label Text="Od:"/>
-                    <Entry Keyboard="Numeric" 
+                    <Label Text="Od:"
+                           Style="{StaticResource PickerLabel}"/>
+                    <Entry Style="{StaticResource NumericEntry}" 
                            Text="{Binding SmallestBalanceChange}"
                            IsEnabled="{Binding UseCustomSmallestChange}"/>
                     <CheckBox IsChecked="{Binding UseCustomSmallestChange}"/>
-                </HorizontalStackLayout>
-                <HorizontalStackLayout>
-                    <Label Text="Do:"/>
-                    <Entry Keyboard="Numeric" 
+                    <Label Text="Do:"
+                           Style="{StaticResource PickerLabel}"/>
+                    <Entry Style="{StaticResource NumericEntry}"
                            Text="{Binding LargestBalanceChange}"
                            IsEnabled="{Binding UseCustomLargestChange}"/>
                     <CheckBox IsChecked="{Binding UseCustomLargestChange}"/>
                 </HorizontalStackLayout>
+                
                 <!-- Sorting -->
                 <HorizontalStackLayout>
-                    <Label Text="Sortuj według:"/>
+                    <Label Text="Sortuj według:"
+                           Style="{StaticResource PickerLabel}"/>
                     <Picker ItemsSource="{Binding SortMethods}"
-                            SelectedItem="{Binding SelectedSortMethod}"/>
+                            SelectedItem="{Binding SelectedSortMethod, Converter={StaticResource SortingCriteriaToStringConverter}}"/>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout>
-                    <Label Text="Sortuj malejąco:"/>
+                    <Label Text="Sortuj malejąco:"
+                           Style="{StaticResource PickerLabel}"/>
                     <CheckBox IsChecked="{Binding UseDescendingSortOrder}"/>
                 </HorizontalStackLayout>
                 
                 <!-- Options at bottom -->
-                <HorizontalStackLayout>
+                <HorizontalStackLayout HorizontalOptions="Center"
+                                       Spacing="5">
                     <Button Text="Anuluj" Command="{Binding PopCommand}"/>
                     <Button Text="Zastosuj filtry" Command="{Binding ApplyCommand}"/>
                 </HorizontalStackLayout>

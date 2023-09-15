@@ -3,11 +3,11 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels.Converters;
 using FarmOrganizer.ViewModels.HelperClasses;
-using FarmOrganizer.Views.PopUps;
 using Mopups.Interfaces;
 
-namespace FarmOrganizer.ViewModels
+namespace FarmOrganizer.ViewModels.PopUps
 {
     public partial class LedgerFilterPopupViewModel : ObservableObject
     {
@@ -19,14 +19,14 @@ namespace FarmOrganizer.ViewModels
 
         #region Collections and Choices Bindings
         [ObservableProperty]
-        private List<CostType> allCostTypes;
+        private List<CostType> allCostTypes = new();
         [ObservableProperty]
-        private List<CostType> selectedCostTypes;
+        private List<object> selectedCostTypes = new();
 
         [ObservableProperty]
-        private List<Season> allSeasons;
+        private List<Season> allSeasons = new();
         [ObservableProperty]
-        private List<Season> selectedSeasons;
+        private List<object> selectedSeasons = new();
 
         [ObservableProperty]
         private DateTime selectedEarliestDate;
@@ -51,10 +51,9 @@ namespace FarmOrganizer.ViewModels
 
         #region Sorting Related Fields
         [ObservableProperty]
-        //private List<string> sortMethods; //TODO: converter
-        private List<LedgerFilterSet.SortBy> sortMethods; //TODO: converter
+        private List<string> sortMethods;
         [ObservableProperty]
-        private LedgerFilterSet.SortBy selectedSortMethod; //TODO: converter
+        private LedgerFilterSet.SortingCriteria selectedSortMethod;
         [ObservableProperty]
         private bool useDescendingSortOrder;
         #endregion
@@ -67,13 +66,11 @@ namespace FarmOrganizer.ViewModels
             {
                 using var context = new DatabaseContext();
 
-                AllCostTypes = context.CostTypes.ToList();
-                SelectedCostTypes = new();
+                AllCostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
                 foreach (int id in _filterSet.SelectedCostTypeIds)
                     SelectedCostTypes.Add(context.CostTypes.Find(id));
 
                 AllSeasons = context.Seasons.ToList();
-                SelectedSeasons = new();
                 foreach (int id in _filterSet.SelectedSeasonIds)
                     SelectedSeasons.Add(context.Seasons.Find(id));
 
@@ -89,8 +86,13 @@ namespace FarmOrganizer.ViewModels
                 UseCustomLargestChange = _filterSet.LargestBalanceChange != decimal.MaxValue;
                 LargestBalanceChange = UseCustomLargestChange ? _filterSet.LargestBalanceChange : decimal.MaxValue;
 
-                SortMethods = new();
-                SortMethods.AddRange(Enum.GetValues<LedgerFilterSet.SortBy>());
+                SortMethods = new()
+                {
+                    SortingCriteriaToStringConverter.DateAdded,
+                    SortingCriteriaToStringConverter.BalanceChange,
+                    SortingCriteriaToStringConverter.CostTypes,
+                    SortingCriteriaToStringConverter.SeasonStartDate
+                };
                 SelectedSortMethod = _filterSet.SortingMethod;
                 UseDescendingSortOrder = _filterSet.DescendingSort;
 
@@ -103,32 +105,54 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
-        private LedgerFilterSet PackFieldValuesToFilterSet()
+        [RelayCommand]
+        private async Task Apply()
         {
             List<int> costTypeIds = new();
-            foreach (CostType cost in SelectedCostTypes)
+            foreach (CostType cost in SelectedCostTypes.Cast<CostType>())
                 costTypeIds.Add(cost.Id);
 
+            //Warn when no cost type was selected
+            if (costTypeIds.Count == 0)
+            {
+                await App.AlertSvc.ShowAlertAsync(
+                    "Brak wybranych kosztów",
+                    "Nie wybrano żadnych rodzajów kosztów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na pomarańczowo rodzaje kosztów, które mają posiadać wpisy aby zostały pokazane.");
+                return;
+            }
+
             List<int> seasons = new();
-            foreach (Season season in SelectedSeasons)
+            foreach (Season season in SelectedSeasons.Cast<Season>())
                 seasons.Add(season.Id);
 
-            //TODO: there's no input validation for dates, balance changes
-            return new LedgerFilterSet(costTypeIds, seasons)
+            //Warn when no season was selected
+            if (seasons.Count == 0)
+            {
+                await App.AlertSvc.ShowAlertAsync(
+                    "Brak wybranych sezonów",
+                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na pomarańczowo sezony, z których wpisy mają być pokazane.");
+                return;
+            }
+
+            //Condition of LargestBalance >= SmallerBalance
+            if (LargestBalanceChange < SmallestBalanceChange)
+            {
+                await App.AlertSvc.ShowAlertAsync(
+                    "Zły zakres wartości kosztu",
+                    "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronny zakres.");
+                return;
+            }
+
+            //Condition EarliestDate >= LatestDate is enforced in View
+            var newFilterSet = new LedgerFilterSet(costTypeIds, seasons)
             {
                 EarliestDate = UseCustomEarliestDate ? SelectedEarliestDate : DateTime.MinValue,
                 LatestDate = UseCustomLatestDate ? SelectedLatestDate : DateTime.MaxValue,
-                SmallestBalanceChange = UseCustomSmallestChange ? SmallestBalanceChange : decimal.MinValue, 
-                LargestBalanceChange = UseCustomLargestChange ? LargestBalanceChange : decimal.MaxValue, 
+                SmallestBalanceChange = UseCustomSmallestChange ? SmallestBalanceChange : decimal.MinValue,
+                LargestBalanceChange = UseCustomLargestChange ? LargestBalanceChange : decimal.MaxValue,
                 SortingMethod = SelectedSortMethod,
                 DescendingSort = UseDescendingSortOrder
             };
-        }
-
-        [RelayCommand]
-        private void Apply()
-        {
-            LedgerFilterSet newFilterSet = PackFieldValuesToFilterSet();
             OnFilterSetCreated?.Invoke(new FilterSetEventArgs(newFilterSet));
             Pop();
         }
