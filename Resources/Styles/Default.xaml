@@ -12,6 +12,6 @@
     <Style TargetType="Entry" x:Key="NumericEntry">
         <Setter Property="Keyboard" Value="Numeric"/>
         <Setter Property="MaxLength" Value="8"/>
-        <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
+        <Setter Property="ClearButtonVisibility" Value="Never"/>
     </Style>
 </ResourceDictionary>
