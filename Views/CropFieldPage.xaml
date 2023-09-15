@@ -75,7 +75,7 @@
                         <Label Text="Pole powierzchni (ha):"/>
                         <Entry Margin="0,-11,0,0"
                                HorizontalOptions="Fill"
-                               Keyboard="Numeric"
+                               Style="{StaticResource NumericEntry}"
                                Text="{Binding CropFieldHectares}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">

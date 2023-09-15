@@ -11,11 +11,8 @@
             <Setter Property="IsEnabled" Value="False"/>
             <Setter Property="Grid.Column" Value="1"/>
         </Style>
-        <Style TargetType="Entry" x:Key="QuickCalcEntry">
-            <Setter Property="MaxLength" Value="9"/>
+        <Style TargetType="Entry" x:Key="QuickCalcEntry" BasedOn="{StaticResource NumericEntry}">
             <Setter Property="VerticalOptions" Value="Fill"/>
-            <Setter Property="Keyboard" Value="Numeric"/>
-            <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
             <Setter Property="FontSize" Value="Medium"/>
         </Style>
         <Style TargetType="Entry" x:Key="QuickCalcReadOnlyEntry" BaseResourceKey="QuickCalcEntry">

@@ -9,7 +9,9 @@
                 Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"/>
         <Setter Property="BorderColor" Value="DarkGrey"/>
     </Style>
-    <Style TargetType="Entry">
+    <Style TargetType="Entry" x:Key="NumericEntry">
+        <Setter Property="Keyboard" Value="Numeric"/>
+        <Setter Property="MaxLength" Value="8"/>
         <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
     </Style>
 </ResourceDictionary>

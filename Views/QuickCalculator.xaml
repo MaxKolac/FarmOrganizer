@@ -17,11 +17,8 @@
             <Setter Property="Margin" Value="10"/>
             <Setter Property="FontSize" Value="18"/>
         </Style>
-        <Style TargetType="Entry">
-            <Setter Property="MaxLength" Value="9"/>
+        <Style TargetType="Entry" BasedOn="{StaticResource NumericEntry}">
             <Setter Property="VerticalOptions" Value="Fill"/>
-            <Setter Property="Keyboard" Value="Numeric"/>
-            <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
             <Setter Property="FontSize" Value="Medium"/>
         </Style>
         <Style TargetType="CheckBox">

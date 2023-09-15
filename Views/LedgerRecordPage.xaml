@@ -24,7 +24,7 @@
         <DatePicker Date="{Binding DateAdded}"/>
 
         <Label Text="Zysk/koszt w złotych"/>
-        <Entry Text="{Binding BalanceChange}" Keyboard="Numeric"/>
+        <Entry Text="{Binding BalanceChange}" Style="{StaticResource NumericEntry}"/>
 
         <Label Text="(Opcjonalne) Notatka"/>
         <Editor Text="{Binding Notes}" AutoSize="TextChanges"/>
