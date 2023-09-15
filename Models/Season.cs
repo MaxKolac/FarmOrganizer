@@ -61,7 +61,7 @@ public partial class Season : IValidatable<Season>
     public static void AddEntry(Season entry)
     {
         using var context = new DatabaseContext();
-        Season seasonToEnd = GetCurrentSeason();
+        Season seasonToEnd = context.Seasons.Find(GetCurrentSeason().Id);
 
         //New season cannot start before the previous one started
         if (seasonToEnd.DateStart >= entry.DateStart)
