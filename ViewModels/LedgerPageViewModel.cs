@@ -35,7 +35,7 @@ namespace FarmOrganizer.ViewModels
             {
                 //TODO: load default filters from Preferences
                 SmallestBalanceChange = 0,
-                LargestBalanceChange = 100_000m,
+                LargestBalanceChange = 999_999m,
                 EarliestDate = DateTime.Now.AddMonths(-1),
                 LatestDate = DateTime.Now
             };

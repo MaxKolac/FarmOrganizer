@@ -171,6 +171,6 @@ namespace FarmOrganizer.ViewModels.PopUps
             SmallestBalanceChange = 0.00m;
 
         partial void OnUseCustomLargestChangeChanged(bool value) => 
-            LargestBalanceChange = 99_999_999m;
+            LargestBalanceChange = 999_999m;
     }
 }

@@ -39,7 +39,7 @@
 
         <Label Text="Tabela kosztów" Style="{StaticResource GroupTitle}"/>
         <Grid>
-            <Label Style="{StaticResource BaseLabelStyle}" Text="Domyślne pole uprawne:"/>
+            <Label Style="{StaticResource BaseLabelStyle}" Text="Domyślne pole:"/>
             <Picker Grid.Column="1"
                     ItemsSource="{Binding CropFields}" 
                     SelectedItem="{Binding DefaultCropField}"/>
