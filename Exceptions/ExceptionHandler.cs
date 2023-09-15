@@ -46,8 +46,14 @@ namespace FarmOrganizer.Exceptions
             else if (exception is DbUpdateException)
             {
                 DbUpdateException ex = exception as DbUpdateException;
-                _title = "Bład podczas aktualizacji bazy";
+                _title = "Błąd podczas aktualizacji bazy";
                 _message = ex.InnerException.Message;
+            }
+            else if (exception is InvalidDbOperationException)
+            {
+                InvalidDbOperationException ex = exception as InvalidDbOperationException;
+                _title = "Bład podczas operacji na bazie danych";
+                _message = ex.Message;
             }
             else
             {
