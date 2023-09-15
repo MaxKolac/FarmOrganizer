@@ -161,24 +161,16 @@ namespace FarmOrganizer.ViewModels.PopUps
         private void Pop() => _popUpSvc.PopAsync();
 
         //TODO: applies to all partial methods below - load default timespan from Preferences
-        partial void OnUseCustomEarliestDateChanged(bool oldValue, bool newValue)
-        {
+        partial void OnUseCustomEarliestDateChanged(bool oldValue, bool newValue) => 
             SelectedEarliestDate = newValue ? DateTime.Now.AddMonths(-1) : DateTime.MinValue;
-        }
 
-        partial void OnUseCustomLatestDateChanged(bool oldValue, bool newValue)
-        {
+        partial void OnUseCustomLatestDateChanged(bool oldValue, bool newValue) => 
             SelectedLatestDate = newValue ? DateTime.Now : DateTime.MaxValue;
-        }
 
-        partial void OnUseCustomSmallestChangeChanged(bool oldValue, bool newValue)
-        {
-            SmallestBalanceChange = newValue ? 0.00m : decimal.MinValue;
-        }
+        partial void OnUseCustomSmallestChangeChanged(bool value) => 
+            SmallestBalanceChange = 0.00m;
 
-        partial void OnUseCustomLargestChangeChanged(bool oldValue, bool newValue)
-        {
-            LargestBalanceChange = newValue ? 1000m : decimal.MaxValue;
-        }
+        partial void OnUseCustomLargestChangeChanged(bool value) => 
+            LargestBalanceChange = 99_999_999m;
     }
 }
