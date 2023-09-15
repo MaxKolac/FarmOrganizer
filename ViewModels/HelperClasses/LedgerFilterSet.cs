@@ -2,7 +2,7 @@
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 
-namespace FarmOrganizer.Views.PopUps
+namespace FarmOrganizer.ViewModels.HelperClasses
 {
     public class LedgerFilterSet
     {

@@ -1,6 +1,4 @@
-﻿using FarmOrganizer.Views.PopUps;
-
-namespace FarmOrganizer.ViewModels.HelperClasses
+﻿namespace FarmOrganizer.ViewModels.HelperClasses
 {
     public class FilterSetEventArgs
     {

@@ -1,7 +1,7 @@
-using FarmOrganizer.ViewModels;
+using FarmOrganizer.ViewModels.PopUps;
 using Mopups.Pages;
 
-namespace FarmOrganizer.PopUps;
+namespace FarmOrganizer.Views.PopUps;
 
 public partial class LedgerFilterPopup : PopupPage
 {

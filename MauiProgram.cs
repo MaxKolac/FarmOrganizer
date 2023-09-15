@@ -5,9 +5,7 @@ using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using Mopups.Hosting;
-using Mopups.Interfaces;
 using Mopups.Services;
-using FarmOrganizer.PopUps;
 
 namespace FarmOrganizer;
 public static class MauiProgram

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                  xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+                  xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels.PopUps"
                   xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
-                  x:Class="FarmOrganizer.PopUps.LedgerFilterPopup"
+                  xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
+                  x:Class="FarmOrganizer.Views.PopUps.LedgerFilterPopup"
                   x:DataType="viewmodel:LedgerFilterPopupViewModel"
                   Title="Ustawienia filtrów"
                   BackgroundColor="#80000000"
