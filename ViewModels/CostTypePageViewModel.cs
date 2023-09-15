@@ -9,7 +9,7 @@ namespace FarmOrganizer.ViewModels
     public partial class CostTypePageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private List<CostType> costTypes;
+        private List<CostType> costTypes = new();
         [ObservableProperty]
         private bool showCreatorFrame = false;
         [ObservableProperty]
@@ -28,8 +28,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate();
-                CostTypes = new DatabaseContext().CostTypes.ToList();
+                CostType.Validate(out List<CostType> allEntries);
+                CostTypes.AddRange(allEntries);
             }
             catch (Exception ex)
             {
@@ -42,7 +42,6 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                using var context = new DatabaseContext();
                 if (addingEntry)
                 {
                     CostType newCostType = new()
@@ -54,13 +53,16 @@ namespace FarmOrganizer.ViewModels
                 }
                 else if (editingEntry)
                 {
-                    //TODO: IValidatable.EditEntry
-                    CostType existingCostType = context.CostTypes.Find(editedEntryId);
-                    existingCostType.Name = CostTypeName;
-                    existingCostType.IsExpense = CostTypeIsExpense;
+                    CostType costTypeToEdit = new()
+                    {
+                        Id = editedEntryId,
+                        Name = CostTypeName,
+                        IsExpense = CostTypeIsExpense
+                    };
+                    CostType.EditEntry(costTypeToEdit);
                 }
-                context.SaveChanges();
-                CostTypes = context.CostTypes.ToList();
+
+                CostTypes = new DatabaseContext().CostTypes.ToList();
                 ToggleAdding();
             }
             catch (Exception ex)
@@ -84,42 +86,20 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task Remove(CostType costToRemove)
         {
-            using var context = new DatabaseContext();
-            List<CostType> allExpenses = new();
-            List<CostType> allProfits = new();
-            foreach (CostType cost in CostTypes)
+            try
             {
-                if (cost.IsExpense)
-                    allExpenses.Add(cost);
-                else
-                    allProfits.Add(cost);
-            }
-            if (allExpenses.Count == 1 && costToRemove.IsExpense)
-            {
-                App.AlertSvc.ShowAlert("Wystąpił błąd", "Nie można usunąć ostatniego rodzaju kosztu, który jest wydatkiem. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden taki rodzaj kosztu.");
-                return;
-            }
-            if (allProfits.Count == 1 && !costToRemove.IsExpense)
-            {
-                App.AlertSvc.ShowAlert("Wystąpił błąd", "Nie można usunąć ostatniego rodzaju kosztu, który jest przychodem. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden taki rodzaj kosztu.");
-                return;
-            }
-
-            if (!await App.AlertSvc.ShowConfirmationAsync(
+                if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
                 "Usunięcie rodzaju kosztu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany rodzaj. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
                 "Tak, usuń",
                 "Anuluj"))
-                return;
-            try
-            {
-                context.CostTypes.Remove(costToRemove);
-                context.SaveChanges();
-                CostTypes = context.CostTypes.ToList();
+                    return;
+                CostType.DeleteEntry(costToRemove);
+                CostTypes = new DatabaseContext().CostTypes.ToList();
             }
             catch (Exception ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                new ExceptionHandler(ex).ShowAlert(false);
             }
         }
 

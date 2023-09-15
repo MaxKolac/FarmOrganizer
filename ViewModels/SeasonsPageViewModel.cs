@@ -24,8 +24,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                Season.Validate();
-                Seasons.AddRange(new DatabaseContext().Seasons.ToList());
+                Season.Validate(out List<Season> allEntries);
+                Seasons.AddRange(allEntries);
                 NewSeasonName = "Nowy sezon " + DateTime.Now.Year.ToString();
                 NewSeasonDateStart = DateTime.Now;
             }

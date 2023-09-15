@@ -37,9 +37,9 @@ namespace FarmOrganizer.ViewModels
             //};
             try
             {
-                CostType.Validate();
+                CostType.Validate(out List<CostType> allEntries);
+                CostTypes.AddRange(allEntries);
                 using var context = new DatabaseContext();
-                CostTypes = context.CostTypes.ToList();
                 CropFields = context.CropFields.ToList();
                 SelectedCropField = CropFields.Find(field =>
                     field.Id == Preferences.Get(

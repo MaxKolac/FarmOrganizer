@@ -31,10 +31,13 @@ public partial class Season : IValidatable<Season>
     }
 
     //Database related methods
-    public static void Validate()
+    public static void Validate() => Validate(out _);
+
+    public static void Validate(out List<Season> allSeasons)
     {
         var context = new DatabaseContext();
-        List<Season> allSeasons = context.Seasons.ToList();
+        allSeasons = new();
+        allSeasons.AddRange(context.Seasons.ToList());
 
         //Check if there is at least 1 season
         if (allSeasons.Count == 0)
@@ -68,6 +71,16 @@ public partial class Season : IValidatable<Season>
         seasonToEnd.DateEnd = entry.DateStart;
         context.Seasons.Add(entry);
         context.SaveChanges();
+    }
+
+    public static void EditEntry(Season entry)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void DeleteEntry(Season entry)
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
