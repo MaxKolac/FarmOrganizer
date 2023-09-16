@@ -151,7 +151,10 @@ namespace FarmOrganizer.ViewModels
                             IdCropField = SelectedCropField.Id,
                             IdSeason = SelectedSeason.Id,
                             DateAdded = this.DateAdded,
-                            BalanceChange = Math.Round(Utils.CastToValue(this.BalanceChange.ToString()), 2),
+                            BalanceChange = 
+                            Math.Abs(
+                                Math.Round(
+                                    Utils.CastToValue(this.BalanceChange.ToString()), 2)),
                             Notes = this.Notes
                         };
                         context.BalanceLedgers.Add(newRecord);
