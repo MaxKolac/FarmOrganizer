@@ -90,7 +90,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async Task Remove(CropField cropFieldToRemove)
+        private static async Task Remove(CropField cropFieldToRemove)
         {
             if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",

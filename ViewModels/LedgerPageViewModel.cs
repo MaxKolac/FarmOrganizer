@@ -29,6 +29,7 @@ namespace FarmOrganizer.ViewModels
         public LedgerPageViewModel(IPopupNavigation popupNavigation)
         {
             LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
+            ReportPageViewModel.OnPageQuit += QueryLedgerEntries;
             LedgerFilterPopupViewModel.OnFilterSetCreated += ApplyFilters;
             _popUpSvc = popupNavigation;
             _filterSet = new()
@@ -41,10 +42,11 @@ namespace FarmOrganizer.ViewModels
             };
             try
             {
-                CostType.Validate(out List<CostType> allEntries);
-                CostTypes.AddRange(allEntries);
-                using var context = new DatabaseContext();
-                CropFields = context.CropFields.ToList();
+                CostType.Validate(out List<CostType> allCostTypes);
+                CostTypes.AddRange(allCostTypes);
+                CropField.Validate(out List<CropField> allCropFields);
+                CropFields.AddRange(allCropFields);
+                //OnSelectedCropField already triggers QueryLedgerTables(); no need to call it twice
                 SelectedCropField = CropFields.Find(field =>
                     field.Id == Preferences.Get(
                         SettingsPageViewModel.LedgerPage_DefaultCropField,
@@ -52,7 +54,6 @@ namespace FarmOrganizer.ViewModels
                         )
                     );
                 SelectedCropField ??= CropFields.First();
-                QueryLedgerEntries();
             }
             catch (Exception ex)
             {
@@ -60,10 +61,14 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
-        ~LedgerPageViewModel()
+        [RelayCommand]
+        public async Task UnsubscribeEvents()
         {
             LedgerRecordPageViewModel.OnPageQuit -= QueryLedgerEntries;
+            ReportPageViewModel.OnPageQuit -= QueryLedgerEntries;
             LedgerFilterPopupViewModel.OnFilterSetCreated -= ApplyFilters;
+            await Shell.Current.GoToAsync("..");
+
         }
 
         [RelayCommand]

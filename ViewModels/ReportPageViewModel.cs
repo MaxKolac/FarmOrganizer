@@ -44,6 +44,9 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private CostType selectedCostType;
 
+        public delegate void ReportPageEventHandler();
+        public static event ReportPageEventHandler OnPageQuit;
+
         public ReportPageViewModel()
         {
             try
@@ -121,6 +124,7 @@ namespace FarmOrganizer.ViewModels
                         HasConcluded = false
                     }
                     );
+                OnPageQuit?.Invoke();
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)

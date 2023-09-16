@@ -9,4 +9,12 @@ public partial class LedgerPage : ContentPage
 		InitializeComponent();
 		BindingContext = vm;
 	}
+
+	protected override bool OnBackButtonPressed()
+	{
+		//And here I am, foolishly thinking I'd never have to have any code on page's modal class...
+		base.OnBackButtonPressed();
+        _ = ((LedgerPageViewModel)BindingContext).UnsubscribeEvents();
+		return true;
+	}
 }
