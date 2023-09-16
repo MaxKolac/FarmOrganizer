@@ -2,6 +2,7 @@
 <mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                   xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels.PopUps"
+                  xmlns:model="clr-namespace:FarmOrganizer.Models"
                   xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
                   xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
                   x:Class="FarmOrganizer.Views.PopUps.LedgerFilterPopup"
@@ -12,6 +13,35 @@
     <ContentPage.Resources>
         <converter:SortingCriteriaToStringConverter x:Key="SortingCriteriaToStringConverter"/>
 
+        <DataTemplate x:DataType="model:Season" x:Key="SeasonDataTemplate">
+            <Label Text="{Binding .}" Style="{StaticResource VisualStates}"/>
+        </DataTemplate>
+        <DataTemplate x:DataType="model:CostType" x:Key="CostTypeDataTemplate">
+            <Label Text="{Binding .}" Style="{StaticResource VisualStates}"/>
+        </DataTemplate>
+
+        <Style TargetType="Label" x:Key="VisualStates">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" 
+                                        Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" 
+                                        Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+        
         <Style TargetType="Label" x:Key="BaseLabel">
             <Setter Property="FontSize" Value="16"/>
         </Style>
@@ -20,7 +50,8 @@
         </Style>
     </ContentPage.Resources>
     <Border WidthRequest="400"
-            HeightRequest="600">
+            HeightRequest="600"
+            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
         <Grid RowDefinitions="*, Auto"
               Margin="10"
               RowSpacing="5">
@@ -31,15 +62,19 @@
                     <Label Text="Uwzględnij tylko typy kosztów:" 
                            Style="{StaticResource BaseLabel}"/>
                     <CollectionView SelectionMode="Multiple"
+                                    ItemTemplate="{StaticResource CostTypeDataTemplate}"
                                     ItemsSource="{Binding AllCostTypes}"
-                                    SelectedItems="{Binding SelectedCostTypes}"/>
+                                    SelectedItems="{Binding SelectedCostTypes}"
+                                    VisualStateManager.VisualStateGroups="{StaticResource VisualStates}"/>
 
                     <!-- Seasons -->
                     <Label Text="Uwzględnij tylko sezony:" 
                            Style="{StaticResource BaseLabel}"/>
                     <CollectionView SelectionMode="Multiple"
+                                    ItemTemplate="{StaticResource SeasonDataTemplate}"
                                     ItemsSource="{Binding AllSeasons}"
-                                    SelectedItems="{Binding SelectedSeasons}"/>
+                                    SelectedItems="{Binding SelectedSeasons}"
+                                    VisualStateManager.VisualStateGroups="{StaticResource VisualStates}"/>
 
                     <!-- Custom Dates -->
                     <Label Text="Z okresu czasowego:" 
