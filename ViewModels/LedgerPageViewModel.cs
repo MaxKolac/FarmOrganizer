@@ -44,6 +44,7 @@ namespace FarmOrganizer.ViewModels
                 EarliestDate = DateTime.Now.AddMonths(-1),
                 LatestDate = DateTime.Now
             };
+            _filterSet.SelectedSeasonIds = new() { _filterSet.SelectedSeasonIds.Last() };
             try
             {
                 CostType.Validate(out List<CostType> allCostTypes);

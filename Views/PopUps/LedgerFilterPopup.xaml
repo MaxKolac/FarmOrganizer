@@ -11,30 +11,36 @@
                   BackgroundColor="#80000000"
                   CloseWhenBackgroundIsClicked="False">
     <ContentPage.Resources>
+        <!-- Note to self: NEVER touch those DataTemplates and that VisualStateManager -->
+        <!-- Unless you want to painstakingly recompile a Release build 700x times just to get it working again. -->
         <converter:SortingCriteriaToStringConverter x:Key="SortingCriteriaToStringConverter"/>
 
         <DataTemplate x:DataType="model:Season" x:Key="SeasonDataTemplate">
-            <Label Text="{Binding .}" Style="{StaticResource VisualStates}"/>
+            <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
         </DataTemplate>
         <DataTemplate x:DataType="model:CostType" x:Key="CostTypeDataTemplate">
-            <Label Text="{Binding .}" Style="{StaticResource VisualStates}"/>
+            <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
         </DataTemplate>
 
-        <Style TargetType="Label" x:Key="VisualStates">
-            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+        <Style TargetType="Label" x:Key="VisualStatesLabel">
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">
                         <VisualState x:Name="Normal">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" 
-                                        Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"/>
+                                <Setter Property="Background" 
+                                        Value="{AppThemeBinding Light={StaticResource WhiteBrush}, Dark={StaticResource BlackBrush}}"/>
+                                <Setter Property="TextColor"
+                                        Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+                                <Setter Property="FontAttributes" Value="None"/>
                             </VisualState.Setters>
                         </VisualState>
                         <VisualState x:Name="Selected">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" 
-                                        Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}"/>
+                                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                                <Setter Property="TextColor" Value="{StaticResource White}"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
@@ -64,8 +70,7 @@
                     <CollectionView SelectionMode="Multiple"
                                     ItemTemplate="{StaticResource CostTypeDataTemplate}"
                                     ItemsSource="{Binding AllCostTypes}"
-                                    SelectedItems="{Binding SelectedCostTypes}"
-                                    VisualStateManager.VisualStateGroups="{StaticResource VisualStates}"/>
+                                    SelectedItems="{Binding SelectedCostTypes}"/>
 
                     <!-- Seasons -->
                     <Label Text="Uwzględnij tylko sezony:" 
@@ -73,8 +78,7 @@
                     <CollectionView SelectionMode="Multiple"
                                     ItemTemplate="{StaticResource SeasonDataTemplate}"
                                     ItemsSource="{Binding AllSeasons}"
-                                    SelectedItems="{Binding SelectedSeasons}"
-                                    VisualStateManager.VisualStateGroups="{StaticResource VisualStates}"/>
+                                    SelectedItems="{Binding SelectedSeasons}"/>
 
                     <!-- Custom Dates -->
                     <Label Text="Z okresu czasowego:" 
