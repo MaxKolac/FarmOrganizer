@@ -11,8 +11,8 @@ namespace FarmOrganizer.ViewModels.PopUps
 {
     public partial class LedgerFilterPopupViewModel : ObservableObject
     {
-        public delegate void LedgerFilterPopupEventHandler(FilterSetEventArgs args);
-        public static event LedgerFilterPopupEventHandler OnFilterSetCreated;
+        public static event EventHandler<LedgerFilterSet> OnFilterSetCreated;
+        public static event EventHandler OnPageQuit;
 
         private readonly LedgerFilterSet _filterSet;
         private readonly IPopupNavigation _popUpSvc;
@@ -153,12 +153,16 @@ namespace FarmOrganizer.ViewModels.PopUps
                 SortingMethod = SelectedSortMethod,
                 DescendingSort = UseDescendingSortOrder
             };
-            OnFilterSetCreated?.Invoke(new FilterSetEventArgs(newFilterSet));
+            OnFilterSetCreated?.Invoke(this, newFilterSet);
             Pop();
         }
-        
+
         [RelayCommand]
-        private void Pop() => _popUpSvc.PopAsync();
+        private void Pop()
+        {
+            OnPageQuit?.Invoke(this, null);
+            _popUpSvc.PopAsync();
+        }
 
         //TODO: applies to all partial methods below - load default timespan from Preferences
         partial void OnUseCustomEarliestDateChanged(bool oldValue, bool newValue) => 

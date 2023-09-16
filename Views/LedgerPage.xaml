@@ -17,7 +17,7 @@
         <ToolbarItem Text="Dodaj nowy wpis" Command="{Binding AddRecordCommand}"/>
     </ContentPage.ToolbarItems>
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding UnsubscribeEventsCommand}"/>
+        <BackButtonBehavior Command="{Binding ReturnToPreviousPageCommand}"/>
     </Shell.BackButtonBehavior>
 
     <Grid RowDefinitions="auto,*,.1*"

@@ -67,8 +67,7 @@ namespace FarmOrganizer.ViewModels
         Season selectedSeason;
         #endregion
 
-        public delegate void LedgerRecordPageEventHandler();
-        public static event LedgerRecordPageEventHandler OnPageQuit;
+        public static event EventHandler OnPageQuit;
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
@@ -196,9 +195,9 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static async Task ReturnToPreviousPage()
+        private async Task ReturnToPreviousPage()
         {
-            OnPageQuit?.Invoke();
+            OnPageQuit?.Invoke(this, null);
             await Shell.Current.GoToAsync("..");
         }
     }

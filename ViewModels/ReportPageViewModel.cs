@@ -44,8 +44,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private CostType selectedCostType;
 
-        public delegate void ReportPageEventHandler();
-        public static event ReportPageEventHandler OnPageQuit;
+        public static event EventHandler OnPageQuit;
 
         public ReportPageViewModel()
         {
@@ -122,13 +121,13 @@ namespace FarmOrganizer.ViewModels
                         DateStart = DateTime.Now,
                         DateEnd = DateTime.MaxValue,
                         HasConcluded = false
-                OnPageQuit?.Invoke();
                     };
                     Season.AddEntry(newSeason);
                 }
                 context.BalanceLedgers.Add(newEntry);
                 context.SaveChanges();
                 await Shell.Current.GoToAsync("..");
+                OnPageQuit?.Invoke(this, null);
             }
             catch (Exception ex)
             {

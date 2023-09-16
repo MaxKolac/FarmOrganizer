@@ -30,6 +30,7 @@ namespace FarmOrganizer.ViewModels
         {
             LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit += QueryLedgerEntries;
+            LedgerFilterPopupViewModel.OnPageQuit += EnableFilterPopupButton;
             LedgerFilterPopupViewModel.OnFilterSetCreated += ApplyFilters;
             _popUpSvc = popupNavigation;
             _filterSet = new()
@@ -62,7 +63,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        public async Task UnsubscribeEvents()
+        public async Task ReturnToPreviousPage()
         {
             LedgerRecordPageViewModel.OnPageQuit -= QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit -= QueryLedgerEntries;
@@ -110,7 +111,7 @@ namespace FarmOrganizer.ViewModels
             }
             finally
             {
-                QueryLedgerEntries();
+                QueryLedgerEntries(this, null);
             }
         }
 
@@ -130,13 +131,13 @@ namespace FarmOrganizer.ViewModels
         private void FilterAndSortRecords() => 
             _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
 
-        private void ApplyFilters(FilterSetEventArgs args)
+        private void ApplyFilters(object sender, LedgerFilterSet newSet)
         {
-            _filterSet = args.FilterSet;
-            QueryLedgerEntries();
+            _filterSet = newSet;
+            QueryLedgerEntries(this, null);
         }
 
-        public void QueryLedgerEntries()
+        public void QueryLedgerEntries(object sender, EventArgs e)
         {
             try
             {
@@ -178,7 +179,7 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
-        partial void OnSelectedCropFieldChanged(CropField value)
-            => QueryLedgerEntries();
+        partial void OnSelectedCropFieldChanged(CropField value) => 
+            QueryLedgerEntries(this, null);
     }
 }
