@@ -117,7 +117,7 @@ namespace FarmOrganizer.ViewModels.PopUps
             {
                 await App.AlertSvc.ShowAlertAsync(
                     "Brak wybranych kosztów",
-                    "Nie wybrano żadnych rodzajów kosztów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na pomarańczowo rodzaje kosztów, które mają posiadać wpisy aby zostały pokazane.");
+                    "Nie wybrano żadnych rodzajów kosztów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono rodzaje kosztów, które mają posiadać wpisy aby zostały pokazane.");
                 return;
             }
 
@@ -130,7 +130,7 @@ namespace FarmOrganizer.ViewModels.PopUps
             {
                 await App.AlertSvc.ShowAlertAsync(
                     "Brak wybranych sezonów",
-                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na pomarańczowo sezony, z których wpisy mają być pokazane.");
+                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono sezony, z których wpisy mają być pokazane.");
                 return;
             }
 
