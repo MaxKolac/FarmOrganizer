@@ -246,7 +246,7 @@
                        IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
                 <Label Text="Kategoria nowego wpisu:"/>
                 <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
-                <Button Text="Dodaj zysk po wydatkach jako wpis"
+                <Button Text="Dodaj zysk ze sprzedaży (bez wydatków) jako wpis"
                         Command="{Binding AddNewLedgerEntryCommand}"/>
             </VerticalStackLayout>
         </StackLayout>

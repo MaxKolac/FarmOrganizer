@@ -63,6 +63,10 @@ public partial class Season : IValidatable<Season>
         using var context = new DatabaseContext();
         Season seasonToEnd = context.Seasons.Find(GetCurrentSeason().Id);
 
+        //New season cannot have empty name
+        if (string.IsNullOrEmpty(entry.Name))
+            throw new InvalidRecordException("Nazwa sezonu", "Pusta");
+
         //New season cannot start before the previous one started
         if (seasonToEnd.DateStart >= entry.DateStart)
             throw new InvalidRecordException("Data rozpoczęcia", entry.DateStart.ToShortDateString());

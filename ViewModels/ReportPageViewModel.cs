@@ -111,20 +111,23 @@ namespace FarmOrganizer.ViewModels
                     IdCropField = PassedCropField.Id,
                     IdSeason = PassedSeason.Id,
                     DateAdded = DateTime.Now,
-                    BalanceChange = ProfitAfterExpenses
+                    BalanceChange = Utils.CastToValue(PureIncomeValue),
+                    Notes = $"Sprzedaż {CropAmountValue} kg przy stawce {SellRateValue} zł za kilo."
                 };
-                context.BalanceLedgers.Add(newEntry);
-                context.SaveChanges();
                 if (AddNewSeasonAfterSaving)
-                    Season.AddEntry(new() 
+                {
+                    Season newSeason = new()
                     {
-                        Name = NewSeasonName, 
+                        Name = NewSeasonName,
                         DateStart = DateTime.Now,
                         DateEnd = DateTime.MaxValue,
                         HasConcluded = false
-                    }
-                    );
                 OnPageQuit?.Invoke();
+                    };
+                    Season.AddEntry(newSeason);
+                }
+                context.BalanceLedgers.Add(newEntry);
+                context.SaveChanges();
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
