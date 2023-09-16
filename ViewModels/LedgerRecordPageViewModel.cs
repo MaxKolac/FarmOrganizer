@@ -52,40 +52,49 @@ namespace FarmOrganizer.ViewModels
 
         #region Picker ItemSources
         [ObservableProperty]
-        List<CropField> cropFields;
+        List<CropField> cropFields = new();
         [ObservableProperty]
         CropField selectedCropField;
 
         [ObservableProperty]
-        List<CostType> costTypes;
+        List<CostType> costTypes = new();
         [ObservableProperty]
         CostType selectedCostType;
 
         [ObservableProperty]
-        List<Season> seasons;
+        List<Season> seasons = new();
         [ObservableProperty]
         Season selectedSeason;
         #endregion
 
         public static event EventHandler OnPageQuit;
 
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        public LedgerRecordPageViewModel()
         {
-            PageMode = query["mode"] as string;
-            RecordId = (int)query["id"];
-            QuerriedCropFieldId = (int)query["cropFieldId"];
-
             try
             {
-                using var context = new DatabaseContext();
-                CostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
-                CropFields = context.CropFields.ToList();
-                Seasons = context.Seasons.ToList();
+                CostType.Validate(out List<CostType> allCostTypes);
+                CostTypes.AddRange(allCostTypes.OrderBy(cost => cost.Name).ToList());
+
+                CropField.Validate(out var allCropFields);
+                CropFields.AddRange(allCropFields);
+
+                Season.Validate(out var allSeasons);
+                Seasons.AddRange(allSeasons);
+
+                SelectedSeason = Seasons.Find(season => season.Id == Season.GetCurrentSeason().Id);
             }
             catch (Exception ex)
             {
                 new ExceptionHandler(ex).ShowAlert();
             }
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            PageMode = query["mode"] as string;
+            RecordId = (int)query["id"];
+            QuerriedCropFieldId = (int)query["cropFieldId"];
 
             switch (PageMode)
             {
@@ -94,8 +103,7 @@ namespace FarmOrganizer.ViewModels
                     SaveButtonText = "Dodaj i zapisz";
                     SelectedCostType = CostTypes.First();
                     SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
-                    //This isnt showing ???? burh
-                    SelectedSeason = Season.GetCurrentSeason();
+                    //SelectedSeason
                     DateAdded = DateTime.Now;
                     BalanceChange = "0";
                     Notes = string.Empty;
@@ -114,25 +122,11 @@ namespace FarmOrganizer.ViewModels
                         BalanceChange = result.BalanceChange.ToString();
                         Notes = result.Notes;
                     }
-                    catch (NullReferenceException)
+                    catch (Exception ex)
                     {
-                        //Should be thrown when:
-                        //No record was found - result is returned as null
-                        NoRecordFoundException ex = new(
-                            nameof(DatabaseContext.BalanceLedgers),
-                            $"Id = {RecordId}"
-                            );
                         new ExceptionHandler(ex).ShowAlert();
                     }
-                    catch (Exception ex1)
-                    {
-                        new ExceptionHandler(ex1).ShowAlert();
-                    }
-                    break;
-                default:
-                    InvalidPageQueryException ex2 = new(query);
-                    new ExceptionHandler(ex2).ShowAlert();
-                    break;
+                break;
             }
         }
 
