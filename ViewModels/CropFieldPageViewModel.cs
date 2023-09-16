@@ -10,7 +10,7 @@ namespace FarmOrganizer.ViewModels
     public partial class CropFieldPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private List<CropField> cropFields;
+        private List<CropField> cropFields = new();
 
         [ObservableProperty]
         private bool showCreatorFrame = false;
@@ -30,8 +30,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                using var context = new DatabaseContext();
-                CropFields = context.CropFields.ToList();
+                CropField.Validate(out List<CropField> allEntries);
+                CropFields.AddRange(allEntries);
             }
             catch (Exception ex)
             {
@@ -44,7 +44,6 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                using var context = new DatabaseContext();
                 decimal hectares = Utils.CastToValue(CropFieldHectares);
                 if (hectares <= 0)
                     throw new InvalidRecordException("Pole powierzchni", hectares.ToString());
@@ -56,17 +55,20 @@ namespace FarmOrganizer.ViewModels
                         Name = CropFieldName,
                         Hectares = hectares
                     };
-                    context.CropFields.Add(newField); 
+                    CropField.AddEntry(newField);
                 }
                 else if (editingEntry)
                 {
-                    CropField existingField = context.CropFields.Find(editedEntryId);
-                    existingField.Name = CropFieldName;
-                    existingField.Hectares = hectares;
+                    CropField newFieldValues = new()
+                    {
+                        Id = editedEntryId,
+                        Name = CropFieldName,
+                        Hectares = hectares
+                    };
+                    CropField.EditEntry(newFieldValues);
                 }
 
-                context.SaveChanges();
-                CropFields = context.CropFields.ToList();
+                CropFields = new DatabaseContext().CropFields.ToList();
                 ToggleAdding();
             }
             catch (Exception ex)
@@ -98,10 +100,7 @@ namespace FarmOrganizer.ViewModels
                 return;
             try
             {
-                using var context = new DatabaseContext();
-                context.CropFields.Remove(cropFieldToRemove);
-                context.SaveChanges();
-                CropFields = context.CropFields.ToList();
+                CropField.DeleteEntry(cropFieldToRemove);
             }
             catch (Exception ex)
             {
