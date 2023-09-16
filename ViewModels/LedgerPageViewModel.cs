@@ -23,6 +23,9 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private CropField selectedCropField;
 
+        [ObservableProperty]
+        private bool filterPopupButtonEnabled = true;
+
         private LedgerFilterSet _filterSet;
         private readonly IPopupNavigation _popUpSvc;
 
@@ -128,13 +131,17 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void FilterAndSortRecords() => 
+        private void FilterAndSortRecords()
+        {
+            FilterPopupButtonEnabled = false;
             _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
+        }
 
         private void ApplyFilters(object sender, LedgerFilterSet newSet)
         {
             _filterSet = newSet;
             QueryLedgerEntries(this, null);
+            FilterPopupButtonEnabled = true;
         }
 
         public void QueryLedgerEntries(object sender, EventArgs e)
@@ -178,6 +185,9 @@ namespace FarmOrganizer.ViewModels
                 new ExceptionHandler(ex).ShowAlert();
             }
         }
+
+        public void EnableFilterPopupButton(object sender, EventArgs e) =>
+            FilterPopupButtonEnabled = true;
 
         partial void OnSelectedCropFieldChanged(CropField value) => 
             QueryLedgerEntries(this, null);

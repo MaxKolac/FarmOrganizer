@@ -73,7 +73,7 @@
                                        HorizontalTextAlignment="End" />
                                 <Label Text="{Binding Notes}"
                                        Grid.Row="1" 
-                                       Grid.ColumnSpan="2" 
+                                       Grid.ColumnSpan="3" 
                                        FontAttributes="Italic" />
                             </Grid>
                         </Frame>
@@ -85,6 +85,7 @@
         <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
             <Button Text="Filtruj i sortuj..." 
                     LineBreakMode="CharacterWrap"
+                    IsEnabled="{Binding FilterPopupButtonEnabled}"
                     Command="{Binding FilterAndSortRecordsCommand}"
                     Margin="2"/>
             <Button Text="Generuj raport i oblicz" 

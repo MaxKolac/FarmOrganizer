@@ -8,7 +8,7 @@
                   x:DataType="viewmodel:LedgerFilterPopupViewModel"
                   Title="Ustawienia filtrów"
                   BackgroundColor="#80000000"
-                  CloseWhenBackgroundIsClicked="True">
+                  CloseWhenBackgroundIsClicked="False">
     <ContentPage.Resources>
         <converter:SortingCriteriaToStringConverter x:Key="SortingCriteriaToStringConverter"/>
 
