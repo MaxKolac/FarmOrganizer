@@ -90,7 +90,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static async Task Remove(CropField cropFieldToRemove)
+        private async Task Remove(CropField cropFieldToRemove)
         {
             if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
@@ -101,6 +101,7 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 CropField.DeleteEntry(cropFieldToRemove);
+                CropFields = new DatabaseContext().CropFields.ToList();
             }
             catch (Exception ex)
             {
