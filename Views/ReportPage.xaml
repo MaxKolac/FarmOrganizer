@@ -185,7 +185,7 @@
                     <!-- Sell rate -->
                     <Label Grid.Row="4" 
                            Grid.ColumnSpan="2" 
-                           Text="Cena za kilogram (zł):"
+                           Text="Cena za kilogram (zł/kg):"
                            Style="{StaticResource QuickCalcLabel}"/>
                     <Entry x:Name="sellRate"
                            Grid.Row="5"

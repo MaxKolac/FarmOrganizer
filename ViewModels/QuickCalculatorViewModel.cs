@@ -42,11 +42,11 @@ namespace FarmOrganizer.ViewModels
 
             if (lastEditedControls.Contains(pureIncomeName) && lastEditedControls.Contains(sellRateName))
             {
-                CropAmountValue = (PureIncome / SellRate).ToString();
+                CropAmountValue = SellRate != 0 ? (PureIncome / SellRate).ToString() : "0";
             }
             else if (lastEditedControls.Contains(pureIncomeName) && lastEditedControls.Contains(cropAmountName))
             {
-                SellRateValue = (PureIncome / CropAmount).ToString();
+                SellRateValue = CropAmount != 0 ? (PureIncome / CropAmount).ToString() : "0";
             }
             else if (lastEditedControls.Contains(cropAmountName) && lastEditedControls.Contains(sellRateName))
             {
