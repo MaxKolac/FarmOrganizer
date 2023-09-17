@@ -35,6 +35,7 @@ namespace FarmOrganizer.ViewModels
         private decimal profitAfterExpenses = 0.0m;
         #endregion
 
+        #region Properties related to adding new records
         [ObservableProperty]
         private bool addNewSeasonAfterSaving = false;
         [ObservableProperty]
@@ -43,6 +44,7 @@ namespace FarmOrganizer.ViewModels
         private List<CostType> costTypes;
         [ObservableProperty]
         private CostType selectedCostType;
+        #endregion
 
         public static event EventHandler OnPageQuit;
 
@@ -111,8 +113,9 @@ namespace FarmOrganizer.ViewModels
                     IdSeason = PassedSeason.Id,
                     DateAdded = DateTime.Now,
                     BalanceChange = Utils.CastToValue(PureIncomeValue),
-                    Notes = $"Sprzedaż {CropAmountValue} kg przy stawce {SellRateValue} zł za kilo."
+                    Notes = $"Sprzedaż {Utils.CastToValue(CropAmountValue)} kg przy stawce {Utils.CastToValue(SellRateValue)} zł za kilo."
                 };
+                context.BalanceLedgers.Add(newEntry);
                 if (AddNewSeasonAfterSaving)
                 {
                     Season newSeason = new()
@@ -124,10 +127,9 @@ namespace FarmOrganizer.ViewModels
                     };
                     Season.AddEntry(newSeason);
                 }
-                context.BalanceLedgers.Add(newEntry);
                 context.SaveChanges();
-                await Shell.Current.GoToAsync("..");
                 OnPageQuit?.Invoke(this, null);
+                await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
             {
