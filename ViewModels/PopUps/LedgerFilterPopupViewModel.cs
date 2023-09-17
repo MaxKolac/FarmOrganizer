@@ -95,9 +95,6 @@ namespace FarmOrganizer.ViewModels.PopUps
                 };
                 SelectedSortMethod = _filterSet.SortingMethod;
                 UseDescendingSortOrder = _filterSet.DescendingSort;
-
-                //what happens when ShowALert proceeds with true?
-                //throw new Exception("please break stuff");
             }
             catch (Exception ex)
             {
@@ -146,8 +143,8 @@ namespace FarmOrganizer.ViewModels.PopUps
             //Condition EarliestDate >= LatestDate is enforced in View
             var newFilterSet = new LedgerFilterSet(costTypeIds, seasons)
             {
-                EarliestDate = UseCustomEarliestDate ? SelectedEarliestDate : DateTime.MinValue,
-                LatestDate = UseCustomLatestDate ? SelectedLatestDate : DateTime.MaxValue,
+                EarliestDate = UseCustomEarliestDate ? SelectedEarliestDate.Date : DateTime.MinValue,
+                LatestDate = UseCustomLatestDate ? SelectedLatestDate.Date.AddDays(1).AddMicroseconds(-1) : DateTime.MaxValue,
                 SmallestBalanceChange = UseCustomSmallestChange ? SmallestBalanceChange : decimal.MinValue,
                 LargestBalanceChange = UseCustomLargestChange ? LargestBalanceChange : decimal.MaxValue,
                 SortingMethod = SelectedSortMethod,

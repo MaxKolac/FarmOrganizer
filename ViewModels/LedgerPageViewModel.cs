@@ -42,7 +42,7 @@ namespace FarmOrganizer.ViewModels
                 SmallestBalanceChange = 0,
                 LargestBalanceChange = 999_999m,
                 EarliestDate = DateTime.Now.AddMonths(-1),
-                LatestDate = DateTime.Now
+                LatestDate = DateTime.Now.Date.AddDays(1).AddMicroseconds(-1)
             };
             _filterSet.SelectedSeasonIds = new() { _filterSet.SelectedSeasonIds.Last() };
             try
@@ -71,6 +71,7 @@ namespace FarmOrganizer.ViewModels
         {
             LedgerRecordPageViewModel.OnPageQuit -= QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit -= QueryLedgerEntries;
+            LedgerFilterPopupViewModel.OnPageQuit -= EnableFilterPopupButton;
             LedgerFilterPopupViewModel.OnFilterSetCreated -= ApplyFilters;
             await Shell.Current.GoToAsync("..");
 
