@@ -21,33 +21,34 @@ namespace FarmOrganizer.ViewModels
         /// The mode in which this page has been opened. It could be used for either adding a new record, or editing an existing one. Use one of those modes by passing a string <c>add</c> or <c>edit</c>, all lowercase.
         /// </summary>
         [ObservableProperty]
-        string pageMode;
+        private string pageMode;
         /// <summary>
         /// If the page was openned in <c>edit</c> mode, this is the unique ID of the record to edit. Otherwise, this property is ignored.
         /// </summary>
         [ObservableProperty]
-        int recordId;
+        private int recordId;
         /// <summary>
         /// If the page is opened in <c>add</c> mode, this is a value that is automatically assigned to the new record's <c>IdCropField</c> property. In <c>edit</c> mode, it is ignored.
         /// </summary>
         [ObservableProperty]
-        int querriedCropFieldId;
+        private int querriedCropFieldId;
         #endregion
 
         #region Record Properties
         [ObservableProperty]
-        DateTime dateAdded;
+        private DateTime dateAdded;
+        private DateTime dateAddedCorrected;
         [ObservableProperty]
-        string balanceChange;
+        private string balanceChange;
         [ObservableProperty]
-        string notes;
+        private string notes;
         #endregion
 
         #region Mode-specific Strings
         [ObservableProperty]
-        string titleText;
+        private string titleText;
         [ObservableProperty]
-        string saveButtonText;
+        private string saveButtonText;
         #endregion
 
         #region Picker ItemSources
@@ -104,6 +105,7 @@ namespace FarmOrganizer.ViewModels
                     SelectedCostType = CostTypes.First();
                     SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
                     //SelectedSeason
+                    dateAddedCorrected = DateTime.Now;
                     DateAdded = DateTime.Now;
                     BalanceChange = "0";
                     Notes = string.Empty;
@@ -118,6 +120,7 @@ namespace FarmOrganizer.ViewModels
                         SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
                         SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
                         SelectedSeason = Seasons.Find(season => season.Id == result.IdSeason);
+                        dateAddedCorrected = result.DateAdded;
                         DateAdded = result.DateAdded;
                         BalanceChange = result.BalanceChange.ToString();
                         Notes = result.Notes;
@@ -126,7 +129,7 @@ namespace FarmOrganizer.ViewModels
                     {
                         new ExceptionHandler(ex).ShowAlert();
                     }
-                break;
+                    break;
             }
         }
 
@@ -139,13 +142,21 @@ namespace FarmOrganizer.ViewModels
                 switch (PageMode)
                 {
                     case "add":
+                        var dateTime = new DateTime(
+                            dateAddedCorrected.Year,
+                            dateAddedCorrected.Month,
+                            dateAddedCorrected.Day,
+                            DateTime.Now.Hour,
+                            DateTime.Now.Minute,
+                            DateTime.Now.Second
+                            );
                         BalanceLedger newRecord = new()
                         {
                             IdCostType = SelectedCostType.Id,
                             IdCropField = SelectedCropField.Id,
                             IdSeason = SelectedSeason.Id,
-                            DateAdded = this.DateAdded,
-                            BalanceChange = 
+                            DateAdded = dateTime,
+                            BalanceChange =
                             Math.Abs(
                                 Math.Round(
                                     Utils.CastToValue(this.BalanceChange.ToString()), 2)),
@@ -160,7 +171,7 @@ namespace FarmOrganizer.ViewModels
                         existingRecord.IdCostType = SelectedCostType.Id;
                         existingRecord.IdCropField = SelectedCropField.Id;
                         existingRecord.IdSeason = SelectedSeason.Id;
-                        existingRecord.DateAdded = DateAdded;
+                        existingRecord.DateAdded = dateAddedCorrected;
                         existingRecord.BalanceChange =
                             Math.Abs(
                                 Math.Round(
@@ -170,20 +181,6 @@ namespace FarmOrganizer.ViewModels
                         await ReturnToPreviousPage();
                         break;
                 }
-            }
-            catch (DbUpdateException ex)
-            {
-                //Thrown when:
-                //Constraint is failed - basic code 19
-                new ExceptionHandler((SqliteException)ex.InnerException).ShowAlert();
-            }
-            catch (NullReferenceException)
-            {
-                NoRecordFoundException ex = new(
-                    nameof(DatabaseContext.BalanceLedgers),
-                    $"If = {RecordId}"
-                    );
-                new ExceptionHandler(ex).ShowAlert();
             }
             catch (Exception ex)
             {
@@ -196,6 +193,20 @@ namespace FarmOrganizer.ViewModels
         {
             OnPageQuit?.Invoke(this, null);
             await Shell.Current.GoToAsync("..");
+        }
+
+        partial void OnDateAddedChanged(DateTime oldValue, DateTime newValue)
+        {
+            dateAddedCorrected = new DateTime(
+                newValue.Year,
+                newValue.Month,
+                newValue.Day,
+                dateAddedCorrected.Hour,
+                dateAddedCorrected.Minute,
+                dateAddedCorrected.Second,
+                dateAddedCorrected.Millisecond,
+                dateAddedCorrected.Microsecond
+                );
         }
     }
 }
