@@ -16,13 +16,21 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Dodaj nowy wpis" Command="{Binding AddRecordCommand}"/>
     </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <Style TargetType="Label" x:Key="SwipeViewLabel">
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="VerticalOptions" Value="Center"/>
+        </Style>
+        <Style TargetType="Frame" x:Key="SwipeViewFrame">
+            <Setter Property="VerticalOptions" Value="FillAndExpand"/>
+        </Style>
+    </ContentPage.Resources>
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding ReturnToPreviousPageCommand}"/>
     </Shell.BackButtonBehavior>
 
     <Grid RowDefinitions="auto,*,.1*"
           Padding="5">
-        <!-- AFAIK, there is no way to apply DataTemplate's magic to items present inside a Picker. This might become an issue if ToString() override for CropField class needs to be different. -->
         <Picker Title="Wybierz pole uprawne" 
                 ItemsSource="{Binding CropFields}"
                 SelectedItem="{Binding SelectedCropField}">
@@ -36,10 +44,11 @@
                             <SwipeItems>
                                 <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}" 
                                                CommandParameter="{Binding .}">
-                                    <Frame BackgroundColor="LightYellow">
-                                        <Label Text="Edytuj" 
-                                               TextColor="Black"
-                                               FontAttributes="Bold"/>
+                                    <Frame Style="{StaticResource SwipeViewFrame}"
+                                           BackgroundColor="LightYellow">
+                                        <Label Style="{StaticResource SwipeViewLabel}"
+                                               Text="Edytuj" 
+                                               TextColor="Black"/>
                                     </Frame>
                                 </SwipeItemView>
                             </SwipeItems>
@@ -48,33 +57,46 @@
                             <SwipeItems>
                                 <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"
                                                CommandParameter="{Binding .}">
-                                    <Frame BackgroundColor="Firebrick">
-                                        <Label Text="Usuń"
-                                               TextColor="White"
-                                               FontAttributes="Bold"/>
+                                    <Frame Style="{StaticResource SwipeViewFrame}"
+                                           BackgroundColor="Firebrick">
+                                        <Label Style="{StaticResource SwipeViewLabel}"
+                                               Text="Usuń"
+                                               TextColor="White"/>
                                     </Frame>
                                 </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.RightItems>
 
                         <Frame Style="{StaticResource TableEntryFrame}">
-                            <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, Auto">
-                                <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
-                                       HorizontalTextAlignment="Start"
-                                       FontAttributes="Bold"
-                                       FontSize="20" />
+                            <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, Auto, Auto">
                                 <Label Text="{Binding IdCostTypeNavigation.Name}"
-                                       Grid.Column="1" 
                                        FontSize="16"
-                                       HorizontalTextAlignment="Center" />
-                                <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy}'}" 
+                                       FontAttributes="Bold"
+                                       HorizontalTextAlignment="Start"/>
+                                <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
+                                       Grid.Row="1"
+                                       FontAttributes="Bold"
+                                       FontSize="20"
+                                       HorizontalTextAlignment="Start"/>
+
+                                <Label Text="{Binding IdSeasonNavigation.Name}"
                                        Grid.Column="2"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy }'}" 
+                                       Grid.Column="2"
+                                       Grid.Row="1"
                                        FontSize="16" 
-                                       HorizontalTextAlignment="End" />
+                                       FontAttributes="Italic"
+                                       HorizontalTextAlignment="End"/>
+
                                 <Label Text="{Binding Notes}"
-                                       Grid.Row="1" 
+                                       Grid.Row="2" 
                                        Grid.ColumnSpan="3" 
-                                       FontAttributes="Italic" />
+                                       LineBreakMode="WordWrap"
+                                       FontAttributes="Italic"
+                                       MinimumHeightRequest="0"/>
                             </Grid>
                         </Frame>
                     </SwipeView>
