@@ -5,6 +5,7 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -25,35 +26,28 @@ namespace FarmOrganizer.ViewModels
 
         public SettingsPageViewModel()
         {
-            try
-            {
-                using var context = new DatabaseContext();
-                AppThemes = new()
+            using var context = new DatabaseContext();
+            AppThemes = new()
                 {
                     AppThemeToStringConverter.Default,
                     AppThemeToStringConverter.Light,
                     AppThemeToStringConverter.Dark
                 };
-                SelectedTheme = Enum.Parse<AppTheme>(
-                    Preferences.Get(
-                        AppThemeKey,
-                        Enum.GetName(AppTheme.Unspecified)
-                        )
-                    );
+            SelectedTheme = Enum.Parse<AppTheme>(
+                Preferences.Get(
+                    AppThemeKey,
+                    Enum.GetName(AppTheme.Unspecified)
+                    )
+                );
 
-                CropFields = context.CropFields.ToList();
-                DefaultCropField = context.CropFields.Find(
-                    Preferences.Get(
-                        LedgerPage_DefaultCropField,
-                        context.CropFields.First().Id
-                        )
-                    );
-                DefaultCropField ??= CropFields.First();
-            }
-            catch (Exception ex)
-            {
-                new ExceptionHandler(ex).ShowAlert();
-            }
+            CropFields = context.CropFields.ToList();
+            DefaultCropField = context.CropFields.Find(
+                Preferences.Get(
+                    LedgerPage_DefaultCropField,
+                    context.CropFields.First().Id
+                    )
+                );
+            DefaultCropField ??= CropFields.First();
         }
 
         public static void ApplyPreferences()
@@ -101,9 +95,9 @@ namespace FarmOrganizer.ViewModels
                     $"Baza danych została pomyślnie wyeksportowana do lokalizacji: {folder.Folder.Path}"
                     );
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -126,10 +120,10 @@ namespace FarmOrganizer.ViewModels
                     );
                 DatabaseFile.DeleteBackup();
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 await DatabaseFile.RestoreBackup();
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
     }

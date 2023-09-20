@@ -31,9 +31,9 @@ namespace FarmOrganizer.ViewModels
                 CostType.Validate(out List<CostType> allEntries);
                 CostTypes.AddRange(allEntries);
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -65,9 +65,13 @@ namespace FarmOrganizer.ViewModels
                 CostTypes = new DatabaseContext().CostTypes.ToList();
                 ToggleAdding();
             }
-            catch (Exception ex)
+            catch (InvalidRecordPropertyException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (NoRecordFoundException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -97,9 +101,9 @@ namespace FarmOrganizer.ViewModels
                 CostType.DeleteEntry(costToRemove);
                 CostTypes = new DatabaseContext().CostTypes.ToList();
             }
-            catch (Exception ex)
+            catch (RecordDeletionException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 

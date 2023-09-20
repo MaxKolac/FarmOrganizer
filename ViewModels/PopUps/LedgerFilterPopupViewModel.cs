@@ -62,44 +62,37 @@ namespace FarmOrganizer.ViewModels.PopUps
         {
             _filterSet = filterSet;
             _popUpSvc = popupNavigation;
-            try
-            {
-                using var context = new DatabaseContext();
+            using var context = new DatabaseContext();
 
-                AllCostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
-                foreach (int id in _filterSet.SelectedCostTypeIds)
-                    SelectedCostTypes.Add(context.CostTypes.Find(id));
+            AllCostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
+            foreach (int id in _filterSet.SelectedCostTypeIds)
+                SelectedCostTypes.Add(context.CostTypes.Find(id));
 
-                AllSeasons = context.Seasons.ToList();
-                foreach (int id in _filterSet.SelectedSeasonIds)
-                    SelectedSeasons.Add(context.Seasons.Find(id));
+            AllSeasons = context.Seasons.ToList();
+            foreach (int id in _filterSet.SelectedSeasonIds)
+                SelectedSeasons.Add(context.Seasons.Find(id));
 
-                UseCustomEarliestDate = _filterSet.EarliestDate != DateTime.MinValue;
-                SelectedEarliestDate = UseCustomEarliestDate ? _filterSet.EarliestDate : DateTime.MinValue;
+            UseCustomEarliestDate = _filterSet.EarliestDate != DateTime.MinValue;
+            SelectedEarliestDate = UseCustomEarliestDate ? _filterSet.EarliestDate : DateTime.MinValue;
 
-                UseCustomLatestDate = _filterSet.LatestDate != DateTime.MaxValue;
-                SelectedLatestDate = UseCustomLatestDate ? _filterSet.LatestDate : DateTime.MaxValue;
+            UseCustomLatestDate = _filterSet.LatestDate != DateTime.MaxValue;
+            SelectedLatestDate = UseCustomLatestDate ? _filterSet.LatestDate : DateTime.MaxValue;
 
-                UseCustomSmallestChange = _filterSet.SmallestBalanceChange != decimal.MinValue;
-                SmallestBalanceChange = UseCustomSmallestChange ? _filterSet.SmallestBalanceChange : decimal.MinValue;
+            UseCustomSmallestChange = _filterSet.SmallestBalanceChange != decimal.MinValue;
+            SmallestBalanceChange = UseCustomSmallestChange ? _filterSet.SmallestBalanceChange : decimal.MinValue;
 
-                UseCustomLargestChange = _filterSet.LargestBalanceChange != decimal.MaxValue;
-                LargestBalanceChange = UseCustomLargestChange ? _filterSet.LargestBalanceChange : decimal.MaxValue;
+            UseCustomLargestChange = _filterSet.LargestBalanceChange != decimal.MaxValue;
+            LargestBalanceChange = UseCustomLargestChange ? _filterSet.LargestBalanceChange : decimal.MaxValue;
 
-                SortMethods = new()
+            SortMethods = new()
                 {
                     SortingCriteriaToStringConverter.DateAdded,
                     SortingCriteriaToStringConverter.BalanceChange,
                     SortingCriteriaToStringConverter.CostTypes,
                     SortingCriteriaToStringConverter.SeasonStartDate
                 };
-                SelectedSortMethod = _filterSet.SortingMethod;
-                UseDescendingSortOrder = _filterSet.DescendingSort;
-            }
-            catch (Exception ex)
-            {
-                new ExceptionHandler(ex).ShowAlert(false);
-            }
+            SelectedSortMethod = _filterSet.SortingMethod;
+            UseDescendingSortOrder = _filterSet.DescendingSort;
         }
 
         [RelayCommand]
@@ -162,16 +155,16 @@ namespace FarmOrganizer.ViewModels.PopUps
         }
 
         //TODO: applies to all partial methods below - load default timespan from Preferences
-        partial void OnUseCustomEarliestDateChanged(bool oldValue, bool newValue) => 
+        partial void OnUseCustomEarliestDateChanged(bool oldValue, bool newValue) =>
             SelectedEarliestDate = newValue ? DateTime.Now.AddMonths(-1) : DateTime.MinValue;
 
-        partial void OnUseCustomLatestDateChanged(bool oldValue, bool newValue) => 
+        partial void OnUseCustomLatestDateChanged(bool oldValue, bool newValue) =>
             SelectedLatestDate = newValue ? DateTime.Now : DateTime.MaxValue;
 
-        partial void OnUseCustomSmallestChangeChanged(bool value) => 
+        partial void OnUseCustomSmallestChangeChanged(bool value) =>
             SmallestBalanceChange = 0.00m;
 
-        partial void OnUseCustomLargestChangeChanged(bool value) => 
+        partial void OnUseCustomLargestChangeChanged(bool value) =>
             LargestBalanceChange = 999_999m;
     }
 }

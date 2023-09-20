@@ -60,9 +60,9 @@ namespace FarmOrganizer.ViewModels
                     );
                 SelectedCropField ??= CropFields.First();
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -104,20 +104,10 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void DeleteRecord(BalanceLedger record)
         {
-            try
-            { 
-                using var context = new DatabaseContext();
-                context.BalanceLedgers.Remove(record);
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                new ExceptionHandler(ex).ShowAlert();
-            }
-            finally
-            {
-                QueryLedgerEntries(this, null);
-            }
+            using var context = new DatabaseContext();
+            context.BalanceLedgers.Remove(record);
+            context.SaveChanges();
+            QueryLedgerEntries(this, null);
         }
 
         [RelayCommand]
@@ -148,50 +138,43 @@ namespace FarmOrganizer.ViewModels
 
         public void QueryLedgerEntries(object sender, EventArgs e)
         {
-            try
+            using var context = new DatabaseContext();
+            IEnumerable<BalanceLedger> query =
+                from entry in context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
+                                                    .Include(entry => entry.IdSeasonNavigation)
+                where entry.IdCropField == SelectedCropField.Id
+                && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
+                && _filterSet.EarliestDate <= entry.DateAdded
+                && entry.DateAdded <= _filterSet.LatestDate
+                && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
+                && _filterSet.SmallestBalanceChange <= entry.BalanceChange
+                && entry.BalanceChange <= _filterSet.LargestBalanceChange
+                select entry;
+            LedgerEntries = query.ToList();
+
+            switch (_filterSet.SortingMethod)
             {
-                using var context = new DatabaseContext();
-                IEnumerable<BalanceLedger> query =
-                    from entry in context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
-                                                        .Include(entry => entry.IdSeasonNavigation)
-                    where entry.IdCropField == SelectedCropField.Id
-                    && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
-                    && _filterSet.EarliestDate <= entry.DateAdded 
-                    && entry.DateAdded <= _filterSet.LatestDate
-                    && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
-                    && _filterSet.SmallestBalanceChange <= entry.BalanceChange 
-                    && entry.BalanceChange <= _filterSet.LargestBalanceChange
-                    select entry;
-                LedgerEntries = query.ToList();
-                
-                switch (_filterSet.SortingMethod)
-                {
-                    case LedgerFilterSet.SortingCriteria.CostTypes:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdCostTypeNavigation.Name).ToList();
-                        break;
-                    case LedgerFilterSet.SortingCriteria.DateAdded:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.DateAdded).ToList();
-                        break;
-                    case LedgerFilterSet.SortingCriteria.SeasonStartDate:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdSeasonNavigation.DateStart).ToList();
-                        break;
-                    case LedgerFilterSet.SortingCriteria.BalanceChange:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.BalanceChange).ToList();
-                        break;
-                }
-                if (_filterSet.DescendingSort)
-                    LedgerEntries.Reverse();
+                case LedgerFilterSet.SortingCriteria.CostTypes:
+                    LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdCostTypeNavigation.Name).ToList();
+                    break;
+                case LedgerFilterSet.SortingCriteria.DateAdded:
+                    LedgerEntries = LedgerEntries.OrderBy(entry => entry.DateAdded).ToList();
+                    break;
+                case LedgerFilterSet.SortingCriteria.SeasonStartDate:
+                    LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdSeasonNavigation.DateStart).ToList();
+                    break;
+                case LedgerFilterSet.SortingCriteria.BalanceChange:
+                    LedgerEntries = LedgerEntries.OrderBy(entry => entry.BalanceChange).ToList();
+                    break;
             }
-            catch (Exception ex)
-            {
-                new ExceptionHandler(ex).ShowAlert();
-            }
+            if (_filterSet.DescendingSort)
+                LedgerEntries.Reverse();
         }
 
         public void EnableFilterPopupButton(object sender, EventArgs e) =>
             FilterPopupButtonEnabled = true;
 
-        partial void OnSelectedCropFieldChanged(CropField value) => 
+        partial void OnSelectedCropFieldChanged(CropField value) =>
             QueryLedgerEntries(this, null);
     }
 }

@@ -4,6 +4,7 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -55,9 +56,9 @@ namespace FarmOrganizer.ViewModels
                 CostType.Validate();
                 CostTypes = new DatabaseContext().CostTypes.Where(cost => !cost.IsExpense).ToList();
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -115,7 +116,6 @@ namespace FarmOrganizer.ViewModels
                     BalanceChange = Utils.CastToValue(PureIncomeValue),
                     Notes = $"Sprzedaż {Utils.CastToValue(CropAmountValue)} kg przy stawce {Utils.CastToValue(SellRateValue)} zł za kilo."
                 };
-                context.BalanceLedgers.Add(newEntry);
                 if (AddNewSeasonAfterSaving)
                 {
                     Season newSeason = new()
@@ -127,13 +127,18 @@ namespace FarmOrganizer.ViewModels
                     };
                     Season.AddEntry(newSeason);
                 }
+                context.BalanceLedgers.Add(newEntry);
                 context.SaveChanges();
                 OnPageQuit?.Invoke(this, null);
                 await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (InvalidRecordPropertyException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (SqliteException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
             }
         }
 

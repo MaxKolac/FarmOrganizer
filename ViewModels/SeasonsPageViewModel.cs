@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -29,9 +30,9 @@ namespace FarmOrganizer.ViewModels
                 NewSeasonName = "Nowy sezon " + DateTime.Now.Year.ToString();
                 NewSeasonDateStart = DateTime.Now;
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -51,9 +52,9 @@ namespace FarmOrganizer.ViewModels
                 Seasons = new DatabaseContext().Seasons.ToList();
                 ToggleNewSeasonFrame();
             }
-            catch (Exception ex)
+            catch (InvalidRecordPropertyException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
