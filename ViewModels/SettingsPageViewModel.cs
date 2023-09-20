@@ -82,6 +82,13 @@ namespace FarmOrganizer.ViewModels
                 "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
                 "Tak", "Nie"))
             {
+                if (!await DatabaseFile.RequestPermissions())
+                {
+                    App.AlertSvc.ShowAlert(
+                        "Błąd",
+                        "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.");
+                    return;
+                }
                 await DatabaseFile.Delete();
                 await MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
             }
@@ -92,6 +99,13 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                if (!await DatabaseFile.RequestPermissions())
+                {
+                    App.AlertSvc.ShowAlert(
+                        "Błąd",
+                        "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.");
+                    return;
+                }
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
                 if (!folder.IsSuccessful)
                     return;
@@ -112,6 +126,13 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                if (!await DatabaseFile.RequestPermissions())
+                {
+                    App.AlertSvc.ShowAlert(
+                        "Błąd",
+                        "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.");
+                    return;
+                }
                 await DatabaseFile.CreateBackup();
                 FileResult file = await FilePicker.PickAsync();
                 if (file == null)

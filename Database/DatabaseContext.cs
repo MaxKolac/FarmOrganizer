@@ -6,8 +6,15 @@ namespace FarmOrganizer.Database;
 
 public partial class DatabaseContext : DbContext
 {
+    private bool _debug = false;
+
     public DatabaseContext()
     {
+    }
+
+    public DatabaseContext(bool debugLogging)
+    {
+        _debug = debugLogging;
     }
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
@@ -24,6 +31,8 @@ public partial class DatabaseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+        if (_debug)
+            optionsBuilder.LogTo(Console.WriteLine);
         SqliteConnectionStringBuilder builder = new()
         {
             DataSource = DatabaseFile.FullPath,
