@@ -41,21 +41,24 @@ public partial class Season : IValidatable<Season>
 
         //Check if there is at least 1 season
         if (allSeasons.Count == 0)
-            throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "*");
+            throw new TableValidationException(nameof(DatabaseContext.Seasons), "Nie odnaleziono żadnych rekordów.");
 
         //Check if the only season is concluded
         if (allSeasons.Count == 1 && allSeasons[0].HasConcluded)
-            throw new InvalidRecordException("W tabeli nie może znajdować się tylko jeden sezon, który jest zamknięty.", allSeasons[0].ToString());
+        {
+            var season = allSeasons[0];
+            throw new TableValidationException(nameof(DatabaseContext.Seasons), "W tabeli znajduje się tylko jeden sezon, który jest zakończony", season.ToString(), nameof(season.HasConcluded));
+        }
 
         List<Season> openSeasons = allSeasons.FindAll(e => !e.HasConcluded);
 
         //Check if there are any open seasons
         if (openSeasons.Count == 0)
-            throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), "W tabeli nie odnaleziono żadnych otwartych sezonów.");
+            throw new TableValidationException(nameof(DatabaseContext.Seasons), "W tabeli nie odnaleziono żadnych otwartych sezonów.");
 
         //Check if there's more than 1 open season.
         if (openSeasons.Count > 1)
-            throw new InvalidRecordException("W tabeli sezonów odnaleziono więcej niż jeden otwarty sezon.", openSeasons.ToString());
+            throw new TableValidationException(nameof(DatabaseContext.Seasons), "W tabeli odnaleziono więcej niż jeden otwarty sezon.");
     }
 
     public static void AddEntry(Season entry)
@@ -65,11 +68,11 @@ public partial class Season : IValidatable<Season>
 
         //New season cannot have empty name
         if (string.IsNullOrEmpty(entry.Name))
-            throw new InvalidRecordException("Nazwa sezonu", "Pusta");
+            throw new InvalidRecordPropertyException("Nazwa", null, "Sezon musi posiadać niepustą nazwę.");
 
         //New season cannot start before the previous one started
         if (seasonToEnd.DateStart >= entry.DateStart)
-            throw new InvalidRecordException("Data rozpoczęcia", entry.DateStart.ToShortDateString());
+            throw new InvalidRecordPropertyException("Data rozpoczęcia", entry.DateStart.ToShortDateString(), "Data rozpoczęcia nowego sezonu nie może być wcześniej od daty zakończenia obecnego sezonu.");
 
         seasonToEnd.HasConcluded = true;
         seasonToEnd.DateEnd = entry.DateStart;
