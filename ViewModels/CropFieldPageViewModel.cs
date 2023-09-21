@@ -4,6 +4,7 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -33,9 +34,9 @@ namespace FarmOrganizer.ViewModels
                 CropField.Validate(out List<CropField> allEntries);
                 CropFields.AddRange(allEntries);
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -45,9 +46,6 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 decimal hectares = Utils.CastToValue(CropFieldHectares);
-                if (hectares <= 0)
-                    throw new InvalidRecordException("Pole powierzchni", hectares.ToString());
-
                 if (addingEntry)
                 {
                     CropField newField = new()
@@ -71,9 +69,17 @@ namespace FarmOrganizer.ViewModels
                 CropFields = new DatabaseContext().CropFields.ToList();
                 ToggleAdding();
             }
-            catch (Exception ex)
+            catch (InvalidRecordPropertyException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (NoRecordFoundException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (SqliteException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -103,9 +109,9 @@ namespace FarmOrganizer.ViewModels
                 CropField.DeleteEntry(cropFieldToRemove);
                 CropFields = new DatabaseContext().CropFields.ToList();
             }
-            catch (Exception ex)
+            catch (RecordDeletionException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 

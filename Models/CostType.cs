@@ -30,6 +30,9 @@ public partial class CostType : IValidatable<CostType>
         bool incomeFound = false;
         foreach (CostType type in allEntries)
         {
+            if (string.IsNullOrEmpty(type.Name))
+                throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Odnaleziono typ z pustą nazwą", type.ToString(), nameof(Name));
+
             if (type.IsExpense)
                 expenseFound = true;
             else
@@ -39,12 +42,14 @@ public partial class CostType : IValidatable<CostType>
         }
 
         if (!expenseFound || !incomeFound)
-            throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), "W tabeli nie znaleziono przynajmniej jednego kosztu traktowanego jako wydatek lub przynajmniej jednego kosztu traktowanego jako zysk.");
+            throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego kosztu traktowanego jako wydatek lub przynajmniej jednego kosztu traktowanego jako zysk.");
     }
 
     public static void AddEntry(CostType entry)
     {
         using var context = new DatabaseContext();
+        if (string.IsNullOrEmpty(entry.Name))
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         context.CostTypes.Add(entry);
         context.SaveChanges();
     }
@@ -52,12 +57,10 @@ public partial class CostType : IValidatable<CostType>
     public static void EditEntry(CostType entry)
     {
         using var context = new DatabaseContext();
-        CostType existingEntry = context.CostTypes.Find(entry.Id) 
-            ?? throw new NoRecordFoundException(
-                nameof(DatabaseContext.CostTypes),
-                "Nie znaleziono żadnego rekordu z pasującą wartością identyfikatora ID."
-                );
+        CostType existingEntry = context.CostTypes.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), $"Id == {entry.Id}");
 
+        if (string.IsNullOrEmpty(entry.Name))
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         existingEntry.Name = entry.Name;
 
         //If the editing is more than just name change, check if editing IsExpense wouldn't cause the last costType of unique IsExpense value to be gone.
@@ -73,9 +76,9 @@ public partial class CostType : IValidatable<CostType>
                     profitsFound++;
             }
             if (existingEntry.IsExpense && !entry.IsExpense && expensesFound <= 1)
-                throw new InvalidRecordException("entry.IsExpense", "false");
+                throw new InvalidRecordPropertyException("Traktuj jako wydatek", entry.IsExpense.ToString(), "Nie można zmienić ostatniego rodzaju wydatku na rodzaj przychodu.");
             if (!existingEntry.IsExpense && entry.IsExpense && profitsFound <= 1)
-                throw new InvalidRecordException("entry.IsExpense", "true");
+                throw new InvalidRecordPropertyException("Traktuj jako wydatek", entry.IsExpense.ToString(), "Nie można zmienić ostatniego rodzaju przychodu na rodzaj wydatku.");
             existingEntry.IsExpense = entry.IsExpense;
         }
 
@@ -100,9 +103,9 @@ public partial class CostType : IValidatable<CostType>
                 profitsFound++;
         }
         if (entryToDelete.IsExpense && expensesFound <= 1)
-            throw new InvalidDbOperationException("Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako wydatek. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden rodzaj kosztu traktowany jako wydatek i przynajmniej jeden rodzaj kosztu traktowany jako przychód.");
+            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako wydatek.");
         if (!entryToDelete.IsExpense && profitsFound <= 1)
-            throw new InvalidDbOperationException("Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako przychód. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden rodzaj kosztu traktowany jako wydatek i przynajmniej jeden rodzaj kosztu traktowany jako przychód.");
+            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako przychód.");
 
         context.CostTypes.Remove(entryToDelete);
         context.SaveChanges();

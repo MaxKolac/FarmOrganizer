@@ -25,24 +25,16 @@ namespace FarmOrganizer.ViewModels.HelperClasses
         }
 
         /// <summary>
-        /// Creates a LedgerFilterSet which attempts to load all IDs of all <see cref="CostType"/> and <see cref="Season"/> entries from a database through instance of <see cref="DatabaseContext"/>. Might throw an exception.
+        /// Creates a LedgerFilterSet which attempts to load all IDs of all <see cref="CostType"/> and <see cref="Season"/> entries from a database.
         /// </summary>
         public LedgerFilterSet()
         {
-            try
-            {
-                using var context = new DatabaseContext();
+            using var context = new DatabaseContext();
+            foreach (CostType cost in context.CostTypes.ToList())
+                SelectedCostTypeIds.Add(cost.Id);
 
-                foreach (CostType cost in context.CostTypes.ToList())
-                    SelectedCostTypeIds.Add(cost.Id);
-
-                foreach (Season season in context.Seasons.ToList())
-                    SelectedSeasonIds.Add(season.Id);
-            }
-            catch (Exception ex)
-            {
-                new ExceptionHandler(ex).ShowAlert(false);
-            }
+            foreach (Season season in context.Seasons.ToList())
+                SelectedSeasonIds.Add(season.Id);
         }
 
         /// <summary>

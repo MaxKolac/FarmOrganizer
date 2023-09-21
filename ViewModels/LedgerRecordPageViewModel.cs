@@ -85,9 +85,9 @@ namespace FarmOrganizer.ViewModels
 
                 SelectedSeason = Seasons.Find(season => season.Id == Season.GetCurrentSeason().Id);
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -113,9 +113,8 @@ namespace FarmOrganizer.ViewModels
                 case "edit":
                     TitleText = "Edytowanie wpisu";
                     SaveButtonText = "Zapisz zmiany";
-                    try
+                    using (var context = new DatabaseContext())
                     {
-                        using var context = new DatabaseContext();
                         BalanceLedger result = context.BalanceLedgers.Find(RecordId);
                         SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
                         SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
@@ -124,10 +123,6 @@ namespace FarmOrganizer.ViewModels
                         DateAdded = result.DateAdded;
                         BalanceChange = result.BalanceChange.ToString();
                         Notes = result.Notes;
-                    }
-                    catch (Exception ex)
-                    {
-                        new ExceptionHandler(ex).ShowAlert();
                     }
                     break;
             }
@@ -182,9 +177,9 @@ namespace FarmOrganizer.ViewModels
                         break;
                 }
             }
-            catch (Exception ex)
+            catch (SqliteException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, false);
             }
         }
 

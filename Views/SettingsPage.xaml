@@ -41,6 +41,7 @@
         <Grid>
             <Label Style="{StaticResource BaseLabelStyle}" Text="Domyślne pole:"/>
             <Picker Grid.Column="1"
+                    IsEnabled="{Binding CropFieldPickerEnabled}"
                     ItemsSource="{Binding CropFields}" 
                     SelectedItem="{Binding DefaultCropField}"/>
         </Grid>

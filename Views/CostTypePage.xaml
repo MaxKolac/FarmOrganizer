@@ -86,7 +86,7 @@
                                   IsChecked="{Binding CostTypeIsExpense}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">
-                        <Button Text="Dodaj kategorię i zapisz"
+                        <Button Text="{Binding SaveButtonText}"
                                 Command="{Binding AddOrSaveCommand}"/>
                     </HorizontalStackLayout>
                 </Grid>

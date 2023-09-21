@@ -9,8 +9,7 @@
         /// Retrieves all <typeparamref name="T"/> records from the database and checks their validity.
         /// If at any point any validity check fails, an unhandled exception is thrown.
         /// </summary>
-        /// <exception cref="Exceptions.NoRecordFoundException"></exception>
-        /// <exception cref="Exceptions.InvalidRecordException"></exception>
+        /// <exception cref="Exceptions.TableValidationException"></exception>
         static abstract void Validate();
 
         /// <summary>
@@ -20,13 +19,14 @@
         /// </para>
         /// </summary>
         /// <param name="allEntries">A <see cref="List{T}"/> of all <typeparamref name="T"/> records in the database.</param>
+        /// <exception cref="Exceptions.TableValidationException"></exception>
         static abstract void Validate(out List<T> allEntries);
 
         /// <summary>
         /// Validates the <typeparamref name="T"/> entry and, if successful, adds it to the table.
         /// If at any points any validity check fails, an unhandled exception is thrown.
         /// </summary>
-        /// <exception cref="Exceptions.InvalidRecordException"></exception>
+        /// <exception cref="Exceptions.InvalidRecordPropertyException"></exception>
         /// <param name="entry">The <typeparamref name="T"/> object which will be added as a record.</param>
         static abstract void AddEntry(T entry);
 
@@ -35,7 +35,7 @@
         /// If at any points any validity check fails or the record isn't found, an unhandled exception is thrown.
         /// </summary>
         /// <exception cref="Exceptions.NoRecordFoundException"></exception>
-        /// <exception cref="Exceptions.InvalidRecordException"></exception>
+        /// <exception cref="Exceptions.InvalidRecordPropertyException"></exception>
         /// <param name="entry">The <typeparamref name="T"/> object to look for in the table. Only the object's ID property will be used. The rest of the properties will have their values assigned to the entry in the table.</param>
         static abstract void EditEntry(T entry);
 
@@ -43,7 +43,7 @@
         /// Finds the <typeparamref name="T"/> entry in the table by the ID property and, if found, is deleted safely.
         /// If at any points any validity check fails, an unhandled exception is thrown. If the record isn't found, no action is taken.
         /// </summary>
-        /// <exception cref="Exceptions.InvalidRecordException"></exception>
+        /// <exception cref="Exceptions.RecordDeletionException"></exception>
         /// <param name="entry">The <typeparamref name="T"/> object to look for in the table. Only the object's ID property will be used.</param>
         static abstract void DeleteEntry(T entry);
     }
