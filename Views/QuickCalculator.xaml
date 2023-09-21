@@ -35,11 +35,16 @@
         
         <Grid Margin="10"
               ColumnDefinitions=".9*, Auto"
-              RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
+              RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
 
-            <Label Grid.ColumnSpan="2"  Text="Ilość plonów (kg):"/>
+            <!-- Example Expenses Entry -->
+            <Label Grid.ColumnSpan="2" Text="Przykładowe wydatki (zł):"/>
+            <Entry Grid.Row="1" Text="{Binding ExampleExpenseValue}"/>
+
+            <!-- Crop Amount Entry -->
+            <Label Grid.Row="2" Grid.ColumnSpan="2"  Text="Ilość plonów (kg):"/>
             <Entry x:Name="cropAmount"
-                   Grid.Row="1"
+                   Grid.Row="3"
                    Text="{Binding CropAmountValue}"
                    ReturnCommand="{Binding TextChangedCommand}">
                    <Entry.GestureRecognizers>
@@ -47,11 +52,12 @@
                                              CommandParameter="cropAmount"/>
                    </Entry.GestureRecognizers>
             </Entry>
-            <CheckBox Grid.Row="1" IsChecked="{Binding CropAmountFocused}"/>
+            <CheckBox Grid.Row="3" IsChecked="{Binding CropAmountFocused}"/>
 
-            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Cena za kilogram (zł/kg):"/>
+            <!-- Sell Rate Entry -->
+            <Label Grid.Row="4" Grid.ColumnSpan="2" Text="Cena za kilogram (zł/kg):"/>
             <Entry x:Name="sellRate"
-                   Grid.Row="3"
+                   Grid.Row="5"
                    Text="{Binding SellRateValue}"
                    ReturnCommand="{Binding TextChangedCommand}">
                    <Entry.GestureRecognizers>
@@ -59,11 +65,12 @@
                                              CommandParameter="sellRate"/>
                    </Entry.GestureRecognizers>
             </Entry>
-            <CheckBox Grid.Row="3" IsChecked="{Binding SellRateFocused}"/>
+            <CheckBox Grid.Row="5" IsChecked="{Binding SellRateFocused}"/>
 
-            <Label Grid.Row="4" Grid.ColumnSpan="2" Text="Zysk ze sprzedaży (zł):"/>
+            <!-- Pure Income Entry -->
+            <Label Grid.Row="6" Grid.ColumnSpan="2" Text="Zysk ze sprzedaży (zł):"/>
             <Entry x:Name="pureIncome"
-                   Grid.Row="5"
+                   Grid.Row="7"
                    Text="{Binding PureIncomeValue}"
                    ReturnCommand="{Binding TextChangedCommand}">
                    <Entry.GestureRecognizers>
@@ -71,7 +78,14 @@
                                              CommandParameter="pureIncome"/>
                    </Entry.GestureRecognizers>
             </Entry>
-            <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
+            <CheckBox Grid.Row="7" IsChecked="{Binding PureIncomeFocused}"/>
+            
+            <!-- Theoritical Total Change Entry -->
+            <Label Grid.Row="8" Grid.ColumnSpan="2" Text="Zysk ze sprzedaży po wydatkach (zł):"/>
+            <Entry Grid.Row="9"
+                   Text="{Binding ExampleChangeValue}"
+                   IsReadOnly="True">
+            </Entry>
         </Grid>
     </VerticalStackLayout>
 </ContentPage>
