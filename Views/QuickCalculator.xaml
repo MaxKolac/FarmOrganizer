@@ -24,6 +24,7 @@
         <Style TargetType="CheckBox">
             <Setter Property="IsEnabled" Value="False"/>
             <Setter Property="Grid.Column" Value="1"/>
+            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
         </Style>
     </ContentPage.Resources>
 

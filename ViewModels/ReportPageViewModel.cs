@@ -47,6 +47,13 @@ namespace FarmOrganizer.ViewModels
         private CostType selectedCostType;
         #endregion
 
+        #region Dynamic TotalChange text
+        [ObservableProperty]
+        private string totalChangeText = _totalChangeTextProfit;
+        private const string _totalChangeTextProfit = "Zysk (zł):";
+        private const string _totalChangeTextLoss = "Straty (zł):";
+        #endregion
+
         public static event EventHandler OnPageQuit;
 
         public ReportPageViewModel()
@@ -147,5 +154,8 @@ namespace FarmOrganizer.ViewModels
             decimal pureIncome = Utils.CastToValue(value);
             ProfitAfterExpenses = pureIncome + TotalChange;
         }
+
+        partial void OnTotalChangeChanged(decimal value) =>
+            TotalChangeText = value >= 0 ? _totalChangeTextProfit : _totalChangeTextLoss;
     }
 }
