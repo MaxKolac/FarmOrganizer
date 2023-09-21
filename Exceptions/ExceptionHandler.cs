@@ -48,7 +48,9 @@ namespace FarmOrganizer.Exceptions
         /// <inheritdoc cref="Handle(FarmOrganizerException, bool)"/>
         public static void Handle(IOException exception, bool returnToPreviousPage)
         {
-            //TODO
+            App.AlertSvc.ShowAlert("Błąd podczas pracy na plikach", exception.Message);
+            if (returnToPreviousPage)
+                ReturnToPreviousPage();
         }
 
         private static void ReturnToPreviousPage()
