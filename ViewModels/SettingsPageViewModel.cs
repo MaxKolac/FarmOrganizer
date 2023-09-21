@@ -20,9 +20,11 @@ namespace FarmOrganizer.ViewModels
         private AppTheme selectedTheme;
 
         [ObservableProperty]
-        private List<CropField> cropFields;
+        private List<CropField> cropFields = new();
         [ObservableProperty]
         private CropField defaultCropField;
+        [ObservableProperty]
+        private bool cropFieldPickerEnabled = true;
 
         public SettingsPageViewModel()
         {
@@ -40,14 +42,23 @@ namespace FarmOrganizer.ViewModels
                     )
                 );
 
-            CropFields = context.CropFields.ToList();
-            DefaultCropField = context.CropFields.Find(
+            try
+            {
+                CropField.Validate(out List<CropField> allEntries);
+                CropFields.AddRange(allEntries);
+                DefaultCropField = context.CropFields.Find(
                 Preferences.Get(
                     LedgerPage_DefaultCropField,
                     context.CropFields.First().Id
                     )
                 );
-            DefaultCropField ??= CropFields.First();
+                DefaultCropField ??= CropFields.First();
+            }
+            catch (TableValidationException ex)
+            {
+                CropFieldPickerEnabled = false;
+                ExceptionHandler.Handle(ex, false);
+            }
         }
 
         public static void ApplyPreferences()
@@ -63,7 +74,8 @@ namespace FarmOrganizer.ViewModels
 
         partial void OnDefaultCropFieldChanged(CropField oldValue, CropField newValue)
         {
-            Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
+            if (CropFieldPickerEnabled)
+                Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
             ApplyPreferences();
         }
 
