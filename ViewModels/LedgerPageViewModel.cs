@@ -47,6 +47,7 @@ namespace FarmOrganizer.ViewModels
             _filterSet.SelectedSeasonIds = new() { _filterSet.SelectedSeasonIds.Last() };
             try
             {
+                Season.Validate();
                 CostType.Validate(out List<CostType> allCostTypes);
                 CostTypes.AddRange(allCostTypes);
                 CropField.Validate(out List<CropField> allCropFields);

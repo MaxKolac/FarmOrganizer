@@ -56,6 +56,10 @@ namespace FarmOrganizer.ViewModels
             {
                 ExceptionHandler.Handle(ex, false);
             }
+            catch (SqliteException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
         }
 
         [RelayCommand]

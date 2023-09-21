@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -70,6 +71,10 @@ namespace FarmOrganizer.ViewModels
                 ExceptionHandler.Handle(ex, false);
             }
             catch (NoRecordFoundException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (SqliteException ex)
             {
                 ExceptionHandler.Handle(ex, false);
             }

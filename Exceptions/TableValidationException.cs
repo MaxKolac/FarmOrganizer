@@ -27,12 +27,12 @@ namespace FarmOrganizer.Exceptions
 
         private static string BuildMessage(string table, string failedValidationCheck)
         {
-            return $"Tabela \'{table}\' nie spełniła warunku walidacji: {failedValidationCheck}.";
+            return $"Tabela \'{table}\' nie spełniła warunku walidacji: {failedValidationCheck}";
         }
 
         private static string BuildMessage(string table, string failedValidationCheck, string invalidRecord, string invalidProperty)
         {
-            return BuildMessage(table, failedValidationCheck) + $" Problematyczny rekord: {invalidRecord}; Problematyczny właściwość: {invalidProperty};";
+            return BuildMessage(table, failedValidationCheck) + $" Problematyczny rekord: {invalidRecord}; Problematyczna właściwość: {invalidProperty};";
         }
     }
 }
