@@ -15,7 +15,7 @@
         <Style TargetType="Label" x:Key="InstructionStyle">
             <Setter Property="HorizontalTextAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
         </Style>
         <Style TargetType="Entry" BasedOn="{StaticResource NumericEntry}">
             <Setter Property="VerticalOptions" Value="Fill"/>
@@ -28,50 +28,62 @@
     </ContentPage.Resources>
 
     <VerticalStackLayout>
-        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej."
+        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. 
+               Dotyczy liczb wewnątrz szarego kwadratu. Pozostałe liczby są opcjonalne." 
                Style="{StaticResource InstructionStyle}"/>
-        <Label Text="Po wpisaniu liczby, wciśnij OK aby ją zatwierdzić."
-               Style="{StaticResource InstructionStyle}"/>
-        
-        <Grid Margin="10"
-              ColumnDefinitions=".9*, Auto"
-              RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
 
-            <Label Grid.ColumnSpan="2"  Text="Ilość plonów (kg):"/>
-            <Entry x:Name="cropAmount"
-                   Grid.Row="1"
-                   Text="{Binding CropAmountValue}"
-                   ReturnCommand="{Binding TextChangedCommand}">
-                   <Entry.GestureRecognizers>
-                       <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                             CommandParameter="cropAmount"/>
-                   </Entry.GestureRecognizers>
-            </Entry>
-            <CheckBox Grid.Row="1" IsChecked="{Binding CropAmountFocused}"/>
+        <Grid Margin="10" ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+            <!-- Example Expenses Entry -->
+            <Label Grid.ColumnSpan="2" Text="Przykładowe wydatki (zł):"/>
+            <Entry Grid.Row="1" Text="{Binding ExampleExpenseValue}"/>
 
-            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Cena za kilogram (zł/kg):"/>
-            <Entry x:Name="sellRate"
-                   Grid.Row="3"
-                   Text="{Binding SellRateValue}"
-                   ReturnCommand="{Binding TextChangedCommand}">
-                   <Entry.GestureRecognizers>
-                       <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                             CommandParameter="sellRate"/>
-                   </Entry.GestureRecognizers>
-            </Entry>
-            <CheckBox Grid.Row="3" IsChecked="{Binding SellRateFocused}"/>
+            <Frame Grid.Row="2" 
+                   BackgroundColor="{AppThemeBinding Light=LightGray, Dark=Black}"
+                   BorderColor="{AppThemeBinding Light=DarkGray, Dark=LightGray}"
+                   Margin="0,10,0,10">
+                <Grid ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
 
-            <Label Grid.Row="4" Grid.ColumnSpan="2" Text="Zysk ze sprzedaży (zł):"/>
-            <Entry x:Name="pureIncome"
-                   Grid.Row="5"
-                   Text="{Binding PureIncomeValue}"
-                   ReturnCommand="{Binding TextChangedCommand}">
-                   <Entry.GestureRecognizers>
-                       <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                             CommandParameter="pureIncome"/>
-                   </Entry.GestureRecognizers>
-            </Entry>
-            <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
+                    <!-- Crop Amount Entry -->
+                    <Label Grid.ColumnSpan="2"  Text="Ilość plonów (kg):"/>
+                    <Entry x:Name="cropAmount" 
+                           Grid.Row="1"
+                           Text="{Binding CropAmountValue}">
+                        <Entry.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
+                                                  CommandParameter="cropAmount"/>
+                        </Entry.GestureRecognizers>
+                    </Entry>
+                    <CheckBox Grid.Row="1" IsChecked="{Binding CropAmountFocused}"/>
+
+                    <!-- Sell Rate Entry -->
+                    <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Cena za kilogram (zł/kg):"/>
+                    <Entry x:Name="sellRate"
+                           Grid.Row="3"
+                           Text="{Binding SellRateValue}">
+                        <Entry.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
+                                                  CommandParameter="sellRate"/>
+                        </Entry.GestureRecognizers>
+                    </Entry>
+                    <CheckBox Grid.Row="3" IsChecked="{Binding SellRateFocused}"/>
+
+                    <!-- Pure Income Entry -->
+                    <Label Grid.Row="4" Grid.ColumnSpan="2" Text="Zysk ze sprzedaży (zł):"/>
+                    <Entry x:Name="pureIncome"
+                           Grid.Row="5"
+                           Text="{Binding PureIncomeValue}">
+                        <Entry.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
+                                                  CommandParameter="pureIncome"/>
+                        </Entry.GestureRecognizers>
+                    </Entry>
+                    <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
+                </Grid>
+            </Frame>
+
+            <!-- Theoritical Total Change Entry -->
+            <Label Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding ExampleChangeText}"/>
+            <Entry Grid.Row="4" Text="{Binding ExampleChangeValue}" IsReadOnly="True"/>
         </Grid>
     </VerticalStackLayout>
 </ContentPage>
