@@ -33,6 +33,10 @@ namespace FarmOrganizer.ViewModels
         private string exampleExpenseValue;
         [ObservableProperty]
         private string exampleChangeValue;
+        [ObservableProperty]
+        private string exampleChangeText = _exampleChangeProfitText;
+        private const string _exampleChangeProfitText = "Przykładowy zysk (zł):";
+        private const string _exampleChangeLossText = "Przykładowe straty (zł):";
         #endregion 
 
         #region VAT-RR Calculator
@@ -79,23 +83,34 @@ namespace FarmOrganizer.ViewModels
             PureIncomeFocused = lastEditedControls.Contains(pureIncomeName);
         }
 
-        partial void OnPureIncomeValueChanged(string value)
-        {
-            OnIncomeChanged(value);
-            CalculateExampleChange();
-        }
-
-        //Ugly workarounds. Yuck. It works though!
-        protected virtual void OnIncomeChanged(string value) { }
-
-        partial void OnExampleExpenseValueChanged(string oldValue, string newValue) =>
-            CalculateExampleChange();
-
         private void CalculateExampleChange()
         {
             decimal expenses = Utils.CastToValue(ExampleExpenseValue);
             decimal profits = Utils.CastToValue(PureIncomeValue);
             ExampleChangeValue = (profits - expenses).ToString("0.00");
         }
+
+        partial void OnCropAmountValueChanged(string value) =>
+            TextChanged();
+
+        partial void OnSellRateValueChanged(string value) =>
+            TextChanged();
+
+        partial void OnPureIncomeValueChanged(string value)
+        {
+            TextChanged();
+            OnIncomeChanged(value);
+            CalculateExampleChange();
+        }
+
+        partial void OnExampleExpenseValueChanged(string oldValue, string newValue) =>
+            CalculateExampleChange();
+
+        partial void OnExampleChangeValueChanged(string value) => 
+            ExampleChangeText = Utils.CastToValue(value) >= 0 ? _exampleChangeProfitText : _exampleChangeLossText;
+
+        //Ugly workarounds. Yuck. It works though!
+        protected virtual void OnIncomeChanged(string value) { }
+
     }
 }
