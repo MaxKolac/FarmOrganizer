@@ -30,6 +30,9 @@ public partial class CostType : IValidatable<CostType>
         bool incomeFound = false;
         foreach (CostType type in allEntries)
         {
+            if (string.IsNullOrEmpty(type.Name))
+                throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Odnaleziono typ z pustą nazwą", type.ToString(), nameof(Name));
+
             if (type.IsExpense)
                 expenseFound = true;
             else
@@ -45,6 +48,8 @@ public partial class CostType : IValidatable<CostType>
     public static void AddEntry(CostType entry)
     {
         using var context = new DatabaseContext();
+        if (string.IsNullOrEmpty(entry.Name))
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         context.CostTypes.Add(entry);
         context.SaveChanges();
     }

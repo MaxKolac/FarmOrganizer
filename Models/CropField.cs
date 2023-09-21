@@ -29,9 +29,11 @@ public partial class CropField : IValidatable<CropField>
         if (allEntries.Count == 0)
             throw new TableValidationException(nameof(DatabaseContext.CropFields), "Nie znaleziono żadnych rekordów.");
 
-        //Check if all records have positive non-zero hectares
+        //Check if all records have positive non-zero hectares and non-empty names
         foreach (CropField field in allEntries)
         {
+            if (string.IsNullOrEmpty(field.Name))
+                throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne z pustą nazwą.", field.ToString(), nameof(Name));
             if (field.Hectares <= 0)
                 throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne, którego powierzchnia jest zerowa lub mniejsza.", field.ToString(), nameof(Hectares));
         }
