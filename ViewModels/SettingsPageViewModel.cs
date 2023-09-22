@@ -5,7 +5,6 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
-using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -46,12 +45,7 @@ namespace FarmOrganizer.ViewModels
             {
                 CropField.Validate(out List<CropField> allEntries);
                 CropFields.AddRange(allEntries);
-                DefaultCropField = context.CropFields.Find(
-                Preferences.Get(
-                    LedgerPage_DefaultCropField,
-                    context.CropFields.First().Id
-                    )
-                );
+                DefaultCropField = CropFields.Find(field => field.Id == Preferences.Get(LedgerPage_DefaultCropField, CropFields.First().Id));
                 DefaultCropField ??= CropFields.First();
             }
             catch (TableValidationException ex)
