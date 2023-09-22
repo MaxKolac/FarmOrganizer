@@ -4,11 +4,8 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
-using FarmOrganizer.ViewModels.PopUps;
 using FarmOrganizer.Views;
-using FarmOrganizer.Views.PopUps;
 using Microsoft.EntityFrameworkCore;
-using Mopups.Interfaces;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -17,25 +14,18 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private List<BalanceLedger> ledgerEntries = new();
         [ObservableProperty]
-        private List<CostType> costTypes = new();
-        [ObservableProperty]
-        private List<CropField> cropFields = new();
-        [ObservableProperty]
-        private CropField selectedCropField;
 
-        [ObservableProperty]
-        private bool filterPopupButtonEnabled = true;
+        #region Preferences
+        private readonly CropField preferredCropField;
+        #endregion
 
         private LedgerFilterSet _filterSet;
-        private readonly IPopupNavigation _popUpSvc;
 
-        public LedgerPageViewModel(IPopupNavigation popupNavigation)
+        public LedgerPageViewModel()
         {
             LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit += QueryLedgerEntries;
-            LedgerFilterPopupViewModel.OnPageQuit += EnableFilterPopupButton;
-            LedgerFilterPopupViewModel.OnFilterSetCreated += ApplyFilters;
-            _popUpSvc = popupNavigation;
+            LedgerFilterPageViewModel.OnFilterSetCreated += ApplyFilters;
             _filterSet = new()
             {
                 //TODO: load default filters from Preferences
@@ -44,22 +34,22 @@ namespace FarmOrganizer.ViewModels
                 EarliestDate = DateTime.Now.AddMonths(-1),
                 LatestDate = DateTime.Now.Date.AddDays(1).AddMicroseconds(-1)
             };
+            //TODO: select the season that is going through as of right now
             _filterSet.SelectedSeasonIds = new() { _filterSet.SelectedSeasonIds.Last() };
             try
             {
                 Season.Validate();
-                CostType.Validate(out List<CostType> allCostTypes);
-                CostTypes.AddRange(allCostTypes);
+                CostType.Validate();
                 CropField.Validate(out List<CropField> allCropFields);
-                CropFields.AddRange(allCropFields);
-                //OnSelectedCropField already triggers QueryLedgerTables(); no need to call it twice
-                SelectedCropField = CropFields.Find(field =>
+                QueryLedgerEntries(this, null);
+
+                preferredCropField = allCropFields.Find(field =>
                     field.Id == Preferences.Get(
                         SettingsPageViewModel.LedgerPage_DefaultCropField,
-                        CropFields.First().Id
+                        allCropFields.First().Id
                         )
                     );
-                SelectedCropField ??= CropFields.First();
+                preferredCropField ??= allCropFields.First();
             }
             catch (TableValidationException ex)
             {
@@ -72,8 +62,7 @@ namespace FarmOrganizer.ViewModels
         {
             LedgerRecordPageViewModel.OnPageQuit -= QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit -= QueryLedgerEntries;
-            LedgerFilterPopupViewModel.OnPageQuit -= EnableFilterPopupButton;
-            LedgerFilterPopupViewModel.OnFilterSetCreated -= ApplyFilters;
+            LedgerFilterPageViewModel.OnFilterSetCreated -= ApplyFilters;
             await Shell.Current.GoToAsync("..");
 
         }
@@ -85,19 +74,19 @@ namespace FarmOrganizer.ViewModels
             {
                 { "mode", "add" },
                 { "id", 0 },
-                { "cropFieldId", SelectedCropField.Id }
+                { "cropFieldId", preferredCropField.Id }
             };
             await Shell.Current.GoToAsync(nameof(LedgerRecordPage), query);
         }
 
         [RelayCommand]
-        private static async Task EditRecord(BalanceLedger record)
+        private async Task EditRecord(BalanceLedger record)
         {
             var query = new Dictionary<string, object>
             {
                 { "mode", "edit" },
                 { "id", record.Id },
-                { "cropFieldId", 0 }
+                { "cropFieldId", preferredCropField.Id }
             };
             await Shell.Current.GoToAsync(nameof(LedgerRecordPage), query);
         }
@@ -116,25 +105,28 @@ namespace FarmOrganizer.ViewModels
         {
             var query = new Dictionary<string, object>()
             {
+                //TODO: multiple cropfields, multiple seasons
                 { "entries", LedgerEntries },
-                { "cropfield", SelectedCropField },
+                { "cropfield", preferredCropField },
                 { "season", Season.GetCurrentSeason() }
             };
             await Shell.Current.GoToAsync(nameof(ReportPage), query);
         }
 
         [RelayCommand]
-        private void FilterAndSortRecords()
+        private async Task FilterAndSortRecords()
         {
-            FilterPopupButtonEnabled = false;
-            _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
+            var query = new Dictionary<string, object>()
+            {
+                { "filterSet", _filterSet }
+            };
+            await Shell.Current.GoToAsync(nameof(LedgerFilterPage), query);
         }
 
         private void ApplyFilters(object sender, LedgerFilterSet newSet)
         {
             _filterSet = newSet;
             QueryLedgerEntries(this, null);
-            FilterPopupButtonEnabled = true;
         }
 
         public void QueryLedgerEntries(object sender, EventArgs e)
@@ -143,11 +135,11 @@ namespace FarmOrganizer.ViewModels
             IEnumerable<BalanceLedger> query =
                 from entry in context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
                                                     .Include(entry => entry.IdSeasonNavigation)
-                where entry.IdCropField == SelectedCropField.Id
+                where _filterSet.SelectedCropFieldIds.Contains(entry.IdCropField)
                 && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
+                && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
                 && _filterSet.EarliestDate <= entry.DateAdded
                 && entry.DateAdded <= _filterSet.LatestDate
-                && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
                 && _filterSet.SmallestBalanceChange <= entry.BalanceChange
                 && entry.BalanceChange <= _filterSet.LargestBalanceChange
                 select entry;
@@ -171,11 +163,5 @@ namespace FarmOrganizer.ViewModels
             if (_filterSet.DescendingSort)
                 LedgerEntries.Reverse();
         }
-
-        public void EnableFilterPopupButton(object sender, EventArgs e) =>
-            FilterPopupButtonEnabled = true;
-
-        partial void OnSelectedCropFieldChanged(CropField value) =>
-            QueryLedgerEntries(this, null);
     }
 }

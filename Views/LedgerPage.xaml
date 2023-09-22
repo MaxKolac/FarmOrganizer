@@ -29,14 +29,8 @@
         <BackButtonBehavior Command="{Binding ReturnToPreviousPageCommand}"/>
     </Shell.BackButtonBehavior>
 
-    <Grid RowDefinitions="auto,*,.1*"
-          Padding="5">
-        <Picker Title="Wybierz pole uprawne" 
-                ItemsSource="{Binding CropFields}"
-                SelectedItem="{Binding SelectedCropField}">
-        </Picker>
-
-        <CollectionView Grid.Row="1" ItemsSource="{Binding LedgerEntries}">
+    <Grid RowDefinitions="*,.1*" Padding="5">
+        <CollectionView ItemsSource="{Binding LedgerEntries}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:BalanceLedger">
                     <SwipeView>
@@ -104,14 +98,11 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
-            <Button Text="Filtruj i sortuj..." 
-                    LineBreakMode="CharacterWrap"
-                    IsEnabled="{Binding FilterPopupButtonEnabled}"
+        <HorizontalStackLayout Grid.Row="1" HorizontalOptions="Center">
+            <Button Text="Filtruj i sortuj..."
                     Command="{Binding FilterAndSortRecordsCommand}"
                     Margin="2"/>
-            <Button Text="Generuj raport i oblicz" 
-                    LineBreakMode="CharacterWrap"
+            <Button Text="Generuj raport"
                     Command="{Binding GenerateReportCommand}"
                     Margin="2"/>
         </HorizontalStackLayout>

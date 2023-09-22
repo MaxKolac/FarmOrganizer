@@ -5,7 +5,6 @@ using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 //Passing query parameters through a single method and a Dictionary - https://learn.microsoft.com/pl-pl/dotnet/maui/fundamentals/shell/navigation#process-navigation-data-using-a-single-method
 
