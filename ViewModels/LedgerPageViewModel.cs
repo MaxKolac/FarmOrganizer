@@ -14,6 +14,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private List<BalanceLedger> ledgerEntries = new();
         [ObservableProperty]
+        private bool ledgerEntriesIsEmpty;
 
         #region Preferences
         private readonly CropField preferredCropField;
@@ -144,6 +145,7 @@ namespace FarmOrganizer.ViewModels
                 && entry.BalanceChange <= _filterSet.LargestBalanceChange
                 select entry;
             LedgerEntries = query.ToList();
+            LedgerEntriesIsEmpty = !query.Any();
 
             switch (_filterSet.SortingMethod)
             {
