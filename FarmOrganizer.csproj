@@ -105,6 +105,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\LedgerFilterPage.xaml.cs">
+	    <DependentUpon>LedgerFilterPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\LedgerPage.xaml.cs">
 	    <DependentUpon>LedgerPage.xaml</DependentUpon>
 	  </Compile>
@@ -129,7 +132,7 @@
 	  <MauiXaml Update="Views\DebugPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\PopUps\LedgerFilterPopup.xaml">
+	  <MauiXaml Update="Views\LedgerFilterPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LedgerPage.xaml">

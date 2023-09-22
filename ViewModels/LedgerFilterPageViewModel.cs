@@ -1,23 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
-using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
 using FarmOrganizer.ViewModels.HelperClasses;
-using Mopups.Interfaces;
 
-namespace FarmOrganizer.ViewModels.PopUps
+namespace FarmOrganizer.ViewModels
 {
-    public partial class LedgerFilterPopupViewModel : ObservableObject
+    [QueryProperty(nameof(_filterSet), "filterSet")]
+    public partial class LedgerFilterPageViewModel : ObservableObject, IQueryAttributable
     {
         public static event EventHandler<LedgerFilterSet> OnFilterSetCreated;
         public static event EventHandler OnPageQuit;
 
-        private readonly LedgerFilterSet _filterSet;
-        private readonly IPopupNavigation _popUpSvc;
-
         #region Collections and Choices Bindings
+        [ObservableProperty]
+        private List<CropField> allCropFields = new();
+        [ObservableProperty]
+        private List<object> selectedCropFields = new();
+
         [ObservableProperty]
         private List<CostType> allCostTypes = new();
         [ObservableProperty]
@@ -29,12 +30,12 @@ namespace FarmOrganizer.ViewModels.PopUps
         private List<object> selectedSeasons = new();
 
         [ObservableProperty]
-        private DateTime selectedEarliestDate;
+        private DateTime selectedEarliestDate = DateTime.MinValue;
         [ObservableProperty]
         private bool useCustomEarliestDate;
 
         [ObservableProperty]
-        private DateTime selectedLatestDate;
+        private DateTime selectedLatestDate = DateTime.MaxValue;
         [ObservableProperty]
         private bool useCustomLatestDate;
 
@@ -57,12 +58,17 @@ namespace FarmOrganizer.ViewModels.PopUps
         [ObservableProperty]
         private bool useDescendingSortOrder;
         #endregion
+        
+        private LedgerFilterSet _filterSet;
 
-        public LedgerFilterPopupViewModel(LedgerFilterSet filterSet, IPopupNavigation popupNavigation)
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            _filterSet = filterSet;
-            _popUpSvc = popupNavigation;
+            _filterSet = query["filterSet"] as LedgerFilterSet;
             using var context = new DatabaseContext();
+
+            AllCropFields = context.CropFields.OrderBy(field => field.Name).ToList();
+            foreach (int id in _filterSet.SelectedCropFieldIds)
+                SelectedCropFields.Add(context.CropFields.Find(id));
 
             AllCostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
             foreach (int id in _filterSet.SelectedCostTypeIds)
@@ -98,6 +104,19 @@ namespace FarmOrganizer.ViewModels.PopUps
         [RelayCommand]
         private async Task Apply()
         {
+            List<int> cropFieldsIds = new();
+            foreach (CropField field in SelectedCropFields.Cast<CropField>())
+                cropFieldsIds.Add(field.Id);
+
+            //Warn when no crop field was selected
+            if (cropFieldsIds.Count == 0)
+            {
+                await App.AlertSvc.ShowAlertAsync(
+                    "Brak wybranych pól uprawnych",
+                    "Nie wybrano żadnych pól uprawnych do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono pola uprawne, którch wpisy mają zostać pokazane.");
+                return;
+            }
+
             List<int> costTypeIds = new();
             foreach (CostType cost in SelectedCostTypes.Cast<CostType>())
                 costTypeIds.Add(cost.Id);
@@ -134,7 +153,7 @@ namespace FarmOrganizer.ViewModels.PopUps
             }
 
             //Condition EarliestDate >= LatestDate is enforced in View
-            var newFilterSet = new LedgerFilterSet(costTypeIds, seasons)
+            var newFilterSet = new LedgerFilterSet(cropFieldsIds, costTypeIds, seasons)
             {
                 EarliestDate = UseCustomEarliestDate ? SelectedEarliestDate.Date : DateTime.MinValue,
                 LatestDate = UseCustomLatestDate ? SelectedLatestDate.Date.AddDays(1).AddMicroseconds(-1) : DateTime.MaxValue,
@@ -144,14 +163,14 @@ namespace FarmOrganizer.ViewModels.PopUps
                 DescendingSort = UseDescendingSortOrder
             };
             OnFilterSetCreated?.Invoke(this, newFilterSet);
-            Pop();
+            await ReturnToPreviousPage();
         }
 
         [RelayCommand]
-        private void Pop()
+        private async Task ReturnToPreviousPage()
         {
             OnPageQuit?.Invoke(this, null);
-            _popUpSvc.PopAsync();
+            await Shell.Current.GoToAsync("..");
         }
 
         //TODO: applies to all partial methods below - load default timespan from Preferences

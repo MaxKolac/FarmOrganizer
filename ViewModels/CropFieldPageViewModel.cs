@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
-using FarmOrganizer.ViewModels.HelperClasses;
 using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels

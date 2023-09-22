@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace FarmOrganizer.ViewModels.HelperClasses
+namespace FarmOrganizer
 {
     public static class Utils
     {
