@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:helper="clr-namespace:FarmOrganizer.ViewModels.HelperClasses"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.ReportPage"
              x:DataType="viewmodel:ReportPageViewModel"
              Title="Raport wydatków i przychodów">
@@ -66,6 +67,12 @@
                 </Grid>
             </Frame>
         </DataTemplate>
+        <DataTemplate x:DataType="model:CropField" x:Key="CropFieldTemplate">
+            <Label Text="{Binding .}" LineBreakMode="WordWrap"/>
+        </DataTemplate>
+        <DataTemplate x:DataType="model:Season" x:Key="SeasonTemplate">
+            <Label Text="{Binding .}" LineBreakMode="WordWrap"/>
+        </DataTemplate>
     </ContentPage.Resources>
 
     <ScrollView>
@@ -76,17 +83,19 @@
                 <Grid ColumnDefinitions="*"
                       RowDefinitions="Auto, Auto, Auto, Auto">
                     <Label Grid.Row="0" 
-                            Text="Pole uprawne:" 
+                            Text="{Binding CropFieldsLabel}" 
                             Style="{StaticResource BoldLabel}"/>
-                    <Label Grid.Row="1" 
-                           Text="{Binding PassedCropField}"
-                           LineBreakMode="WordWrap"/>
+                    <CollectionView Grid.Row="1"
+                                    ItemTemplate="{StaticResource CropFieldTemplate}"
+                                    ItemsSource="{Binding PassedCropFields}"
+                                    SelectionMode="None"/>
                     <Label Grid.Row="2" 
-                            Text="Sezon:" 
+                            Text="{Binding SeasonsLabel}" 
                             Style="{StaticResource BoldLabel}"/>
-                    <Label Grid.Row="3" 
-                           Text="{Binding PassedSeason}" 
-                           LineBreakMode="WordWrap"/>
+                    <CollectionView Grid.Row="3"
+                                    ItemTemplate="{StaticResource SeasonTemplate}"
+                                    ItemsSource="{Binding PassedSeasons}"
+                                    SelectionMode="None"/>
                 </Grid>
             </VerticalStackLayout>
             

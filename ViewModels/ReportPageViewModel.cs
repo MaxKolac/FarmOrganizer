@@ -9,17 +9,20 @@ using Microsoft.Data.Sqlite;
 namespace FarmOrganizer.ViewModels
 {
     [QueryProperty(nameof(passedLedgerEntries), "entries")]
-    [QueryProperty(nameof(PassedCropField), "cropfield")]
-    [QueryProperty(nameof(PassedSeason), "season")]
+    [QueryProperty(nameof(cropFieldIds), "cropfields")]
+    [QueryProperty(nameof(seasonIds), "seasons")]
     public partial class ReportPageViewModel : QuickCalculatorViewModel, IQueryAttributable
     {
         #region Query Properties
         private List<BalanceLedger> passedLedgerEntries;
-        [ObservableProperty]
-        private CropField passedCropField;
-        [ObservableProperty]
-        private Season passedSeason;
+        private List<int> cropFieldIds;
+        private List<int> seasonIds;
         #endregion
+
+        [ObservableProperty]
+        private List<CropField> passedCropFields = new();
+        [ObservableProperty]
+        private List<Season> passedSeasons = new();
 
         #region Money Related Properties and Lists
         [ObservableProperty]
@@ -47,7 +50,17 @@ namespace FarmOrganizer.ViewModels
         private CostType selectedCostType;
         #endregion
 
-        #region Dynamic TotalChange text
+        #region Dynamic text
+        [ObservableProperty]
+        private string seasonsLabel = _seasonLabelSingle;
+        private const string _seasonLabelSingle = "Sezon:";
+        private const string _seasonLabelMultiple = "Sezony:";
+
+        [ObservableProperty]
+        private string cropFieldsLabel = _cropFieldLabelSingle;
+        private const string _cropFieldLabelSingle = "Pole uprawne:";
+        private const string _cropFieldLabelMultiple = "Pola uprawne:";
+
         [ObservableProperty]
         private string totalChangeText = _totalChangeTextProfit;
         private const string _totalChangeTextProfit = "Zysk (zł):";
@@ -72,8 +85,19 @@ namespace FarmOrganizer.ViewModels
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             passedLedgerEntries = query["entries"] as List<BalanceLedger>;
-            PassedCropField = query["cropfield"] as CropField;
-            PassedSeason = query["season"] as Season;
+            cropFieldIds = query["cropfields"] as List<int>;
+            seasonIds = query["seasons"] as List<int>;
+
+            using var context = new DatabaseContext();
+                foreach (int id in cropFieldIds)
+                    PassedCropFields.Add(context.CropFields.Find(id));
+                foreach (int id in seasonIds)
+                    PassedSeasons.Add(context.Seasons.Find(id));
+
+            if (PassedSeasons.Count > 1)
+                SeasonsLabel = _seasonLabelMultiple;
+            if (PassedCropFields.Count > 1)
+                CropFieldsLabel = _cropFieldLabelMultiple;
 
             var costDictionary = new Dictionary<CostType, decimal>();
             foreach (BalanceLedger entry in passedLedgerEntries)
@@ -111,14 +135,27 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task AddNewLedgerEntry()
         {
+            if (PassedCropFields.Count == 0 || PassedSeasons.Count == 0)
+            {
+                App.AlertSvc.ShowAlert("Nie można dodać nowego rekordu",
+                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport bez zaznaczonego przynajmniej jednego sezonu i/lub jednego pola uprawnego.");
+                return;
+            }
+            if (PassedCropFields.Count != 1 || PassedSeasons.Count != 1)
+            {
+                App.AlertSvc.ShowAlert("Nie można dodać nowego rekordu",
+                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport zawierający więcej niż jeden sezon i/lub więcej niż jedno pole uprawne.");
+                return;
+            }
+
             try
             {
                 using var context = new DatabaseContext();
                 BalanceLedger newEntry = new()
                 {
                     IdCostType = SelectedCostType.Id,
-                    IdCropField = PassedCropField.Id,
-                    IdSeason = PassedSeason.Id,
+                    IdCropField = PassedCropFields[0].Id,
+                    IdSeason = PassedSeasons[0].Id,
                     DateAdded = DateTime.Now,
                     BalanceChange = Utils.CastToValue(PureIncomeValue),
                     Notes = $"Sprzedaż {Utils.CastToValue(CropAmountValue)} kg przy stawce {Utils.CastToValue(SellRateValue)} zł za kilo."

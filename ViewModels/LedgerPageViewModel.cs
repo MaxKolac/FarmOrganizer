@@ -106,10 +106,9 @@ namespace FarmOrganizer.ViewModels
         {
             var query = new Dictionary<string, object>()
             {
-                //TODO: multiple cropfields, multiple seasons
                 { "entries", LedgerEntries },
-                { "cropfield", preferredCropField },
-                { "season", Season.GetCurrentSeason() }
+                { "cropfields", _filterSet.SelectedCropFieldIds },
+                { "seasons", _filterSet.SelectedSeasonIds }
             };
             await Shell.Current.GoToAsync(nameof(ReportPage), query);
         }
