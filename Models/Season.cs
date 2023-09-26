@@ -26,6 +26,12 @@ public partial class Season : IValidatable<Season>
     public DateTime DateEnd { get; set; }
     [Obsolete("The program is no longer making use of this property, it will be deleted on the next database schema update.")]
     public bool HasConcluded { get; set; }
+    /// <summary>
+    /// <b>Important!</b> SQLite stores <see cref="DateTime.MaxValue"/> as C#'s actual <see cref="DateTime.MaxValue"/> value <b>MINUS 9 TICKS</b>.<br/>
+    /// During testing, records retrieved from the database had their <see cref="DateEnd"/> changed <see cref="DateTime.Ticks"/> property from <c>3155378975999999999</c> to <c>3155378975999999990</c>.<br/>
+    /// Whenever you wish to use <see cref="DateTime.MaxValue"/>, to avoid this discrepancy use <see cref="MaximumDate"/> instead.
+    /// </summary>
+    public static readonly DateTime MaximumDate = new(9999, 1, 1);
 
     public virtual ICollection<BalanceLedger> BalanceLedgers { get; set; } = new List<BalanceLedger>();
     public virtual ICollection<FieldEfficiency> FieldEfficiencies { get; set; } = new List<FieldEfficiency>();
@@ -115,7 +121,7 @@ public partial class Season : IValidatable<Season>
         {
             Name = entry.Name,
             DateStart = entry.DateStart.Date.AddDays(1),
-            DateEnd = DateTime.MaxValue
+            DateEnd = MaximumDate
         };
         context.Seasons.Add(entryValidated);
         context.SaveChanges();
@@ -183,7 +189,7 @@ public partial class Season : IValidatable<Season>
     /// <summary>
     /// <inheritdoc/>
     /// <para>
-    /// If the deleted <see cref="Season"/> is chronologically the last, the previous record's <see cref="DateEnd"/> is changed to <see cref="DateTime.MaxValue"/>.<br/>
+    /// If the deleted <see cref="Season"/> is chronologically the last, the previous record's <see cref="DateEnd"/> is changed to <see cref="MaximumDate"/>.<br/>
     /// Otherwise, the <see cref="Season"/> right after the deleted one fills in the gap left behind after deleting the desired record.
     /// </para>
     /// </summary>
@@ -206,7 +212,7 @@ public partial class Season : IValidatable<Season>
         {
             Season? previousSeason = context.Seasons.Find(allSeasonsOrdered[^2].Id) ?? 
                 throw new RecordDeletionException("Sezony", "Odnaleziono więcej niż 1 sezon, ale nie udało się odnaleźć drugiego sezonu licząc od końca.");
-            previousSeason.DateEnd = DateTime.MaxValue;
+            previousSeason.DateEnd = MaximumDate;
         }
         //If it isn't, the next season is chosen to cover the timespan hole left after the entry is deleted
         else

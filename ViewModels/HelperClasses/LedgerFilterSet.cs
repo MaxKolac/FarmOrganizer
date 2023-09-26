@@ -9,7 +9,7 @@ namespace FarmOrganizer.ViewModels.HelperClasses
         public List<int> SelectedCostTypeIds { get; set; } = new();
         public List<int> SelectedSeasonIds { get; set; } = new();
         public DateTime EarliestDate { get; set; } = DateTime.MinValue;
-        public DateTime LatestDate { get; set; } = DateTime.MaxValue;
+        public DateTime LatestDate { get; set; } = Season.MaximumDate;
         public decimal SmallestBalanceChange { get; set; } = decimal.MinValue;
         public decimal LargestBalanceChange { get; set; } = decimal.MaxValue;
 

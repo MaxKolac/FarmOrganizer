@@ -45,8 +45,8 @@ namespace FarmOrganizer.ViewModels
                 {
                     Name = NewSeasonName,
                     DateStart = NewSeasonDateStart,
-                    DateEnd = DateTime.MaxValue,
-                    HasConcluded = false
+                    DateEnd = Season.MaximumDate
+                    //HasConcluded = false
                 };
                 Season.AddEntry(newSeason);
                 Seasons = new DatabaseContext().Seasons.ToList();
