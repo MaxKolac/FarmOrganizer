@@ -6,7 +6,7 @@ namespace FarmOrganizer.Models;
 
 /// <summary>
 /// Represents a period of time, during which costs and profits can be accumulated. <br/>
-/// A collection of Seasons added together chronologically should perfectly recreate a timeline from 01.01.2023 to 12.31.9999 without any dates left out.
+/// A collection of Seasons added together chronologically should perfectly recreate a timeline from 01.01.2023 to 12.31.9999 without any dates left out. Minimum length of a single Season is 1 day - 1 microsecond (23 hours, 59 minutes and 59 seconds).
 /// </summary>
 public partial class Season : IValidatable<Season>
 {
@@ -33,12 +33,21 @@ public partial class Season : IValidatable<Season>
     public override string ToString()
     {
         StringBuilder builder = new();
-        builder.Append(Name + " (" + DateStart.ToString("dd.MM.yy") + " - ");
-        builder.Append(new DateTime(9999, 1, 1) < DateEnd ? "dzisiaj)" : DateEnd.ToString("dd.MM.yy") + ")");
+        builder.Append(Name + " (");
+        if (MaximumDate <= DateEnd)
+            builder.Append("od " + DateStart.ToString("dd.MM.yy"));
+        else
+            builder.Append(DateStart.ToString("dd.MM.yy") + " - " + DateEnd.ToString("dd.MM.yy"));
+        builder.Append(')');
+        //builder.Append(Name + " (" + DateStart.ToString("dd.MM.yy") + " - ");
+        //builder.Append(new DateTime(9999, 1, 1) < DateEnd ? "dzisiaj)" : DateEnd.ToString("dd.MM.yy") + ")");
         //builder.Append(" - ");
         //builder.Append(HasConcluded ? "Zakończony" : "W trakcie");
         return builder.ToString();
     }
+
+    public string ToDebugString() =>
+        $"{Id}: {Name} - ({DateStart} - {DateEnd})";
 
     //Database related methods
     public static void Validate() => Validate(out _);
@@ -53,16 +62,19 @@ public partial class Season : IValidatable<Season>
         if (allSeasons.Count == 0)
             throw new TableValidationException(nameof(DatabaseContext.Seasons), "Nie odnaleziono żadnych rekordów.");
 
-        //Check if any DateEnd and DateStart doesnt follow the pattern of having TimeOfDay property set to 23:59:99 and 00:00:00 respectively, except for the last Season
         for (int i = 0; i < allSeasons.Count - 1; i++)
         {
-            if (allSeasons[i].DateEnd != allSeasons[i + 1].DateEnd.AddMicroseconds(-1))
+            //Check if any Season has DateEnd earlier than DateStart, and if any of them break the minimum length of 1 day
+            if (allSeasons[i].DateEnd < allSeasons[i].DateStart.AddDays(1).AddMicroseconds(-1))
+                throw new TableValidationException(nameof(DatabaseContext.Seasons), "Wykryto sezon, w którym data rozpoczęcia znajduje się po dacie zakończenia i/lub nie spłenia wymagania długości min. 1 dnia.", allSeasons[i].ToDebugString(), "DateStart; DateEnd");
+            //Check if any DateEnd and DateStart doesnt follow the pattern of having TimeOfDay property set to 23:59:99 and 00:00:00 respectively, except for the last Season
+            if (allSeasons[i].DateEnd != allSeasons[i + 1].DateStart.AddMicroseconds(-1))
                 throw new TableValidationException(nameof(DatabaseContext.Seasons), "Wykryto dwa sezony, których daty rozpoczęcia i zakończenia nie pokrywają się prawidłowo.", $"{allSeasons[i]}; {allSeasons[i + 1]}", "DateEnd; DateStart");
         }
 
-        //Check if last Season has the MaxValue on DateEnd
-        if (allSeasons[^1].DateEnd != DateTime.MaxValue)
-            throw new TableValidationException(nameof(DatabaseContext.Seasons), "Końcowy sezon musi posiadać DateTime.MaxValue jako datę zakończenia.");
+        //Check if last Season has the MaximumDate on DateEnd. See MaximumDate doc to understand why using DateTime.MaxValue is ill-advised
+        if (allSeasons[^1].DateEnd.Date < MaximumDate)
+            throw new TableValidationException(nameof(DatabaseContext.Seasons), "Końcowy sezon musi posiadać MaximumDate jako datę zakończenia.");
     }
 
     /// <summary>
@@ -85,6 +97,14 @@ public partial class Season : IValidatable<Season>
         //New season cannot have empty name
         if (string.IsNullOrEmpty(entry.Name))
             throw new InvalidRecordPropertyException("Nazwa", null, "Sezon musi posiadać niepustą nazwę.");
+
+        //  This check doesn't matter here, as the final added entry has its DateEnd overriden to always be MaximumDate
+        //  This check might become important if customer demands that you can create a Season inbetween other Seasons, instead
+        //  of the hardcoded behaviour of always appending new Seasons after all other Seasons.
+        //New season needs to have DateEnd greater then DateStart obviously
+        //DateStart needs to be equal or smaller after adding 1day-1microsecond for entry to be valid - min. length of 1 day.
+        //if (entry.DateEnd < entry.DateStart.AddDays(1).AddMicroseconds(-1))
+        //    throw new InvalidRecordPropertyException("Data zakończenia", entry.DateEnd.ToShortDateString(), "Datą zakończenia sezonu może być data, która występuje przynajmniej 1 dzień po dacie rozpoczęcia sezonu.");
 
         //New season cannot start before the previous one started
         if (lastSeason.DateStart >= entry.DateStart.Date.AddDays(1).AddMicroseconds(-1))
@@ -123,15 +143,20 @@ public partial class Season : IValidatable<Season>
         if (string.IsNullOrEmpty(entry.Name))
             throw new InvalidRecordPropertyException("Nazwa", null, "Sezon musi posiadać niepustą nazwę.");
 
+        //New season needs to have DateEnd greater then DateStart obviously
+        //DateStart needs to be equal or smaller after adding 1day-1microsecond for entry to be valid - min. length of 1 day.
+        if (entry.DateEnd < entry.DateStart.AddDays(1).AddMicroseconds(-1))
+            throw new InvalidRecordPropertyException("Data zakończenia", entry.DateEnd.ToShortDateString(), "Datą zakończenia sezonu może być data, która występuje przynajmniej 1 dzień po dacie rozpoczęcia sezonu.");
+
         //Find out if the edited Season has any chronological neighbours.
         //If it does, their respective DateTime property will also have to be changed, as to not leave out any gaps in timeline
-        List<Season> allSeasons = context.Seasons.OrderBy(season => season.DateStart).ToList();
-        for (int i = allSeasons.Count - 1; i >= 0; i--)
+        List<Season> allSeasonsOrdered = context.Seasons.OrderBy(season => season.DateStart).ToList();
+        for (int i = allSeasonsOrdered.Count - 1; i >= 0; i--)
         {
-            if (allSeasons[i].Id == entry.Id)
+            if (allSeasonsOrdered[i].Id == entry.Id)
             {
-                previousSeason = context.Seasons.Find(i - 1);
-                nextSeason = context.Seasons.Find(i + 1);
+                previousSeason = i == 0 ? null : context.Seasons.Find(allSeasonsOrdered[i - 1].Id);
+                nextSeason = i == allSeasonsOrdered.Count - 1 ? null : context.Seasons.Find(allSeasonsOrdered[i + 1].Id);
                 break;
             }
         }
@@ -139,16 +164,16 @@ public partial class Season : IValidatable<Season>
         //Date restraints depending on whether or not Season being edited has neighbouring Seasons
         if (previousSeason is not null)
         {
-            if (entry.DateStart.Date <= previousSeason.DateStart.Date.AddMicroseconds(-1))
-                throw new InvalidRecordPropertyException("Data rozpoczęcia", entry.DateStart.Date.ToString(), "Przesuń datę rozpoczęcia na późniejszą datę.");
+            if (entry.DateStart < previousSeason.DateStart.Date.AddDays(1))
+                throw new InvalidRecordPropertyException("Data rozpoczęcia", entry.DateStart.Date.ToString(), "Zmień datę rozpoczęcia na późniejszą datę.");
             previousSeason.DateEnd = entry.DateStart.Date.AddMicroseconds(-1);
-            editedSeason.DateStart = entry.DateStart.Date;
         }
+        editedSeason.DateStart = entry.DateStart.Date;
 
         if (nextSeason is not null)
         {
-            if (nextSeason.DateEnd <= entry.DateEnd.Date.AddDays(1).AddMicroseconds(-1))
-                throw new InvalidRecordPropertyException("Data zakończenia", entry.DateEnd.Date.ToString(), "Przesuń datę zakończenia na wcześniejszą datę.");
+            if (entry.DateEnd > nextSeason.DateEnd.Date.AddMicroseconds(-1))
+                throw new InvalidRecordPropertyException("Data zakończenia", entry.DateEnd.Date.ToString(), "Zmień datę zakończenia na wcześniejszą datę.");
             editedSeason.DateEnd = entry.DateEnd.Date.AddDays(1).AddMicroseconds(-1);
             nextSeason.DateStart = entry.DateEnd.Date.AddDays(1);
         }
@@ -170,28 +195,27 @@ public partial class Season : IValidatable<Season>
         if (seasonToDelete is null)
             return;
         
-        List<Season> allSeasons = context.Seasons.OrderBy(season => season.DateStart).ToList();
+        List<Season> allSeasonsOrdered = context.Seasons.OrderBy(season => season.DateStart).ToList();
 
         //Minimum of 1 season
-        if (allSeasons.Count <= 1)
+        if (allSeasonsOrdered.Count <= 1)
             throw new RecordDeletionException("Sezony");
 
         //Find out if the deleted Season is the last Season.
-        if (allSeasons[^1].Id == seasonToDelete.Id)
+        if (allSeasonsOrdered[^1].Id == seasonToDelete.Id)
         {
-            Season? previousSeason = context.Seasons.Find(allSeasons[^2].Id) ?? 
+            Season? previousSeason = context.Seasons.Find(allSeasonsOrdered[^2].Id) ?? 
                 throw new RecordDeletionException("Sezony", "Odnaleziono więcej niż 1 sezon, ale nie udało się odnaleźć drugiego sezonu licząc od końca.");
             previousSeason.DateEnd = DateTime.MaxValue;
-            return;
         }
         //If it isn't, the next season is chosen to cover the timespan hole left after the entry is deleted
         else
         {
-            for (int i = allSeasons.Count - 2; i >= 0; i--)
+            for (int i = allSeasonsOrdered.Count - 2; i >= 0; i--)
             {
-                if (allSeasons[i].Id == entry.Id)
+                if (allSeasonsOrdered[i].Id == entry.Id)
                 {
-                    Season? nextSeason = context.Seasons.Find(i + 1) ??
+                    Season? nextSeason = context.Seasons.Find(allSeasonsOrdered[i + 1].Id) ??
                         throw new RecordDeletionException("Sezony", "Nie odnaleziono sezonu następującego po sezonie usuwanym, mimo że powinien istnieć.");
                     nextSeason.DateStart = seasonToDelete.DateStart;
                 }
