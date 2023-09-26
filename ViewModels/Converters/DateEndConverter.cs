@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using FarmOrganizer.Models;
+using System.Globalization;
 
 namespace FarmOrganizer.ViewModels.Converters
 {
@@ -16,7 +17,7 @@ namespace FarmOrganizer.ViewModels.Converters
             if (value is not DateTime)
                 return string.Empty;
             DateTime date = (DateTime)value;
-            if (date > new DateTime(9999, 1, 1))
+            if (date >= Season.MaximumDate)
                 return string.Empty;
             else
                 return " - " + date.ToString("d MMMM yy");
