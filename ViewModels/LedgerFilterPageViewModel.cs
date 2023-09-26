@@ -35,7 +35,7 @@ namespace FarmOrganizer.ViewModels
         private bool useCustomEarliestDate;
 
         [ObservableProperty]
-        private DateTime selectedLatestDate = DateTime.MaxValue;
+        private DateTime selectedLatestDate = Season.MaximumDate;
         [ObservableProperty]
         private bool useCustomLatestDate;
 
@@ -81,8 +81,8 @@ namespace FarmOrganizer.ViewModels
             UseCustomEarliestDate = _filterSet.EarliestDate != DateTime.MinValue;
             SelectedEarliestDate = UseCustomEarliestDate ? _filterSet.EarliestDate : DateTime.MinValue;
 
-            UseCustomLatestDate = _filterSet.LatestDate != DateTime.MaxValue;
-            SelectedLatestDate = UseCustomLatestDate ? _filterSet.LatestDate : DateTime.MaxValue;
+            UseCustomLatestDate = _filterSet.LatestDate != Season.MaximumDate;
+            SelectedLatestDate = UseCustomLatestDate ? _filterSet.LatestDate : Season.MaximumDate;
 
             UseCustomSmallestChange = _filterSet.SmallestBalanceChange != decimal.MinValue;
             SmallestBalanceChange = UseCustomSmallestChange ? _filterSet.SmallestBalanceChange : decimal.MinValue;
@@ -156,7 +156,7 @@ namespace FarmOrganizer.ViewModels
             var newFilterSet = new LedgerFilterSet(cropFieldsIds, costTypeIds, seasons)
             {
                 EarliestDate = UseCustomEarliestDate ? SelectedEarliestDate.Date : DateTime.MinValue,
-                LatestDate = UseCustomLatestDate ? SelectedLatestDate.Date.AddDays(1).AddMicroseconds(-1) : DateTime.MaxValue,
+                LatestDate = UseCustomLatestDate ? SelectedLatestDate.Date.AddDays(1).AddMicroseconds(-1) : Season.MaximumDate,
                 SmallestBalanceChange = UseCustomSmallestChange ? SmallestBalanceChange : decimal.MinValue,
                 LargestBalanceChange = UseCustomLargestChange ? LargestBalanceChange : decimal.MaxValue,
                 SortingMethod = SelectedSortMethod,
@@ -178,7 +178,7 @@ namespace FarmOrganizer.ViewModels
             SelectedEarliestDate = newValue ? DateTime.Now.AddMonths(-1) : DateTime.MinValue;
 
         partial void OnUseCustomLatestDateChanged(bool oldValue, bool newValue) =>
-            SelectedLatestDate = newValue ? DateTime.Now : DateTime.MaxValue;
+            SelectedLatestDate = newValue ? DateTime.Now : Season.MaximumDate;
 
         partial void OnUseCustomSmallestChangeChanged(bool value) =>
             SmallestBalanceChange = 0.00m;
