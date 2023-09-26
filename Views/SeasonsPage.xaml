@@ -94,6 +94,7 @@
                         <Label Text="Data zakończenia:"/>
                         <DatePicker x:Name="DateEndPicker"
                                     Margin="0,-11,0,0"
+                                    IsEnabled="{Binding DateEndPickerEnabled}"
                                     Date="{Binding SeasonDateEnd}"
                                     MinimumDate="{Reference DateStartPicker}"/>
                     </HorizontalStackLayout>

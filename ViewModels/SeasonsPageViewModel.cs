@@ -14,6 +14,8 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private bool showCreatorFrame = false;
         [ObservableProperty]
+        private bool dateEndPickerEnabled = false;
+        [ObservableProperty]
         private string saveButtonText = "Dodaj sezon i zapisz";
 
         private bool addingSeason = false;
@@ -22,7 +24,7 @@ namespace FarmOrganizer.ViewModels
 
         #region Season Details
         [ObservableProperty]
-        private string seasonName = "Nowy sezon " + DateTime.Now.Year.ToString();
+        private string seasonName = "Nowy sezon " + DateTime.Now.AddMonths(2).Year.ToString();
         [ObservableProperty]
         private DateTime seasonDateStart = DateTime.Now;
         [ObservableProperty]
@@ -89,6 +91,7 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void Edit(Season seasonToEdit)
         {
+            DateEndPickerEnabled = seasonToEdit.DateEnd < Season.MaximumDate;
             editedSeasonId = seasonToEdit.Id;
             SeasonName = seasonToEdit.Name;
             SeasonDateStart = seasonToEdit.DateStart;
@@ -124,6 +127,8 @@ namespace FarmOrganizer.ViewModels
         {
             editingSeason = false;
             addingSeason = true;
+            SeasonDateEnd = Season.MaximumDate;
+            DateEndPickerEnabled = false;
             SaveButtonText = "Dodaj sezon i zapisz";
             ShowCreatorFrame = !ShowCreatorFrame;
         }
