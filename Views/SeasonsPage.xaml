@@ -8,7 +8,6 @@
              x:DataType="viewmodel:SeasonsPageViewModel"
              Title="Sezony uprawne">
     <ContentPage.Resources>
-        <converter:HasConcludedConverter x:Key="HasConcludedConverter"/>
         <converter:DateEndConverter x:Key="DateEndConverter"/>
 
         <Style TargetType="Label" x:Key="SeasonListMediumLabel">
@@ -25,23 +24,47 @@
             <CollectionView ItemsSource="{Binding Seasons}" VerticalOptions="Fill">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Season">
-                        <Frame Style="{StaticResource TableEntryFrame}">
-                            <Grid RowDefinitions="Auto, Auto"
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems>
+                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=EditCommand}" 
+                                                   CommandParameter="{Binding .}">
+                                        <Frame BackgroundColor="LightYellow">
+                                            <Label Text="Edytuj" 
+                                                   TextColor="Black"
+                                                   FontAttributes="Bold"/>
+                                        </Frame>
+                                    </SwipeItemView>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=RemoveCommand}" 
+                                                   CommandParameter="{Binding .}">
+                                        <Frame BackgroundColor="Firebrick">
+                                            <Label Text="Usuń"
+                                                   TextColor="White"
+                                                   FontAttributes="Bold"/>
+                                        </Frame>
+                                    </SwipeItemView>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Frame Style="{StaticResource TableEntryFrame}">
+                                <Grid RowDefinitions="Auto, Auto"
                                   ColumnDefinitions="*, Auto">
-                                <Label Text="{Binding Name}"
-                                       FontAttributes="Bold"
-                                       FontSize="20"/>
-                                <Label Grid.Column="1"
-                                       Style="{StaticResource SeasonListMediumLabel}"
-                                       Text="{Binding HasConcluded, Converter={StaticResource HasConcludedConverter}}"/>
-                                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                                    <Label Text="{Binding DateStart, StringFormat='{0:d MMMM yy}'}"
-                                           Style="{StaticResource SeasonListMediumLabel}"/>
-                                    <Label Text="{Binding DateEnd, Converter={StaticResource DateEndConverter}}"
-                                           Style="{StaticResource SeasonListMediumLabel}"/>
-                                </HorizontalStackLayout>
-                            </Grid>
-                        </Frame>
+                                    <Label Text="{Binding Name}"
+                                           FontAttributes="Bold"
+                                           FontSize="20"/>
+                                    <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                                        <Label Text="{Binding DateStart, StringFormat='{0:d MMMM yy}'}"
+                                               Style="{StaticResource SeasonListMediumLabel}"/>
+                                        <Label Text="{Binding DateEnd, Converter={StaticResource DateEndConverter}}"
+                                               Style="{StaticResource SeasonListMediumLabel}"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </SwipeView>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -51,23 +74,32 @@
                    Margin="5,0,5,0"
                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
                    BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                   IsVisible="{Binding AddingNewSeason}">
+                   IsVisible="{Binding ShowCreatorFrame}">
                 <Grid RowDefinitions="Auto, Auto, Auto, Auto"
                       ColumnDefinitions="Auto, *">
                     <HorizontalStackLayout>
                         <Label Text="Nazwa:"/>
                         <Entry Grid.Column="1"
                                Margin="0,-11,0,0"
-                               Text="{Binding NewSeasonName}"/>
+                               Text="{Binding SeasonName}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="1">
                         <Label Text="Data rozpoczęcia:"/>
-                        <DatePicker Margin="0,-11,0,0"
-                                    Date="{Binding NewSeasonDateStart}"/>
+                        <DatePicker x:Name="DateStartPicker"
+                                    Margin="0,-11,0,0"
+                                    Date="{Binding SeasonDateStart}"
+                                    MaximumDate="{Reference DateEndPicker}"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Row="2">
+                        <Label Text="Data zakończenia:"/>
+                        <DatePicker x:Name="DateEndPicker"
+                                    Margin="0,-11,0,0"
+                                    Date="{Binding SeasonDateEnd}"
+                                    MinimumDate="{Reference DateStartPicker}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="3">
-                        <Button Text="Dodaj i rozpocznij sezon"
-                                Command="{Binding StartNewSeasonCommand}"/>
+                        <Button Text="{Binding SaveButtonText}"
+                                Command="{Binding AddOrSaveCommand}"/>
                     </HorizontalStackLayout>
                 </Grid>
             </Frame>
@@ -79,11 +111,7 @@
                                    HorizontalOptions="Center">
                 <Button Text="Stwórz nowy sezon" 
                         HorizontalOptions="Start"
-                        Command="{Binding ToggleNewSeasonFrameCommand}"/>
-                <Button Text="Wznów poprzedni sezon" 
-                        HorizontalOptions="End"
-                        IsVisible="False"
-                        Command="{Binding ResumePreviousSeasonCommand}"/>
+                        Command="{Binding ToggleAddingCommand}"/>
             </HorizontalStackLayout>
         </Grid>
     </ScrollView>

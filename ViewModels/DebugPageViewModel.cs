@@ -21,7 +21,7 @@ namespace FarmOrganizer.ViewModels
         public void PutPause() => DebugText += "\n=========\n";
 
         [RelayCommand]
-        async Task PerformTest() =>
+        void PerformTest() =>
             //PerformCRUDTests();
             //await PerformDatabaseFileTests();
             NewSeasonTests();
