@@ -3,10 +3,20 @@ using FarmOrganizer.Exceptions;
 
 namespace FarmOrganizer.Models;
 
+/// <summary>
+/// A category of a <see cref="BalanceLedger"/> entry. Determines how it will be calculated when generating a new report.<br/>
+/// In user interface, it should be referred to as "Rodzaj wpisu".
+/// </summary>
 public partial class CostType : IValidatable<CostType>
 {
     public int Id { get; set; }
+    /// <summary>
+    /// A user-friendly name of the <see cref="CostType"/>.
+    /// </summary>
     public string Name { get; set; }
+    /// <summary>
+    /// Determines if this <see cref="CostType"/> is considered a loss, or a profit.
+    /// </summary>
     public bool IsExpense { get; set; }
 
     public virtual ICollection<BalanceLedger> BalanceLedgers { get; set; } = new List<BalanceLedger>();
@@ -31,7 +41,7 @@ public partial class CostType : IValidatable<CostType>
         foreach (CostType type in allEntries)
         {
             if (string.IsNullOrEmpty(type.Name))
-                throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Odnaleziono typ z pustą nazwą", type.ToString(), nameof(Name));
+                throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Odnaleziono rodzaj wpisu z pustą nazwą", type.ToString(), nameof(Name));
 
             if (type.IsExpense)
                 expenseFound = true;
@@ -42,7 +52,7 @@ public partial class CostType : IValidatable<CostType>
         }
 
         if (!expenseFound || !incomeFound)
-            throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego kosztu traktowanego jako wydatek lub przynajmniej jednego kosztu traktowanego jako zysk.");
+            throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego rodzaju wpisu traktowanego jako wydatek lub przynajmniej jednego rodzaju wpisu traktowanego jako zysk.");
     }
 
     public static void AddEntry(CostType entry)
@@ -103,9 +113,9 @@ public partial class CostType : IValidatable<CostType>
                 profitsFound++;
         }
         if (entryToDelete.IsExpense && expensesFound <= 1)
-            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako wydatek.");
+            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju wpisu, który traktowany jest jako wydatek.");
         if (!entryToDelete.IsExpense && profitsFound <= 1)
-            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako przychód.");
+            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju wpisu, który traktowany jest jako przychód.");
 
         context.CostTypes.Remove(entryToDelete);
         context.SaveChanges();

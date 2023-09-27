@@ -186,8 +186,8 @@ namespace FarmOrganizer.ViewModels
             if (costTypeIds.Count == 0)
             {
                 await App.AlertSvc.ShowAlertAsync(
-                    "Brak wybranych kosztów",
-                    "Nie wybrano żadnych rodzajów kosztów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono rodzaje kosztów, które mają posiadać wpisy aby zostały pokazane.");
+                    "Brak wybranych rodzajów wpisów",
+                    "Nie wybrano żadnych rodzajów wpisów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono rodzaje, które mają posiadać wpisy aby zostały pokazane.");
                 return;
             }
 
@@ -209,7 +209,7 @@ namespace FarmOrganizer.ViewModels
             {
                 await App.AlertSvc.ShowAlertAsync(
                     "Zły zakres wartości kosztu",
-                    "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronny zakres.");
+                    "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronnie otwarty zakres.");
                 return;
             }
 

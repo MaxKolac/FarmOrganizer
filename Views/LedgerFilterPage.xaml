@@ -86,7 +86,7 @@
                 </HorizontalStackLayout>
 
                 <!-- CostTypes -->
-                <Label Text="Uwzględnij tylko typy kosztów:" 
+                <Label Text="Uwzględnij tylko rodzaje wpisów:" 
                        Style="{StaticResource CollectionViewLabel}"/>
                 <CollectionView SelectionMode="Multiple"
                                 ItemTemplate="{StaticResource CostTypeDataTemplate}"

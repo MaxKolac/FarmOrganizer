@@ -14,14 +14,14 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private bool showCreatorFrame = false;
         [ObservableProperty]
-        private string saveButtonText = "Dodaj koszt i zapisz";
+        private string saveButtonText = "Dodaj rodzaj i zapisz";
 
         private bool addingEntry = false;
         private bool editingEntry = false;
         private int editedEntryId;
 
         [ObservableProperty]
-        private string costTypeName = "Nowy rodzaj kosztu";
+        private string costTypeName = "Nowy rodzaj";
         [ObservableProperty]
         private bool costTypeIsExpense;
 
@@ -99,7 +99,7 @@ namespace FarmOrganizer.ViewModels
             {
                 if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
-                "Usunięcie rodzaju kosztu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany rodzaj. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
+                "Usunięcie rodzaju wpisu usunie również WSZYSTKIE wpisy z tego rodzaju. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
                 "Tak, usuń",
                 "Anuluj"))
                     return;
@@ -117,7 +117,7 @@ namespace FarmOrganizer.ViewModels
         {
             editingEntry = false;
             addingEntry = true;
-            SaveButtonText = "Dodaj koszt i zapisz";
+            SaveButtonText = "Dodaj rodzaj i zapisz";
             ShowCreatorFrame = !ShowCreatorFrame;
         }
     }

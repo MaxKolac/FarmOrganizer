@@ -6,7 +6,7 @@
              xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.CostTypePage"
              x:DataType="viewmodel:CostTypePageViewModel"
-             Title="Rodzaje kosztów">
+             Title="Rodzaje wpisów">
     <ContentPage.Resources>
         <converter:IsExpenseConverter x:Key="IsExpenseConverter"/>
 

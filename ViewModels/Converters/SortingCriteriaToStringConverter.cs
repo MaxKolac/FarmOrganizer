@@ -6,7 +6,7 @@ namespace FarmOrganizer.ViewModels.Converters
     public class SortingCriteriaToStringConverter : IValueConverter
     {
         public const string BalanceChange = "Wartość wydatku";
-        public const string CostTypes = "Rodzaje kosztów";
+        public const string CostTypes = "Rodzaje wpisów";
         public const string DateAdded = "Data dodania";
         public const string SeasonStartDate = "Data początku sezonu";
 

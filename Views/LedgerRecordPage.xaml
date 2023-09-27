@@ -14,7 +14,7 @@
         <Label Text="Pole uprawne"/>
         <Picker ItemsSource="{Binding CropFields}" SelectedItem="{Binding SelectedCropField}"/>
         
-        <Label Text="Rodzaj kosztu"/>
+        <Label Text="Rodzaj wpisu"/>
         <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
 
         <Label Text="Wpis podpięty pod sezon:"/>
