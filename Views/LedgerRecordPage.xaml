@@ -9,33 +9,67 @@
         <Style TargetType="Label">
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
-    </ContentPage.Resources>
-    <VerticalStackLayout Padding="5">
-        <Label Text="Pole uprawne"/>
-        <Picker ItemsSource="{Binding CropFields}" SelectedItem="{Binding SelectedCropField}"/>
         
-        <Label Text="Rodzaj wpisu"/>
-        <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
+        <Style TargetType="Switch">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="On">
+                            <VisualState.Setters>
+                                <Setter Property="OnColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray200}}" />
+                                <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Off">
+                            <VisualState.Setters>
+                                <Setter Property="OnColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray200}}" />
+                                <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout Padding="5">
+            <Label Text="Pole uprawne"/>
+            <Picker ItemsSource="{Binding CropFields}" SelectedItem="{Binding SelectedCropField}"/>
+        
+            <Label Text="Rodzaj wpisu"/>
+            <Grid ColumnDefinitions=".6*, Auto, .2*">
+                <Picker ItemsSource="{Binding CurrentCostTypes}" 
+                        SelectedItem="{Binding SelectedCostType}" />
+                <Switch Grid.Column="1"
+                        IsToggled="{Binding CostIsExpense}"/>
+                <Label Text="{Binding CostTypeLabel}" 
+                       Grid.Column="2"
+                       FontAttributes="None"
+                       HorizontalTextAlignment="Start"
+                       VerticalTextAlignment="Center"/>
+            </Grid>
 
-        <Label Text="Wpis podpięty pod sezon:"/>
-        <Picker ItemsSource="{Binding Seasons}" SelectedItem="{Binding SelectedSeason}"/>
+            <Label Text="Wpis podpięty pod sezon"/>
+            <Picker ItemsSource="{Binding Seasons}" SelectedItem="{Binding SelectedSeason}"/>
 
-        <Label Text="Data dodania wpisu"/>
-        <DatePicker Date="{Binding DateAdded}"/>
+            <Label Text="Data dodania wpisu"/>
+            <DatePicker Date="{Binding DateAdded}"/>
 
-        <Label Text="Zysk/koszt w złotych"/>
-        <Entry Text="{Binding BalanceChange}" Style="{StaticResource NumericEntry}"/>
+            <Label Text="{Binding BalanceChangeLabel}"/>
+            <Entry Text="{Binding BalanceChange}" Style="{StaticResource NumericEntry}"/>
 
-        <Label Text="(Opcjonalne) Notatka"/>
-        <Editor Text="{Binding Notes}" AutoSize="TextChanges"/>
+            <Label Text="(Opcjonalne) Notatka"/>
+            <Editor Text="{Binding Notes}" AutoSize="TextChanges"/>
 
-        <HorizontalStackLayout Spacing="5">
-            <Button Text="Anuluj" 
-                    HorizontalOptions="Start"
-                    Command="{Binding ReturnToPreviousPageCommand}"/>
-            <Button Text="{Binding SaveButtonText}"
-                    HorizontalOptions="End"
-                    Command="{Binding SaveCommand}"/>
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+            <HorizontalStackLayout Spacing="5"
+                                   HorizontalOptions="Center">
+                <Button Text="Anuluj" 
+                        HorizontalOptions="Start"
+                        Command="{Binding ReturnToPreviousPageCommand}"/>
+                <Button Text="{Binding SaveButtonText}"
+                        HorizontalOptions="End"
+                        Command="{Binding SaveCommand}"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

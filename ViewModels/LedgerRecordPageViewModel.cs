@@ -3,7 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels.HelperClasses;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 //Passing query parameters through a single method and a Dictionary - https://learn.microsoft.com/pl-pl/dotnet/maui/fundamentals/shell/navigation#process-navigation-data-using-a-single-method
 
@@ -51,19 +54,35 @@ namespace FarmOrganizer.ViewModels
 
         #region Picker ItemSources
         [ObservableProperty]
-        List<CropField> cropFields = new();
+        private List<CropField> cropFields = new();
         [ObservableProperty]
-        CropField selectedCropField;
+        private CropField selectedCropField;
 
         [ObservableProperty]
-        List<CostType> costTypes = new();
+        private List<Season> seasons = new();
         [ObservableProperty]
-        CostType selectedCostType;
+        private Season selectedSeason;
+        #endregion
 
+        #region Cost Type Variables
         [ObservableProperty]
-        List<Season> seasons = new();
+        private ObservableCollection<CostType> currentCostTypes = new();
         [ObservableProperty]
-        Season selectedSeason;
+        private bool costIsExpense;
+        [ObservableProperty]
+        private string costTypeLabel = _costTypeLabelExpense;
+        [ObservableProperty]
+        private CostType selectedCostType;
+        private const string _costTypeLabelExpense = "Wydatek";
+        private const string _costTypeLabelProfit = "Przychód";
+        private readonly List<CostTypeGroup> costTypeGroups = new();
+        #endregion
+
+        #region Balance Change Variables
+        [ObservableProperty]
+        private string balanceChangeLabel = _balanceLabelExpense;
+        private const string _balanceLabelExpense = "Kwota wydatku w złotych";
+        private const string _balanceLabelProfit = "Kwota przychodu w złotych";
         #endregion
 
         public static event EventHandler OnPageQuit;
@@ -72,8 +91,10 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate(out List<CostType> allCostTypes);
-                CostTypes.AddRange(allCostTypes.OrderBy(cost => cost.Name).ToList());
+                CostType.Validate();
+                costTypeGroups = CostType.BuildCostTypeGroups().ToList();
+                //This triggers the partial method required to repopulate CurrentCostTypes
+                CostIsExpense = true;
 
                 CropField.Validate(out var allCropFields);
                 CropFields.AddRange(allCropFields);
@@ -100,7 +121,7 @@ namespace FarmOrganizer.ViewModels
                 case "add":
                     TitleText = "Dodawanie nowego wpisu";
                     SaveButtonText = "Dodaj i zapisz";
-                    SelectedCostType = CostTypes.First();
+                    SelectedCostType = CurrentCostTypes.First();
                     SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
                     //SelectedSeason
                     dateAddedCorrected = DateTime.Now;
@@ -113,8 +134,10 @@ namespace FarmOrganizer.ViewModels
                     SaveButtonText = "Zapisz zmiany";
                     using (var context = new DatabaseContext())
                     {
-                        BalanceLedger result = context.BalanceLedgers.Find(RecordId);
-                        SelectedCostType = CostTypes.Find(type => type.Id == result.IdCostType);
+                        BalanceLedger result = context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation).ToList().Find(entry => entry.Id == RecordId);
+                        //This triggers the partial method required to repopulate CurrentCostTypes
+                        CostIsExpense = result.IdCostTypeNavigation.IsExpense;
+                        SelectedCostType = CurrentCostTypes.ToList().Find(type => type.Id == result.IdCostType);
                         SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
                         SelectedSeason = Seasons.Find(season => season.Id == result.IdSeason);
                         dateAddedCorrected = result.DateAdded;
@@ -186,6 +209,16 @@ namespace FarmOrganizer.ViewModels
         {
             OnPageQuit?.Invoke(this, null);
             await Shell.Current.GoToAsync("..");
+        }
+
+        partial void OnCostIsExpenseChanged(bool value)
+        {
+            CostTypeLabel = value ? _costTypeLabelExpense : _costTypeLabelProfit;
+            BalanceChangeLabel = value ? _balanceLabelExpense : _balanceLabelProfit;
+            CurrentCostTypes.Clear();
+            foreach (var cost in costTypeGroups[value ? 1 : 0])
+                CurrentCostTypes.Add(cost);
+            SelectedCostType = CurrentCostTypes.First();
         }
 
         partial void OnDateAddedChanged(DateTime oldValue, DateTime newValue)

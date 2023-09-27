@@ -61,7 +61,7 @@
                                FontSize="16"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Start" />
-                        <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
+                        <Label Text="{Binding BalanceChange, StringFormat='{0:F2} zł'}"
                                Grid.Row="1"
                                FontAttributes="Bold"
                                FontSize="20"
