@@ -1,27 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels.HelperClasses;
 using Microsoft.Data.Sqlite;
+using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class CostTypePageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private List<CostType> costTypes = new();
+        private ObservableCollection<CostTypeGroup> costTypeGroups;
         [ObservableProperty]
         private bool showCreatorFrame = false;
+
         [ObservableProperty]
-        private string saveButtonText = "Dodaj koszt i zapisz";
+        private string saveButtonText = _saveButtonAddText;
+        private const string _saveButtonAddText = "Dodaj rodzaj i zapisz";
+        private const string _saveButtonEditText = "Zapisz zmiany";
 
         private bool addingEntry = false;
         private bool editingEntry = false;
         private int editedEntryId;
 
         [ObservableProperty]
-        private string costTypeName = "Nowy rodzaj kosztu";
+        private string costTypeName = "Nowy rodzaj";
         [ObservableProperty]
         private bool costTypeIsExpense;
 
@@ -29,8 +33,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate(out List<CostType> allEntries);
-                CostTypes.AddRange(allEntries);
+                CostType.Validate();
+                CostTypeGroups = CostType.BuildCostTypeGroups();
             }
             catch (TableValidationException ex)
             {
@@ -62,8 +66,7 @@ namespace FarmOrganizer.ViewModels
                     };
                     CostType.EditEntry(costTypeToEdit);
                 }
-
-                CostTypes = new DatabaseContext().CostTypes.ToList();
+                CostTypeGroups = CostType.BuildCostTypeGroups();
                 ToggleAdding();
             }
             catch (InvalidRecordPropertyException ex)
@@ -88,7 +91,7 @@ namespace FarmOrganizer.ViewModels
             CostTypeIsExpense = costToEdit.IsExpense;
             editingEntry = true;
             addingEntry = false;
-            SaveButtonText = "Zapisz zmiany";
+            SaveButtonText = _saveButtonEditText;
             ShowCreatorFrame = true;
         }
 
@@ -99,12 +102,12 @@ namespace FarmOrganizer.ViewModels
             {
                 if (!await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
-                "Usunięcie rodzaju kosztu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany rodzaj. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
+                "Usunięcie rodzaju wpisu usunie również WSZYSTKIE wpisy z tego rodzaju. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
                 "Tak, usuń",
                 "Anuluj"))
                     return;
                 CostType.DeleteEntry(costToRemove);
-                CostTypes = new DatabaseContext().CostTypes.ToList();
+                CostTypeGroups = CostType.BuildCostTypeGroups();
             }
             catch (RecordDeletionException ex)
             {
@@ -117,7 +120,7 @@ namespace FarmOrganizer.ViewModels
         {
             editingEntry = false;
             addingEntry = true;
-            SaveButtonText = "Dodaj koszt i zapisz";
+            SaveButtonText = _saveButtonAddText;
             ShowCreatorFrame = !ShowCreatorFrame;
         }
     }

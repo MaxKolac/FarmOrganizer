@@ -7,6 +7,7 @@
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              xmlns:model="clr-namespace:FarmOrganizer.Models"
              xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
+             xmlns:helper="clr-namespace:FarmOrganizer.ViewModels.HelperClasses"
              x:Class="FarmOrganizer.Views.LedgerFilterPage"
              x:DataType="viewmodel:LedgerFilterPageViewModel"
              Title="Ustawienia filtrów">
@@ -18,12 +19,30 @@
         <DataTemplate x:DataType="model:CropField" x:Key="CropFieldDataTemplate">
             <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
         </DataTemplate>
-        <DataTemplate x:DataType="model:CostType" x:Key="CostTypeDataTemplate">
-            <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
-        </DataTemplate>
         <DataTemplate x:DataType="model:Season" x:Key="SeasonDataTemplate">
             <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
         </DataTemplate>
+        <DataTemplate x:DataType="model:CostType" x:Key="CostTypeDataTemplate">
+            <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
+        </DataTemplate>
+        <DataTemplate x:DataType="helper:CostTypeGroup" x:Key="CostTypeGroupTemplate">
+            <Label Text="{Binding Name}" 
+                   Style="{StaticResource BaseLabel}"
+                   HorizontalOptions="Center" />
+        </DataTemplate>
+
+        <Style TargetType="CollectionView">
+            <Setter Property="SelectionMode" Value="Multiple" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="Margin" Value="35,0" />
+        </Style>
+        
+        <Style TargetType="Frame" x:Key="FilterCategoryFrame">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}" />
+            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+            <Setter Property="Margin" Value="5,2" />
+            <Setter Property="Padding" Value="5" />
+        </Style>
 
         <Style TargetType="Label" x:Key="VisualStatesLabel">
             <Setter Property="HorizontalTextAlignment" Value="Center"/>
@@ -32,10 +51,8 @@
                     <VisualStateGroup x:Name="CommonStates">
                         <VisualState x:Name="Normal">
                             <VisualState.Setters>
-                                <Setter Property="Background" 
-                                        Value="{AppThemeBinding Light={StaticResource WhiteBrush}, Dark={StaticResource BlackBrush}}"/>
-                                <Setter Property="TextColor"
-                                        Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+                                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource WhiteBrush}, Dark={StaticResource BlackBrush}}"/>
+                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                                 <Setter Property="FontAttributes" Value="None"/>
                             </VisualState.Setters>
                         </VisualState>
@@ -58,119 +75,135 @@
             <Setter Property="HorizontalTextAlignment" Value="Center"/>
         </Style>
         <Style TargetType="Label" x:Key="PickerLabel" BasedOn="{StaticResource BaseLabel}">
-            <Setter Property="Margin" Value="0,8,0,0"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
     </ContentPage.Resources>
     <Grid RowDefinitions="*, Auto"
-          Margin="10"
+          Margin="5"
           RowSpacing="5">
         <ScrollView HorizontalOptions="Center" 
                     VerticalOptions="Center">
             <VerticalStackLayout>
                 <!-- CropFields -->
-                <Label Text="Uwzględnij tylko pola uprawne:"
-                       Style="{StaticResource CollectionViewLabel}"/>
-                <CollectionView SelectionMode="Multiple"
-                                ItemTemplate="{StaticResource CropFieldDataTemplate}"
-                                ItemsSource="{Binding AllCropFields}"
-                                SelectedItems="{Binding SelectedCropFields}"/>
-                <HorizontalStackLayout Margin="5" 
-                                       Spacing="5" 
-                                       HorizontalOptions="Center">
-                    <Button Text="Zaznacz wszystko"
-                            Command="{Binding CropFieldsClearAndFillCommand}"
-                            CommandParameter="{StaticResource BooleanTrue}"/>
-                    <Button Text="Odznacz wszystko"
-                            Command="{Binding CropFieldsClearAndFillCommand}"
-                            CommandParameter="{StaticResource BooleanFalse}"/>
-                </HorizontalStackLayout>
+                <Frame Style="{StaticResource FilterCategoryFrame}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Uwzględnij tylko pola uprawne:"
+                               Style="{StaticResource CollectionViewLabel}"/>
+                        <CollectionView ItemTemplate="{StaticResource CropFieldDataTemplate}"
+                                        ItemsSource="{Binding AllCropFields}"
+                                        SelectedItems="{Binding SelectedCropFields}"/>
+                        <HorizontalStackLayout Margin="5" 
+                                               Spacing="5" 
+                                               HorizontalOptions="Center">
+                            <Button Text="Zaznacz wszystko"
+                                    Command="{Binding CropFieldsClearAndFillCommand}"
+                                    CommandParameter="{StaticResource BooleanTrue}"/>
+                            <Button Text="Odznacz wszystko"
+                                    Command="{Binding CropFieldsClearAndFillCommand}"
+                                    CommandParameter="{StaticResource BooleanFalse}"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
 
                 <!-- CostTypes -->
-                <Label Text="Uwzględnij tylko typy kosztów:" 
-                       Style="{StaticResource CollectionViewLabel}"/>
-                <CollectionView SelectionMode="Multiple"
-                                ItemTemplate="{StaticResource CostTypeDataTemplate}"
-                                ItemsSource="{Binding AllCostTypes}"
-                                SelectedItems="{Binding SelectedCostTypes}"/>
-                <HorizontalStackLayout Margin="5" 
-                                       Spacing="5" 
-                                       HorizontalOptions="Center">
-                    <Button Text="Zaznacz wszystko"
-                            Command="{Binding CostTypesClearAndFillCommand}"
-                            CommandParameter="{StaticResource BooleanTrue}"/>
-                    <Button Text="Odznacz wszystko"
-                            Command="{Binding CostTypesClearAndFillCommand}"
-                            CommandParameter="{StaticResource BooleanFalse}"/>
-                </HorizontalStackLayout>
-                
+                <Frame Style="{StaticResource FilterCategoryFrame}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Uwzględnij tylko rodzaje wpisów:" 
+                               Style="{StaticResource CollectionViewLabel}"/>
+                        <CollectionView ItemTemplate="{StaticResource CostTypeDataTemplate}"
+                                        ItemsSource="{Binding AllCostTypes}"
+                                        SelectedItems="{Binding SelectedCostTypes}"
+                                        GroupHeaderTemplate="{StaticResource CostTypeGroupTemplate}"
+                                        IsGrouped="True"/>
+                        <HorizontalStackLayout Margin="5" 
+                                               Spacing="5" 
+                                               HorizontalOptions="Center">
+                            <Button Text="Zaznacz wszystko"
+                                    Command="{Binding CostTypesClearAndFillCommand}"
+                                    CommandParameter="{StaticResource BooleanTrue}"/>
+                            <Button Text="Odznacz wszystko"
+                                    Command="{Binding CostTypesClearAndFillCommand}"
+                                    CommandParameter="{StaticResource BooleanFalse}"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+
                 <!-- Seasons -->
-                <Label Text="Uwzględnij tylko sezony:" 
-                       Style="{StaticResource CollectionViewLabel}"/>
-                <CollectionView SelectionMode="Multiple"
-                                ItemTemplate="{StaticResource SeasonDataTemplate}"
-                                ItemsSource="{Binding AllSeasons}"
-                                SelectedItems="{Binding SelectedSeasons}"/>
-                <HorizontalStackLayout Margin="5" 
-                                       Spacing="5" 
-                                       HorizontalOptions="Center">
-                    <Button Text="Zaznacz wszystko"
-                            Command="{Binding SeasonsClearAndFillCommand}"
-                            CommandParameter="{StaticResource BooleanTrue}"/>
-                    <Button Text="Odznacz wszystko"
-                            Command="{Binding SeasonsClearAndFillCommand}"
-                            CommandParameter="{StaticResource BooleanFalse}"/>
-                </HorizontalStackLayout>
-                
-                <!-- Custom Dates -->
-                <Label Text="Z okresu czasowego:" 
-                        Style="{StaticResource BaseLabel}"/>
-                <HorizontalStackLayout>
-                    <CheckBox IsChecked="{Binding UseCustomEarliestDate}"/>
-                    <Label Text="Od:"
-                            Style="{StaticResource PickerLabel}"/>
-                    <DatePicker Date="{Binding SelectedEarliestDate}" 
-                                IsEnabled="{Binding UseCustomEarliestDate}"
-                                MaximumDate="{Binding SelectedLatestDate}"/>
-                    <CheckBox IsChecked="{Binding UseCustomLatestDate}"/>
-                    <Label Text="Do:"
-                            Style="{StaticResource PickerLabel}"/>
-                    <DatePicker Date="{Binding SelectedLatestDate}" 
-                                IsEnabled="{Binding UseCustomLatestDate}"
-                                MinimumDate="{Binding SelectedEarliestDate}"/>
-                </HorizontalStackLayout>
+                <Frame Style="{StaticResource FilterCategoryFrame}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Uwzględnij tylko sezony:"
+                               Style="{StaticResource CollectionViewLabel}" />
+                        <CollectionView ItemTemplate="{StaticResource SeasonDataTemplate}"
+                                        ItemsSource="{Binding AllSeasons}"
+                                        SelectedItems="{Binding SelectedSeasons}" />
+                        <HorizontalStackLayout Margin="5"
+                                               Spacing="5"
+                                               HorizontalOptions="Center">
+                            <Button Text="Zaznacz wszystko"
+                                    Command="{Binding SeasonsClearAndFillCommand}"
+                                    CommandParameter="{StaticResource BooleanTrue}" />
+                            <Button Text="Odznacz wszystko"
+                                    Command="{Binding SeasonsClearAndFillCommand}"
+                                    CommandParameter="{StaticResource BooleanFalse}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
 
-                <!-- Custom BalanceChanges -->
-                <Label Text="Z zakresu pieniężnego:"
-                        Style="{StaticResource BaseLabel}"/>
-                <HorizontalStackLayout>
-                    <CheckBox IsChecked="{Binding UseCustomSmallestChange}"/>
-                    <Label Text="Od:"
-                            Style="{StaticResource PickerLabel}"/>
-                    <Entry Style="{StaticResource NumericEntry}" 
-                            Text="{Binding SmallestBalanceChange}"
-                            IsEnabled="{Binding UseCustomSmallestChange}"
-                            WidthRequest="100"/>
-                    <CheckBox IsChecked="{Binding UseCustomLargestChange}"/>
-                    <Label Text="Do:"
-                            Style="{StaticResource PickerLabel}"/>
-                    <Entry Style="{StaticResource NumericEntry}"
-                            Text="{Binding LargestBalanceChange}"
-                            IsEnabled="{Binding UseCustomLargestChange}"
-                            WidthRequest="100"/>
-                </HorizontalStackLayout>
+                <Frame Style="{StaticResource FilterCategoryFrame}">
+                    <!-- Custom Dates -->
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Z okresu czasowego:" 
+                                Style="{StaticResource CollectionViewLabel}"/>
+                        <HorizontalStackLayout>
+                            <CheckBox IsChecked="{Binding UseCustomEarliestDate}" />
+                            <Label Text="Od:"
+                                   Style="{StaticResource PickerLabel}" />
+                            <DatePicker Date="{Binding SelectedEarliestDate}"
+                                        IsEnabled="{Binding UseCustomEarliestDate}"
+                                        MaximumDate="{Binding SelectedLatestDate}" />
+                            <CheckBox IsChecked="{Binding UseCustomLatestDate}" />
+                            <Label Text="Do:"
+                                   Style="{StaticResource PickerLabel}" />
+                            <DatePicker Date="{Binding SelectedLatestDate}"
+                                        IsEnabled="{Binding UseCustomLatestDate}"
+                                        MinimumDate="{Binding SelectedEarliestDate}" />
+                        </HorizontalStackLayout>
 
-                <!-- Sorting -->
-                <HorizontalStackLayout>
-                    <Label Text="Sortuj według:"
-                            Style="{StaticResource PickerLabel}"/>
-                    <Picker ItemsSource="{Binding SortMethods}"
-                            SelectedItem="{Binding SelectedSortMethod, Converter={StaticResource SortingCriteriaToStringConverter}}"/>
-                </HorizontalStackLayout>
-                <HorizontalStackLayout>
-                    <Label Text="Sortuj malejąco:"
-                            Style="{StaticResource PickerLabel}"/>
-                    <CheckBox IsChecked="{Binding UseDescendingSortOrder}"/>
-                </HorizontalStackLayout>
+                        <!-- Custom BalanceChanges -->
+                        <Label Text="Z zakresu pieniężnego:"
+                               Style="{StaticResource CollectionViewLabel}" />
+                        <HorizontalStackLayout>
+                            <CheckBox IsChecked="{Binding UseCustomSmallestChange}" />
+                            <Label Text="Od:"
+                                   Style="{StaticResource PickerLabel}" />
+                            <Entry Style="{StaticResource NumericEntry}"
+                                   Text="{Binding SmallestBalanceChange}"
+                                   IsEnabled="{Binding UseCustomSmallestChange}"
+                                   WidthRequest="100" />
+                            <CheckBox IsChecked="{Binding UseCustomLargestChange}" />
+                            <Label Text="Do:"
+                                   Style="{StaticResource PickerLabel}" />
+                            <Entry Style="{StaticResource NumericEntry}"
+                                   Text="{Binding LargestBalanceChange}"
+                                   IsEnabled="{Binding UseCustomLargestChange}"
+                                   WidthRequest="100" />
+                        </HorizontalStackLayout>
+
+                        <!-- Sorting -->
+                        <HorizontalStackLayout>
+                            <Label Text="Sortuj według:"
+                                   Style="{StaticResource PickerLabel}" />
+                            <Picker ItemsSource="{Binding SortMethods}"
+                                    SelectedItem="{Binding SelectedSortMethod, Converter={StaticResource SortingCriteriaToStringConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Sortuj malejąco:"
+                                   Style="{StaticResource PickerLabel}" />
+                            <CheckBox IsChecked="{Binding UseDescendingSortOrder}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
             </VerticalStackLayout>
         </ScrollView>
 

@@ -4,8 +4,6 @@ using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
-using Mopups.Hosting;
-using Mopups.Services;
 
 namespace FarmOrganizer;
 public static class MauiProgram
@@ -16,7 +14,6 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .ConfigureMopups()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -54,7 +51,6 @@ public static class MauiProgram
         builder.Services.AddTransient<CropFieldPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
-        builder.Services.AddSingleton(MopupService.Instance);
 
         if (!DatabaseFile.Exists())
             MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
