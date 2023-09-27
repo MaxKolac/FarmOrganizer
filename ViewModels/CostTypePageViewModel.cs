@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
@@ -35,7 +34,7 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 CostType.Validate();
-                BuildItemSources();
+                CostTypeGroups = CostType.BuildCostTypeGroups();
             }
             catch (TableValidationException ex)
             {
@@ -67,7 +66,7 @@ namespace FarmOrganizer.ViewModels
                     };
                     CostType.EditEntry(costTypeToEdit);
                 }
-                BuildItemSources();
+                CostTypeGroups = CostType.BuildCostTypeGroups();
                 ToggleAdding();
             }
             catch (InvalidRecordPropertyException ex)
@@ -108,7 +107,7 @@ namespace FarmOrganizer.ViewModels
                 "Anuluj"))
                     return;
                 CostType.DeleteEntry(costToRemove);
-                BuildItemSources();
+                CostTypeGroups = CostType.BuildCostTypeGroups();
             }
             catch (RecordDeletionException ex)
             {
@@ -123,24 +122,6 @@ namespace FarmOrganizer.ViewModels
             addingEntry = true;
             SaveButtonText = _saveButtonAddText;
             ShowCreatorFrame = !ShowCreatorFrame;
-        }
-
-        private void BuildItemSources()
-        {
-            List<CostType> expenseCostTypes = new();
-            List<CostType> profitCostTypes = new();
-            foreach (var entry in new DatabaseContext().CostTypes.ToList())
-            {
-                if (entry.IsExpense)
-                    expenseCostTypes.Add(entry);
-                else
-                    profitCostTypes.Add(entry);
-            }
-            CostTypeGroups = new()
-            {
-                { new CostTypeGroup("Rodzaje przychodów", profitCostTypes) },
-                { new CostTypeGroup("Rodzaje wydatków", expenseCostTypes) }
-            };
         }
     }
 }

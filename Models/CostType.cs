@@ -1,5 +1,7 @@
 ﻿using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
+using FarmOrganizer.ViewModels.HelperClasses;
+using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.Models;
 
@@ -119,5 +121,27 @@ public partial class CostType : IValidatable<CostType>
 
         context.CostTypes.Remove(entryToDelete);
         context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Builds and returns an <see cref="ObservableCollection{T}"/> containing two <see cref="CostTypeGroup"/>s.<br/>
+    /// First group contains all <see cref="CostType"/>s with the value <c>isExpense = false</c>, second group contains <see cref="CostType"/>s with the value <c>isExpense = true</c>.
+    /// </summary>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups()
+    {
+        List<CostType> expenseCostTypes = new();
+        List<CostType> profitCostTypes = new();
+        foreach (var entry in new DatabaseContext().CostTypes.ToList())
+        {
+            if (entry.IsExpense)
+                expenseCostTypes.Add(entry);
+            else
+                profitCostTypes.Add(entry);
+        }
+        return new()
+            {
+                { new CostTypeGroup("Rodzaje przychodów", profitCostTypes) },
+                { new CostTypeGroup("Rodzaje wydatków", expenseCostTypes) }
+            };
     }
 }
