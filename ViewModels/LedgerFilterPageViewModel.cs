@@ -21,7 +21,7 @@ namespace FarmOrganizer.ViewModels
         private ObservableCollection<object> selectedCropFields = new();
 
         [ObservableProperty]
-        private List<CostType> allCostTypes = new();
+        private ObservableCollection<CostTypeGroup> allCostTypes = new();
         [ObservableProperty]
         private ObservableCollection<object> selectedCostTypes = new();
 
@@ -86,7 +86,7 @@ namespace FarmOrganizer.ViewModels
             foreach (int id in _filterSet.SelectedCropFieldIds)
                 SelectedCropFields.Add(context.CropFields.Find(id));
 
-            AllCostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
+            AllCostTypes = CostType.BuildCostTypeGroups();
             SelectedCostTypes.Clear();
             foreach (int id in _filterSet.SelectedCostTypeIds)
                 SelectedCostTypes.Add(context.CostTypes.Find(id));
@@ -129,7 +129,9 @@ namespace FarmOrganizer.ViewModels
             SelectedCostTypes.Clear();
             if (refillAfterClearing)
             {
-                foreach (var cost in AllCostTypes)
+                foreach (var cost in AllCostTypes[0])
+                    SelectedCostTypes.Add(cost); 
+                foreach (var cost in AllCostTypes[1])
                     SelectedCostTypes.Add(cost);
             }
         }
