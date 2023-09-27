@@ -27,16 +27,7 @@ namespace FarmOrganizer.ViewModels
             LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit += QueryLedgerEntries;
             LedgerFilterPageViewModel.OnFilterSetCreated += ApplyFilters;
-            _filterSet = new()
-            {
-                //TODO: load default filters from Preferences
-                SmallestBalanceChange = 0,
-                LargestBalanceChange = 999_999m,
-                EarliestDate = DateTime.Now.AddMonths(-1),
-                LatestDate = DateTime.Now.Date.AddDays(1).AddMicroseconds(-1)
-            };
-            //TODO: select the season that is going through as of right now
-            _filterSet.SelectedSeasonIds = new() { _filterSet.SelectedSeasonIds.Last() };
+            _filterSet = GetDefaultFilterSet();
             try
             {
                 Season.Validate();
@@ -65,7 +56,6 @@ namespace FarmOrganizer.ViewModels
             ReportPageViewModel.OnPageQuit -= QueryLedgerEntries;
             LedgerFilterPageViewModel.OnFilterSetCreated -= ApplyFilters;
             await Shell.Current.GoToAsync("..");
-
         }
 
         [RelayCommand]
@@ -127,6 +117,20 @@ namespace FarmOrganizer.ViewModels
         {
             _filterSet = newSet;
             QueryLedgerEntries(this, null);
+        }
+
+        public static LedgerFilterSet GetDefaultFilterSet()
+        {
+            LedgerFilterSet set = new()
+            {
+                //TODO: load default filters from Preferences
+                SmallestBalanceChange = 0,
+                LargestBalanceChange = 999_999m,
+                EarliestDate = DateTime.Now.AddMonths(-1),
+                LatestDate = DateTime.Now.Date.AddDays(1).AddMicroseconds(-1),
+                SelectedSeasonIds = new() { Season.GetCurrentSeason().Id }
+            };
+            return set;
         }
 
         public void QueryLedgerEntries(object sender, EventArgs e)
