@@ -14,4 +14,11 @@
         <Setter Property="MaxLength" Value="8"/>
         <Setter Property="ClearButtonVisibility" Value="Never"/>
     </Style>
+
+    <x:Boolean x:Key="BooleanTrue">
+        True
+    </x:Boolean>
+    <x:Boolean x:Key="BooleanFalse">
+        False
+    </x:Boolean>
 </ResourceDictionary>
