@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Passing Booleans as CommandParameters is complicated for no reason, this is the only thing I could find - https://itecnote.com/tecnote/r-boolean-commandparameter-in-xaml/    
+-->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
@@ -51,6 +54,9 @@
         <Style TargetType="Label" x:Key="BaseLabel">
             <Setter Property="FontSize" Value="16"/>
         </Style>
+        <Style TargetType="Label" x:Key="CollectionViewLabel" BasedOn="{StaticResource BaseLabel}">
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        </Style>
         <Style TargetType="Label" x:Key="PickerLabel" BasedOn="{StaticResource BaseLabel}">
             <Setter Property="Margin" Value="0,8,0,0"/>
         </Style>
@@ -63,28 +69,58 @@
             <VerticalStackLayout>
                 <!-- CropFields -->
                 <Label Text="Uwzględnij tylko pola uprawne:"
-                       Style="{StaticResource BaseLabel}"/>
+                       Style="{StaticResource CollectionViewLabel}"/>
                 <CollectionView SelectionMode="Multiple"
                                 ItemTemplate="{StaticResource CropFieldDataTemplate}"
                                 ItemsSource="{Binding AllCropFields}"
                                 SelectedItems="{Binding SelectedCropFields}"/>
+                <HorizontalStackLayout Margin="5" 
+                                       Spacing="5" 
+                                       HorizontalOptions="Center">
+                    <Button Text="Zaznacz wszystko"
+                            Command="{Binding CropFieldsClearAndFillCommand}"
+                            CommandParameter="{StaticResource BooleanTrue}"/>
+                    <Button Text="Odznacz wszystko"
+                            Command="{Binding CropFieldsClearAndFillCommand}"
+                            CommandParameter="{StaticResource BooleanFalse}"/>
+                </HorizontalStackLayout>
 
                 <!-- CostTypes -->
                 <Label Text="Uwzględnij tylko typy kosztów:" 
-                        Style="{StaticResource BaseLabel}"/>
+                       Style="{StaticResource CollectionViewLabel}"/>
                 <CollectionView SelectionMode="Multiple"
                                 ItemTemplate="{StaticResource CostTypeDataTemplate}"
                                 ItemsSource="{Binding AllCostTypes}"
                                 SelectedItems="{Binding SelectedCostTypes}"/>
-
+                <HorizontalStackLayout Margin="5" 
+                                       Spacing="5" 
+                                       HorizontalOptions="Center">
+                    <Button Text="Zaznacz wszystko"
+                            Command="{Binding CostTypesClearAndFillCommand}"
+                            CommandParameter="{StaticResource BooleanTrue}"/>
+                    <Button Text="Odznacz wszystko"
+                            Command="{Binding CostTypesClearAndFillCommand}"
+                            CommandParameter="{StaticResource BooleanFalse}"/>
+                </HorizontalStackLayout>
+                
                 <!-- Seasons -->
                 <Label Text="Uwzględnij tylko sezony:" 
-                        Style="{StaticResource BaseLabel}"/>
+                       Style="{StaticResource CollectionViewLabel}"/>
                 <CollectionView SelectionMode="Multiple"
                                 ItemTemplate="{StaticResource SeasonDataTemplate}"
                                 ItemsSource="{Binding AllSeasons}"
                                 SelectedItems="{Binding SelectedSeasons}"/>
-
+                <HorizontalStackLayout Margin="5" 
+                                       Spacing="5" 
+                                       HorizontalOptions="Center">
+                    <Button Text="Zaznacz wszystko"
+                            Command="{Binding SeasonsClearAndFillCommand}"
+                            CommandParameter="{StaticResource BooleanTrue}"/>
+                    <Button Text="Odznacz wszystko"
+                            Command="{Binding SeasonsClearAndFillCommand}"
+                            CommandParameter="{StaticResource BooleanFalse}"/>
+                </HorizontalStackLayout>
+                
                 <!-- Custom Dates -->
                 <Label Text="Z okresu czasowego:" 
                         Style="{StaticResource BaseLabel}"/>
@@ -140,9 +176,10 @@
 
         <!-- Options at bottom -->
         <HorizontalStackLayout Grid.Row="1"
-                                HorizontalOptions="Center"
-                                Spacing="5">
+                               HorizontalOptions="Center"
+                               Spacing="5">
             <Button Text="Anuluj" Command="{Binding ReturnToPreviousPageCommand}"/>
+            <Button Text="Resetuj filtry" Command="{Binding ResetFiltersCommand}"/>
             <Button Text="Zastosuj filtry" Command="{Binding ApplyCommand}"/>
         </HorizontalStackLayout>
     </Grid>

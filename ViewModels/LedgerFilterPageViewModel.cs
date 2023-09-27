@@ -4,6 +4,7 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
 using FarmOrganizer.ViewModels.HelperClasses;
+using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -17,17 +18,17 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private List<CropField> allCropFields = new();
         [ObservableProperty]
-        private List<object> selectedCropFields = new();
+        private ObservableCollection<object> selectedCropFields = new();
 
         [ObservableProperty]
         private List<CostType> allCostTypes = new();
         [ObservableProperty]
-        private List<object> selectedCostTypes = new();
+        private ObservableCollection<object> selectedCostTypes = new();
 
         [ObservableProperty]
         private List<Season> allSeasons = new();
         [ObservableProperty]
-        private List<object> selectedSeasons = new();
+        private ObservableCollection<object> selectedSeasons = new();
 
         [ObservableProperty]
         private DateTime selectedEarliestDate = DateTime.MinValue;
@@ -52,7 +53,7 @@ namespace FarmOrganizer.ViewModels
 
         #region Sorting Related Fields
         [ObservableProperty]
-        private List<string> sortMethods;
+        private ObservableCollection<string> sortMethods;
         [ObservableProperty]
         private LedgerFilterSet.SortingCriteria selectedSortMethod;
         [ObservableProperty]
@@ -61,20 +62,37 @@ namespace FarmOrganizer.ViewModels
         
         private LedgerFilterSet _filterSet;
 
+        public LedgerFilterPageViewModel()
+        {
+            //The only way to open this Page is through LedgerPage, which already validates all tables
+            //Because of this, LedgerFilterPage is allowed to proceed without validation
+            using var context = new DatabaseContext();
+            SortMethods = new()
+            {
+                SortingCriteriaToStringConverter.DateAdded,
+                SortingCriteriaToStringConverter.BalanceChange,
+                SortingCriteriaToStringConverter.CostTypes,
+                SortingCriteriaToStringConverter.SeasonStartDate
+            };
+        }
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             _filterSet = query["filterSet"] as LedgerFilterSet;
             using var context = new DatabaseContext();
 
             AllCropFields = context.CropFields.OrderBy(field => field.Name).ToList();
+            SelectedCropFields.Clear();
             foreach (int id in _filterSet.SelectedCropFieldIds)
                 SelectedCropFields.Add(context.CropFields.Find(id));
 
             AllCostTypes = context.CostTypes.OrderBy(cost => cost.Name).ToList();
+            SelectedCostTypes.Clear();
             foreach (int id in _filterSet.SelectedCostTypeIds)
                 SelectedCostTypes.Add(context.CostTypes.Find(id));
 
-            AllSeasons = context.Seasons.ToList();
+            AllSeasons = context.Seasons.OrderBy(season => season.DateStart).ToList();
+            SelectedSeasons.Clear();
             foreach (int id in _filterSet.SelectedSeasonIds)
                 SelectedSeasons.Add(context.Seasons.Find(id));
 
@@ -90,15 +108,58 @@ namespace FarmOrganizer.ViewModels
             UseCustomLargestChange = _filterSet.LargestBalanceChange != decimal.MaxValue;
             LargestBalanceChange = UseCustomLargestChange ? _filterSet.LargestBalanceChange : decimal.MaxValue;
 
-            SortMethods = new()
-                {
-                    SortingCriteriaToStringConverter.DateAdded,
-                    SortingCriteriaToStringConverter.BalanceChange,
-                    SortingCriteriaToStringConverter.CostTypes,
-                    SortingCriteriaToStringConverter.SeasonStartDate
-                };
             SelectedSortMethod = _filterSet.SortingMethod;
             UseDescendingSortOrder = _filterSet.DescendingSort;
+        }
+
+        [RelayCommand]
+        private void CropFieldsClearAndFill(bool refillAfterClearing)
+        {
+            SelectedCropFields.Clear();
+            if (refillAfterClearing)
+            {
+                foreach (var field in AllCropFields)
+                    SelectedCropFields.Add(field);
+            }
+        }
+
+        [RelayCommand]
+        private void CostTypesClearAndFill(bool refillAfterClearing)
+        {
+            SelectedCostTypes.Clear();
+            if (refillAfterClearing)
+            {
+                foreach (var cost in AllCostTypes)
+                    SelectedCostTypes.Add(cost);
+            }
+        }
+
+        [RelayCommand]
+        private void SeasonsClearAndFill(bool refillAfterClearing)
+        {
+            SelectedSeasons.Clear();
+            if (refillAfterClearing)
+            {
+                foreach (var season in AllSeasons)
+                    SelectedSeasons.Add(season);
+            }
+        }
+
+        [RelayCommand]
+        private async Task ReturnToPreviousPage()
+        {
+            OnPageQuit?.Invoke(this, null);
+            await Shell.Current.GoToAsync("..");
+        }
+
+        [RelayCommand]
+        private void ResetFilters()
+        {
+            var selfQuery = new Dictionary<string, object>()
+            {
+                { "filterSet", LedgerPageViewModel.GetDefaultFilterSet() }
+            };
+            ApplyQueryAttributes(selfQuery);
         }
 
         [RelayCommand]
@@ -164,13 +225,6 @@ namespace FarmOrganizer.ViewModels
             };
             OnFilterSetCreated?.Invoke(this, newFilterSet);
             await ReturnToPreviousPage();
-        }
-
-        [RelayCommand]
-        private async Task ReturnToPreviousPage()
-        {
-            OnPageQuit?.Invoke(this, null);
-            await Shell.Current.GoToAsync("..");
         }
 
         //TODO: applies to all partial methods below - load default timespan from Preferences
