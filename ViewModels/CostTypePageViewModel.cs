@@ -3,18 +3,23 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.ViewModels.HelperClasses;
 using Microsoft.Data.Sqlite;
+using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class CostTypePageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private List<CostType> costTypes = new();
+        private ObservableCollection<CostTypeGroup> costTypeGroups;
         [ObservableProperty]
         private bool showCreatorFrame = false;
+
         [ObservableProperty]
-        private string saveButtonText = "Dodaj rodzaj i zapisz";
+        private string saveButtonText = _saveButtonAddText;
+        private const string _saveButtonAddText = "Dodaj rodzaj i zapisz";
+        private const string _saveButtonEditText = "Zapisz zmiany";
 
         private bool addingEntry = false;
         private bool editingEntry = false;
@@ -29,8 +34,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate(out List<CostType> allEntries);
-                CostTypes.AddRange(allEntries);
+                CostType.Validate();
+                BuildItemSources();
             }
             catch (TableValidationException ex)
             {
@@ -62,8 +67,7 @@ namespace FarmOrganizer.ViewModels
                     };
                     CostType.EditEntry(costTypeToEdit);
                 }
-
-                CostTypes = new DatabaseContext().CostTypes.ToList();
+                BuildItemSources();
                 ToggleAdding();
             }
             catch (InvalidRecordPropertyException ex)
@@ -88,7 +92,7 @@ namespace FarmOrganizer.ViewModels
             CostTypeIsExpense = costToEdit.IsExpense;
             editingEntry = true;
             addingEntry = false;
-            SaveButtonText = "Zapisz zmiany";
+            SaveButtonText = _saveButtonEditText;
             ShowCreatorFrame = true;
         }
 
@@ -104,7 +108,7 @@ namespace FarmOrganizer.ViewModels
                 "Anuluj"))
                     return;
                 CostType.DeleteEntry(costToRemove);
-                CostTypes = new DatabaseContext().CostTypes.ToList();
+                BuildItemSources();
             }
             catch (RecordDeletionException ex)
             {
@@ -117,8 +121,26 @@ namespace FarmOrganizer.ViewModels
         {
             editingEntry = false;
             addingEntry = true;
-            SaveButtonText = "Dodaj rodzaj i zapisz";
+            SaveButtonText = _saveButtonAddText;
             ShowCreatorFrame = !ShowCreatorFrame;
+        }
+
+        private void BuildItemSources()
+        {
+            List<CostType> expenseCostTypes = new();
+            List<CostType> profitCostTypes = new();
+            foreach (var entry in new DatabaseContext().CostTypes.ToList())
+            {
+                if (entry.IsExpense)
+                    expenseCostTypes.Add(entry);
+                else
+                    profitCostTypes.Add(entry);
+            }
+            CostTypeGroups = new()
+            {
+                { new CostTypeGroup("Rodzaje przychodów", profitCostTypes) },
+                { new CostTypeGroup("Rodzaje wydatków", expenseCostTypes) }
+            };
         }
     }
 }
