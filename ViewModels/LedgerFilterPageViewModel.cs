@@ -86,10 +86,11 @@ namespace FarmOrganizer.ViewModels
             foreach (int id in _filterSet.SelectedCropFieldIds)
                 SelectedCropFields.Add(context.CropFields.Find(id));
 
-            AllCostTypes = CostType.BuildCostTypeGroups();
+            AllCostTypes = CostType.BuildCostTypeGroups("Uwzględnij rodzaje przychodów:", "Uwzględnij rodzaje wpisów:", out DatabaseContext costTypeContext);
             SelectedCostTypes.Clear();
             foreach (int id in _filterSet.SelectedCostTypeIds)
-                SelectedCostTypes.Add(context.CostTypes.Find(id));
+                SelectedCostTypes.Add(costTypeContext.CostTypes.Find(id));
+            costTypeContext.Dispose();
 
             AllSeasons = context.Seasons.OrderBy(season => season.DateStart).ToList();
             SelectedSeasons.Clear();

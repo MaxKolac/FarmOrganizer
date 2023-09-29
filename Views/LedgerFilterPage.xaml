@@ -26,9 +26,8 @@
             <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
         </DataTemplate>
         <DataTemplate x:DataType="helper:CostTypeGroup" x:Key="CostTypeGroupTemplate">
-            <Label Text="{Binding Name}" 
-                   Style="{StaticResource BaseLabel}"
-                   HorizontalOptions="Center" />
+            <Label Text="{Binding Name}"
+                   Style="{StaticResource CollectionViewLabel}" />
         </DataTemplate>
 
         <Style TargetType="CollectionView">
@@ -109,8 +108,6 @@
                 <!-- CostTypes -->
                 <Frame Style="{StaticResource FilterCategoryFrame}">
                     <VerticalStackLayout HorizontalOptions="Center">
-                        <Label Text="Uwzględnij rodzaje wpisów:" 
-                               Style="{StaticResource CollectionViewLabel}"/>
                         <CollectionView ItemTemplate="{StaticResource CostTypeDataTemplate}"
                                         ItemsSource="{Binding AllCostTypes}"
                                         SelectedItems="{Binding SelectedCostTypes}"
