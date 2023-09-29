@@ -158,7 +158,7 @@
             <!-- QuickCalculator Copy with more stuff -->
             <VerticalStackLayout>
                 <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. 
-                       Dotyczy liczb wewnątrz szarego kwadratu. Pozostałe liczby są opcjonalne." 
+                       Dotyczy liczb wewnątrz poniższej ramki. Pozostałe liczby są opcjonalne." 
                        Style="{StaticResource InstructionLabel}"/>
 
                 <Grid ColumnDefinitions=".9*, Auto"
@@ -167,7 +167,7 @@
                     <!-- Total change -->
                     <Label Grid.Row="0"
                            Grid.ColumnSpan="2"
-                           Text="{Binding TotalChangeText}" 
+                           Text="{Binding TotalChangeText, StringFormat='{0} (zł):'}" 
                            Style="{StaticResource QuickCalcLabel}"/>
                     <Label Grid.Row="1"
                            Grid.ColumnSpan="2"
@@ -229,7 +229,7 @@
                     <!-- Profit after expenses -->
                     <Label Grid.Row="8"
                            Grid.ColumnSpan="2"
-                           Text="Zysk po wydatkach (zł):" 
+                           Text="{Binding TotalChangeText, StringFormat='{0} po wydatkach (zł):'}" 
                            Style="{StaticResource QuickCalcLabel}"/>
                     <Label Grid.Row="9"
                            Grid.ColumnSpan="2"
@@ -256,7 +256,7 @@
                        IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
                 <Label Text="Kategoria nowego wpisu:"/>
                 <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
-                <Button Text="Dodaj zysk ze sprzedaży (bez wydatków) jako wpis"
+                <Button Text="Dodaj zysk po wydatkach jako wpis"
                         Command="{Binding AddNewLedgerEntryCommand}"/>
             </VerticalStackLayout>
         </StackLayout>
