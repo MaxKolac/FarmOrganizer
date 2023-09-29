@@ -24,7 +24,7 @@ namespace FarmOrganizer.ViewModels
 
         #region Season Details
         [ObservableProperty]
-        private string seasonName = "Nowy sezon " + DateTime.Now.AddMonths(2).Year.ToString();
+        private string seasonName = "Nowy sezon " + DateTime.Now.AddMonths(1).Year.ToString();
         [ObservableProperty]
         private DateTime seasonDateStart = DateTime.Now;
         [ObservableProperty]

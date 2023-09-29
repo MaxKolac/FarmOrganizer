@@ -85,18 +85,16 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="1">
                         <Label Text="Data rozpoczęcia:" />
-                        <DatePicker x:Name="DateStartPicker"
-                                    Margin="0,-11,0,0"
+                        <DatePicker Margin="0,-11,0,0"
                                     Date="{Binding SeasonDateStart}"
-                                    MaximumDate="{Reference DateEndPicker}" />
+                                    MaximumDate="{Binding SeasonDateEnd}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">
                         <Label Text="Data zakończenia:" />
-                        <DatePicker x:Name="DateEndPicker"
-                                    Margin="0,-11,0,0"
+                        <DatePicker Margin="0,-11,0,0"
                                     IsEnabled="{Binding DateEndPickerEnabled}"
                                     Date="{Binding SeasonDateEnd}"
-                                    MinimumDate="{Reference DateStartPicker}" />
+                                    MinimumDate="{Binding SeasonDateStart}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="3">
                         <Button Text="{Binding SaveButtonText}"
