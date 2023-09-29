@@ -90,7 +90,7 @@ namespace FarmOrganizer.ViewModels
                     return;
                 }
                 await DatabaseFile.Delete();
-                await MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
+                await DatabaseFile.Create();
             }
         }
 

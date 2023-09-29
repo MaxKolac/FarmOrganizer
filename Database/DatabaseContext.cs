@@ -6,15 +6,11 @@ namespace FarmOrganizer.Database;
 
 public partial class DatabaseContext : DbContext
 {
-    private bool _debug = false;
+    private readonly bool _debug;
 
-    public DatabaseContext()
+    public DatabaseContext(bool debugLog = false)
     {
-    }
-
-    public DatabaseContext(bool debugLogging)
-    {
-        _debug = debugLogging;
+        _debug = debugLog;
     }
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)

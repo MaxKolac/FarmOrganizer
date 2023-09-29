@@ -35,13 +35,12 @@
             Command="{Binding OpenPageCommand}"
             CommandParameter="QuickCalculator"/>
 
-        <!--<Button 
+        <Button 
             Grid.Row="1"  
             Grid.Column="0" 
             Text="Zarządzaj sezonami"
             Command="{Binding OpenPageCommand}"
-            CommandParameter="SeasonsPage"/>-->
-        <Button Grid.Row="1" Text="DEBUG" Command="{Binding OpenPageCommand}" CommandParameter="DebugPage"/>
+            CommandParameter="SeasonsPage"/>
         <Button
             Grid.Row="1" 
             Grid.Column="1" 
