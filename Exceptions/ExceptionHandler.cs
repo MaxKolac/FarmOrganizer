@@ -7,13 +7,6 @@ namespace FarmOrganizer.Exceptions
     /// </summary>
     public static class ExceptionHandler
     {
-        //public static void Handle(Exception exception, bool returnToPreviousPage = true)
-        //{
-        //    App.AlertSvc.ShowAlert("Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
-        //    if (returnToPreviousPage)
-        //        ReturnToPreviousPage();
-        //}
-
         /// <summary>
         /// Handles exceptions which inherit <see cref="FarmOrganizerException"/> class.
         /// </summary>
@@ -51,6 +44,17 @@ namespace FarmOrganizer.Exceptions
             App.AlertSvc.ShowAlert("Błąd podczas pracy na plikach", exception.Message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
+        }
+
+        /// <summary>
+        /// <b>Important!</b> This method should NOT be used to handle actual exceptions. Attempting to handle exceptions this way is a bad practice. <br/>
+        /// Use this method only to diagnose the cause and type of exceptions being thrown at unexpected moments at runtime.
+        /// </summary>
+        [Obsolete("Do not use this method to handle actual exceptions. For debugging purposes only.")]
+        public static void EmergencyHandle(Exception exception)
+        {
+            App.AlertSvc.ShowAlert("Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
+            ReturnToPreviousPage();
         }
 
         private static void ReturnToPreviousPage()
