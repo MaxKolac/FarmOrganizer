@@ -16,6 +16,10 @@ namespace FarmOrganizer.ViewModels
         private bool showCreatorFrame = false;
 
         [ObservableProperty]
+        private string costTypeLabel = _costTypeLabelExpense;
+        private const string _costTypeLabelExpense = "Wydatek";
+        private const string _costTypeLabelProfit = "Przychód";
+        [ObservableProperty]
         private string saveButtonText = _saveButtonAddText;
         private const string _saveButtonAddText = "Dodaj rodzaj i zapisz";
         private const string _saveButtonEditText = "Zapisz zmiany";
@@ -27,7 +31,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private string costTypeName = "Nowy rodzaj";
         [ObservableProperty]
-        private bool costTypeIsExpense;
+        private bool costTypeIsExpense = true;
 
         public CostTypePageViewModel()
         {
@@ -123,5 +127,8 @@ namespace FarmOrganizer.ViewModels
             SaveButtonText = _saveButtonAddText;
             ShowCreatorFrame = !ShowCreatorFrame;
         }
+
+        partial void OnCostTypeIsExpenseChanged(bool value) => 
+            CostTypeLabel = value ? _costTypeLabelExpense : _costTypeLabelProfit;
     }
 }
