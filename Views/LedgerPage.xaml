@@ -94,7 +94,6 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="*, 65" Padding="5">
-        <Label IsVisible="{Binding LedgerEntriesIsEmpty}"
                FontSize="16"
                FontAttributes="Bold,Italic"
                VerticalOptions="Center"

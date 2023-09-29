@@ -35,8 +35,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                Season.Validate(out List<Season> allEntries);
-                Seasons.AddRange(allEntries);
+                Seasons = Season.ValidateRetrieve();
             }
             catch (TableValidationException ex)
             {
