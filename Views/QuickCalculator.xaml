@@ -29,8 +29,7 @@
     </ContentPage.Resources>
 
     <VerticalStackLayout>
-        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. 
-               Dotyczy liczb wewnątrz poniższej ramki. Pozostałe liczby są opcjonalne." 
+        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. Dotyczy liczb wewnątrz poniższej ramki. Pozostałe liczby są opcjonalne." 
                Style="{StaticResource InstructionStyle}"/>
 
         <Grid Margin="10" ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
