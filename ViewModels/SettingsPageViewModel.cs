@@ -19,40 +19,39 @@ namespace FarmOrganizer.ViewModels
         private AppTheme selectedTheme;
 
         [ObservableProperty]
-        private List<CropField> cropFields;
+        private List<CropField> cropFields = new();
         [ObservableProperty]
         private CropField defaultCropField;
+        [ObservableProperty]
+        private bool cropFieldPickerEnabled = true;
 
         public SettingsPageViewModel()
         {
-            try
-            {
-                using var context = new DatabaseContext();
-                AppThemes = new()
+            using var context = new DatabaseContext();
+            AppThemes = new()
                 {
                     AppThemeToStringConverter.Default,
                     AppThemeToStringConverter.Light,
                     AppThemeToStringConverter.Dark
                 };
-                SelectedTheme = Enum.Parse<AppTheme>(
-                    Preferences.Get(
-                        AppThemeKey,
-                        Enum.GetName(AppTheme.Unspecified)
-                        )
-                    );
+            SelectedTheme = Enum.Parse<AppTheme>(
+                Preferences.Get(
+                    AppThemeKey,
+                    Enum.GetName(AppTheme.Unspecified)
+                    )
+                );
 
-                CropFields = context.CropFields.ToList();
-                DefaultCropField = context.CropFields.Find(
-                    Preferences.Get(
-                        LedgerPage_DefaultCropField,
-                        context.CropFields.First().Id
-                        )
-                    );
+            try
+            {
+                CropField.Validate(out List<CropField> allEntries);
+                CropFields.AddRange(allEntries);
+                DefaultCropField = CropFields.Find(field => field.Id == Preferences.Get(LedgerPage_DefaultCropField, CropFields.First().Id));
                 DefaultCropField ??= CropFields.First();
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                CropFieldPickerEnabled = false;
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -69,7 +68,8 @@ namespace FarmOrganizer.ViewModels
 
         partial void OnDefaultCropFieldChanged(CropField oldValue, CropField newValue)
         {
-            Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
+            if (CropFieldPickerEnabled)
+                Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
             ApplyPreferences();
         }
 
@@ -115,9 +115,9 @@ namespace FarmOrganizer.ViewModels
                     $"Baza danych została pomyślnie wyeksportowana do lokalizacji: {folder.Folder.Path}"
                     );
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -147,10 +147,10 @@ namespace FarmOrganizer.ViewModels
                     );
                 DatabaseFile.DeleteBackup();
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 await DatabaseFile.RestoreBackup();
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
     }

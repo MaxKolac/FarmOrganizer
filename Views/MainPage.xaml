@@ -52,7 +52,7 @@
         <Button 
             Grid.Row="2"  
             Grid.Column="0" 
-            Text="Zarządzaj rodzajami kosztów"
+            Text="Zarządzaj rodzajami wpisów"
             Command="{Binding OpenPageCommand}"
             CommandParameter="CostTypePage"/>
         <Button 

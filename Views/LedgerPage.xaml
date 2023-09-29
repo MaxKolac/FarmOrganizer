@@ -17,6 +17,78 @@
         <ToolbarItem Text="Dodaj nowy wpis" Command="{Binding AddRecordCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
+        <ContentView x:Key="LedgerEntriesEmptyView">
+            <Label FontSize="16"
+                   FontAttributes="Bold,Italic"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   Text="Nie znaleziono żadnych wpisów. &#10;&#10;Dodaj nowy wpis poprzez przycisk w prawym górnym rogu ekranu, lub zmień ustawienia filtrowania na bardziej ogólne." />
+        </ContentView>
+        
+        <DataTemplate x:DataType="model:BalanceLedger" x:Key="BalanceLedgerTemplate">
+            <SwipeView>
+                <SwipeView.LeftItems>
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SwipeViewFrame}"
+                                   BackgroundColor="LightYellow">
+                                <Label Style="{StaticResource SwipeViewLabel}"
+                                       Text="Edytuj"
+                                       TextColor="Black" />
+                            </Frame>
+                        </SwipeItemView>
+                    </SwipeItems>
+                </SwipeView.LeftItems>
+                <SwipeView.RightItems>
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SwipeViewFrame}"
+                                   BackgroundColor="Firebrick">
+                                <Label Style="{StaticResource SwipeViewLabel}"
+                                       Text="Usuń"
+                                       TextColor="White" />
+                            </Frame>
+                        </SwipeItemView>
+                    </SwipeItems>
+                </SwipeView.RightItems>
+
+                <Frame Style="{StaticResource TableEntryFrame}">
+                    <Grid ColumnDefinitions="Auto, *, Auto"
+                          RowDefinitions="Auto, Auto, Auto">
+                        <Label Text="{Binding IdCostTypeNavigation.Name}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Start" />
+                        <Label Text="{Binding BalanceChange, StringFormat='{0:F2} zł'}"
+                               Grid.Row="1"
+                               FontAttributes="Bold"
+                               FontSize="20"
+                               HorizontalTextAlignment="Start" />
+
+                        <Label Text="{Binding IdSeasonNavigation.Name}"
+                               Grid.Column="2"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="End" />
+                        <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy }'}"
+                               Grid.Column="2"
+                               Grid.Row="1"
+                               FontSize="16"
+                               FontAttributes="Italic"
+                               HorizontalTextAlignment="End" />
+
+                        <Label Text="{Binding Notes}"
+                               Grid.Row="2"
+                               Grid.ColumnSpan="3"
+                               LineBreakMode="WordWrap"
+                               FontAttributes="Italic"/>
+                    </Grid>
+                </Frame>
+            </SwipeView>
+        </DataTemplate>
+        
         <Style TargetType="Label" x:Key="SwipeViewLabel">
             <Setter Property="FontAttributes" Value="Bold"/>
             <Setter Property="VerticalOptions" Value="Center"/>
@@ -29,89 +101,17 @@
         <BackButtonBehavior Command="{Binding ReturnToPreviousPageCommand}"/>
     </Shell.BackButtonBehavior>
 
-    <Grid RowDefinitions="auto,*,.1*"
+    <Grid RowDefinitions="*, 65"
           Padding="5">
-        <Picker Title="Wybierz pole uprawne" 
-                ItemsSource="{Binding CropFields}"
-                SelectedItem="{Binding SelectedCropField}">
-        </Picker>
+        <CollectionView ItemsSource="{Binding LedgerEntries}"
+                        ItemTemplate="{StaticResource BalanceLedgerTemplate}"
+                        EmptyView="{StaticResource LedgerEntriesEmptyView}" />
 
-        <CollectionView Grid.Row="1" ItemsSource="{Binding LedgerEntries}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:BalanceLedger">
-                    <SwipeView>
-                        <SwipeView.LeftItems>
-                            <SwipeItems>
-                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}" 
-                                               CommandParameter="{Binding .}">
-                                    <Frame Style="{StaticResource SwipeViewFrame}"
-                                           BackgroundColor="LightYellow">
-                                        <Label Style="{StaticResource SwipeViewLabel}"
-                                               Text="Edytuj" 
-                                               TextColor="Black"/>
-                                    </Frame>
-                                </SwipeItemView>
-                            </SwipeItems>
-                        </SwipeView.LeftItems>
-                        <SwipeView.RightItems>
-                            <SwipeItems>
-                                <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"
-                                               CommandParameter="{Binding .}">
-                                    <Frame Style="{StaticResource SwipeViewFrame}"
-                                           BackgroundColor="Firebrick">
-                                        <Label Style="{StaticResource SwipeViewLabel}"
-                                               Text="Usuń"
-                                               TextColor="White"/>
-                                    </Frame>
-                                </SwipeItemView>
-                            </SwipeItems>
-                        </SwipeView.RightItems>
-
-                        <Frame Style="{StaticResource TableEntryFrame}">
-                            <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, Auto, Auto">
-                                <Label Text="{Binding IdCostTypeNavigation.Name}"
-                                       FontSize="16"
-                                       FontAttributes="Bold"
-                                       HorizontalTextAlignment="Start"/>
-                                <Label Text="{Binding BalanceChange, StringFormat='{0:F2}'}"
-                                       Grid.Row="1"
-                                       FontAttributes="Bold"
-                                       FontSize="20"
-                                       HorizontalTextAlignment="Start"/>
-
-                                <Label Text="{Binding IdSeasonNavigation.Name}"
-                                       Grid.Column="2"
-                                       FontSize="16"
-                                       FontAttributes="Bold"
-                                       HorizontalTextAlignment="End"/>
-                                <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy }'}" 
-                                       Grid.Column="2"
-                                       Grid.Row="1"
-                                       FontSize="16" 
-                                       FontAttributes="Italic"
-                                       HorizontalTextAlignment="End"/>
-
-                                <Label Text="{Binding Notes}"
-                                       Grid.Row="2" 
-                                       Grid.ColumnSpan="3" 
-                                       LineBreakMode="WordWrap"
-                                       FontAttributes="Italic"
-                                       MinimumHeightRequest="0"/>
-                            </Grid>
-                        </Frame>
-                    </SwipeView>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
-            <Button Text="Filtruj i sortuj..." 
-                    LineBreakMode="CharacterWrap"
-                    IsEnabled="{Binding FilterPopupButtonEnabled}"
+        <HorizontalStackLayout Grid.Row="1" HorizontalOptions="Center">
+            <Button Text="Filtruj i sortuj..."
                     Command="{Binding FilterAndSortRecordsCommand}"
                     Margin="2"/>
-            <Button Text="Generuj raport i oblicz" 
-                    LineBreakMode="CharacterWrap"
+            <Button Text="Generuj raport"
                     Command="{Binding GenerateReportCommand}"
                     Margin="2"/>
         </HorizontalStackLayout>

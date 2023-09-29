@@ -1,12 +1,24 @@
 ﻿using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
+using FarmOrganizer.ViewModels.HelperClasses;
+using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.Models;
 
+/// <summary>
+/// A category of a <see cref="BalanceLedger"/> entry. Determines how it will be calculated when generating a new report.<br/>
+/// In user interface, it should be referred to as "Rodzaj wpisu".
+/// </summary>
 public partial class CostType : IValidatable<CostType>
 {
     public int Id { get; set; }
+    /// <summary>
+    /// A user-friendly name of the <see cref="CostType"/>.
+    /// </summary>
     public string Name { get; set; }
+    /// <summary>
+    /// Determines if this <see cref="CostType"/> is considered a loss, or a profit.
+    /// </summary>
     public bool IsExpense { get; set; }
 
     public virtual ICollection<BalanceLedger> BalanceLedgers { get; set; } = new List<BalanceLedger>();
@@ -30,6 +42,9 @@ public partial class CostType : IValidatable<CostType>
         bool incomeFound = false;
         foreach (CostType type in allEntries)
         {
+            if (string.IsNullOrEmpty(type.Name))
+                throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Odnaleziono rodzaj wpisu z pustą nazwą", type.ToString(), nameof(Name));
+
             if (type.IsExpense)
                 expenseFound = true;
             else
@@ -39,12 +54,14 @@ public partial class CostType : IValidatable<CostType>
         }
 
         if (!expenseFound || !incomeFound)
-            throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), "W tabeli nie znaleziono przynajmniej jednego kosztu traktowanego jako wydatek lub przynajmniej jednego kosztu traktowanego jako zysk.");
+            throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego rodzaju wpisu traktowanego jako wydatek lub przynajmniej jednego rodzaju wpisu traktowanego jako zysk.");
     }
 
     public static void AddEntry(CostType entry)
     {
         using var context = new DatabaseContext();
+        if (string.IsNullOrEmpty(entry.Name))
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         context.CostTypes.Add(entry);
         context.SaveChanges();
     }
@@ -52,12 +69,10 @@ public partial class CostType : IValidatable<CostType>
     public static void EditEntry(CostType entry)
     {
         using var context = new DatabaseContext();
-        CostType existingEntry = context.CostTypes.Find(entry.Id) 
-            ?? throw new NoRecordFoundException(
-                nameof(DatabaseContext.CostTypes),
-                "Nie znaleziono żadnego rekordu z pasującą wartością identyfikatora ID."
-                );
+        CostType existingEntry = context.CostTypes.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), $"Id == {entry.Id}");
 
+        if (string.IsNullOrEmpty(entry.Name))
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         existingEntry.Name = entry.Name;
 
         //If the editing is more than just name change, check if editing IsExpense wouldn't cause the last costType of unique IsExpense value to be gone.
@@ -73,9 +88,9 @@ public partial class CostType : IValidatable<CostType>
                     profitsFound++;
             }
             if (existingEntry.IsExpense && !entry.IsExpense && expensesFound <= 1)
-                throw new InvalidRecordException("entry.IsExpense", "false");
+                throw new InvalidRecordPropertyException("Traktuj jako wydatek", entry.IsExpense.ToString(), "Nie można zmienić ostatniego rodzaju wydatku na rodzaj przychodu.");
             if (!existingEntry.IsExpense && entry.IsExpense && profitsFound <= 1)
-                throw new InvalidRecordException("entry.IsExpense", "true");
+                throw new InvalidRecordPropertyException("Traktuj jako wydatek", entry.IsExpense.ToString(), "Nie można zmienić ostatniego rodzaju przychodu na rodzaj wydatku.");
             existingEntry.IsExpense = entry.IsExpense;
         }
 
@@ -100,11 +115,33 @@ public partial class CostType : IValidatable<CostType>
                 profitsFound++;
         }
         if (entryToDelete.IsExpense && expensesFound <= 1)
-            throw new InvalidDbOperationException("Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako wydatek. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden rodzaj kosztu traktowany jako wydatek i przynajmniej jeden rodzaj kosztu traktowany jako przychód.");
+            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju wpisu, który traktowany jest jako wydatek.");
         if (!entryToDelete.IsExpense && profitsFound <= 1)
-            throw new InvalidDbOperationException("Nie można usunąć ostatniego rodzaju kosztu, który traktowany jest jako przychód. Aby aplikacja działała poprawnie, musi istnieć przynajmniej jeden rodzaj kosztu traktowany jako wydatek i przynajmniej jeden rodzaj kosztu traktowany jako przychód.");
+            throw new RecordDeletionException("Rodzaje kosztów", "Nie można usunąć ostatniego rodzaju wpisu, który traktowany jest jako przychód.");
 
         context.CostTypes.Remove(entryToDelete);
         context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Builds and returns an <see cref="ObservableCollection{T}"/> containing two <see cref="CostTypeGroup"/>s.<br/>
+    /// First group contains all <see cref="CostType"/>s with the value <c>isExpense = false</c>, second group contains <see cref="CostType"/>s with the value <c>isExpense = true</c>.
+    /// </summary>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups()
+    {
+        List<CostType> expenseCostTypes = new();
+        List<CostType> profitCostTypes = new();
+        foreach (var entry in new DatabaseContext().CostTypes.ToList())
+        {
+            if (entry.IsExpense)
+                expenseCostTypes.Add(entry);
+            else
+                profitCostTypes.Add(entry);
+        }
+        return new()
+            {
+                { new CostTypeGroup("Rodzaje przychodów", profitCostTypes) },
+                { new CostTypeGroup("Rodzaje wydatków", expenseCostTypes) }
+            };
     }
 }
