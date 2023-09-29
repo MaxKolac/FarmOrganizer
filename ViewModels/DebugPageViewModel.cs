@@ -142,9 +142,10 @@ namespace FarmOrganizer.ViewModels
                     Season.Validate();
 
                     AppendLine("Season Table Validation (with return table)");
-                    List<Season> allSeasons = new();
-                    Season.Validate(out List<Season> list1);
-                    allSeasons.AddRange(list1);
+                    //List<Season> allSeasons = new();
+                    //Season.Validate(out List<Season> list1);
+                    //allSeasons.AddRange(list1);
+                    List<Season> allSeasons = Season.ValidateRetrieve();
                     foreach (Season season in allSeasons)
                     {
                         AppendLine(season.ToDebugString() + "\n", false);

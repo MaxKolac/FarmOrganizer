@@ -56,12 +56,12 @@ public partial class Season : IValidatable<Season>
         $"{Id}: {Name} - ({DateStart} - {DateEnd})";
 
     //Database related methods
-    public static void Validate() => Validate(out _);
+    public static void Validate() => _ = ValidateRetrieve();
 
-    public static void Validate(out List<Season> allSeasons)
+    public static List<Season> ValidateRetrieve()
     {
         var context = new DatabaseContext();
-        allSeasons = new();
+        List<Season> allSeasons = new();
         allSeasons.AddRange(context.Seasons.ToList());
 
         //Check if there is at least 1 season
@@ -81,6 +81,8 @@ public partial class Season : IValidatable<Season>
         //Check if last Season has the MaximumDate on DateEnd. See MaximumDate doc to understand why using DateTime.MaxValue is ill-advised
         if (allSeasons[^1].DateEnd.Date < MaximumDate)
             throw new TableValidationException(nameof(DatabaseContext.Seasons), "Końcowy sezon musi posiadać MaximumDate jako datę zakończenia.");
+
+        return allSeasons;
     }
 
     /// <summary>

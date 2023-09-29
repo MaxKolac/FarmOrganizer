@@ -17,12 +17,12 @@ public partial class CropField : IValidatable<CropField>
         return $"{Name} ({Hectares} ha)";
     }
 
-    public static void Validate() => Validate(out _);
+    public static void Validate() => _ = ValidateRetrieve();
 
-    public static void Validate(out List<CropField> allEntries)
+    public static List<CropField> ValidateRetrieve()
     {
         var context = new DatabaseContext();
-        allEntries = new();
+        List<CropField> allEntries = new();
         allEntries.AddRange(context.CropFields.ToList());
 
         //Check if there exists at least 1 crop field
@@ -37,6 +37,7 @@ public partial class CropField : IValidatable<CropField>
             if (field.Hectares <= 0)
                 throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne, którego powierzchnia jest zerowa lub mniejsza.", field.ToString(), nameof(Hectares));
         }
+        return allEntries;
     }
 
     public static void AddEntry(CropField entry)

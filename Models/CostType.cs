@@ -29,12 +29,12 @@ public partial class CostType : IValidatable<CostType>
     }
 
     //Database related methods
-    public static void Validate() => Validate(out _);
+    public static void Validate() => _ = ValidateRetrieve();
 
-    public static void Validate(out List<CostType> allEntries)
+    public static List<CostType> ValidateRetrieve()
     {
         using var context = new DatabaseContext();
-        allEntries = new List<CostType>();
+        List<CostType> allEntries = new();
         allEntries.AddRange(context.CostTypes.ToList());
 
         //There needs to be at least 1 expense and 1 income category
@@ -55,6 +55,8 @@ public partial class CostType : IValidatable<CostType>
 
         if (!expenseFound || !incomeFound)
             throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego rodzaju wpisu traktowanego jako wydatek lub przynajmniej jednego rodzaju wpisu traktowanego jako zysk.");
+
+        return allEntries;
     }
 
     public static void AddEntry(CostType entry)
