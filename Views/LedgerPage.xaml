@@ -94,12 +94,17 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="*, 65" Padding="5">
+        <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                           WidthRequest="100"
+                           HeightRequest="100"/>
+        <Label IsVisible="{Binding ShowLedgerEmptyInfo}"
                FontSize="16"
                FontAttributes="Bold,Italic"
                VerticalOptions="Center"
                HorizontalTextAlignment="Center"
                Text="Nie znaleziono żadnych wpisów. &#10;&#10;Dodaj nowy wpis poprzez przycisk w prawym górnym rogu ekranu, lub zmień ustawienia filtrowania na bardziej ogólne."/>
-        <CollectionView ItemsSource="{Binding LedgerEntries}"
+        <CollectionView IsVisible="{Binding ShowLedger}"
+                        ItemsSource="{Binding LedgerEntries}"
                         ItemTemplate="{StaticResource BalanceLedgerTemplate}" />
 
         <HorizontalStackLayout Grid.Row="1" HorizontalOptions="Center">
