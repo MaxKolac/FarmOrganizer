@@ -13,9 +13,11 @@
     <ContentPage.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="18" />
-            <Setter Property="LineBreakMode" Value="CharacterWrap" />
-            <Setter Property="Padding" Value="25, 40" />
-            <Setter Property="ContentLayout" Value="Top, 0" />
+            <Setter Property="LineBreakMode" Value="WordWrap" />
+            <Setter Property="Padding" Value="25,40,25,40" />
+            <Setter Property="ContentLayout" Value="Top,0" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="Command" Value="{Binding OpenPageCommand}" />
         </Style>
     </ContentPage.Resources>
     <Grid ColumnDefinitions="*, *"
@@ -28,39 +30,33 @@
                 Grid.Column="0"
                 Text="Tabela kosztów"
                 ImageSource="icon_settings.png"
-                Command="{Binding OpenPageCommand}"
                 CommandParameter="LedgerPage" />
         <Button Grid.Row="0"
                 Grid.Column="1"
                 Text="Szybki kalkulator"
                 ImageSource="icon_settings.png"
-                Command="{Binding OpenPageCommand}"
                 CommandParameter="QuickCalculator" />
 
         <Button Grid.Row="1"
                 Grid.Column="0"
                 Text="Zarządzaj sezonami"
-                ImageSource="icon_settings.png"
-                Command="{Binding OpenPageCommand}"
+                ImageSource="icon_seasons.png"
                 CommandParameter="SeasonsPage" />
         <Button Grid.Row="1"
                 Grid.Column="1"
                 Text="Zarządzaj polami"
                 ImageSource="icon_settings.png"
-                Command="{Binding OpenPageCommand}"
                 CommandParameter="CropFieldPage" />
 
         <Button Grid.Row="2"
                 Grid.Column="0"
                 Text="Zarządzaj rodzajami wpisów"
                 ImageSource="icon_settings.png"
-                Command="{Binding OpenPageCommand}"
                 CommandParameter="CostTypePage" />
         <Button Grid.Row="2"
                 Grid.Column="1"
                 Text="Ustawienia"
                 ImageSource="icon_settings.png"
-                Command="{Binding OpenPageCommand}"
                 CommandParameter="SettingsPage" />
     </Grid>
 </ContentPage>

@@ -78,6 +78,7 @@
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\icon_settings.svg" BaseSize="70,70" />
+		<MauiImage Update="Resources\Images\icon_seasons.svg" BaseSize="70,70" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
