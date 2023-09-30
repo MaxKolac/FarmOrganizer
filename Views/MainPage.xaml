@@ -14,7 +14,7 @@
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="18" />
             <Setter Property="LineBreakMode" Value="WordWrap" />
-            <Setter Property="Padding" Value="25,40,25,40" />
+            <Setter Property="Padding" Value="25,40" /> <!-- This setter is bugged, check the code behind -->
             <Setter Property="ContentLayout" Value="Top,0" />
             <Setter Property="CornerRadius" Value="15" />
             <Setter Property="Command" Value="{Binding OpenPageCommand}" />
@@ -26,37 +26,38 @@
           ColumnSpacing="6"
           RowSpacing="6">
 
-        <Button Grid.Row="0"
+        <!-- DO NOT SET IMAGESOURCE PROPERTIES DIRECTLY AS PROPERTY, SEE CODE-BEHIND -->
+        <Button x:Name="LedgerButton"
+                Grid.Row="0"
                 Grid.Column="0"
                 Text="Tabela kosztów"
-                ImageSource="icon_settings.png"
                 CommandParameter="LedgerPage" />
-        <Button Grid.Row="0"
+        <Button x:Name="QuickCalcButton"
+                Grid.Row="0"
                 Grid.Column="1"
                 Text="Szybki kalkulator"
-                ImageSource="icon_settings.png"
                 CommandParameter="QuickCalculator" />
 
-        <Button Grid.Row="1"
+        <Button x:Name="SeasonsButton"
+                Grid.Row="1"
                 Grid.Column="0"
                 Text="Zarządzaj sezonami"
-                ImageSource="icon_seasons.png"
                 CommandParameter="SeasonsPage" />
-        <Button Grid.Row="1"
+        <Button x:Name="CropFieldsButton"
+                Grid.Row="1"
                 Grid.Column="1"
                 Text="Zarządzaj polami"
-                ImageSource="icon_cropfields.png"
                 CommandParameter="CropFieldPage" />
 
-        <Button Grid.Row="2"
+        <Button x:Name="CostTypesButton"
+                Grid.Row="2"
                 Grid.Column="0"
                 Text="Zarządzaj rodzajami wpisów"
-                ImageSource="icon_settings.png"
                 CommandParameter="CostTypePage" />
-        <Button Grid.Row="2"
+        <Button x:Name="SettingsButton"
+                Grid.Row="2"
                 Grid.Column="1"
                 Text="Ustawienia"
-                ImageSource="icon_settings.png"
                 CommandParameter="SettingsPage" />
     </Grid>
 </ContentPage>
