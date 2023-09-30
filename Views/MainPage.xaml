@@ -45,7 +45,7 @@
         <Button Grid.Row="1"
                 Grid.Column="1"
                 Text="Zarządzaj polami"
-                ImageSource="icon_settings.png"
+                ImageSource="icon_cropfields.png"
                 CommandParameter="CropFieldPage" />
 
         <Button Grid.Row="2"
