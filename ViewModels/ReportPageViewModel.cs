@@ -63,8 +63,8 @@ namespace FarmOrganizer.ViewModels
 
         [ObservableProperty]
         private string totalChangeText = _totalChangeTextProfit;
-        private const string _totalChangeTextProfit = "Zysk (zł):";
-        private const string _totalChangeTextLoss = "Straty (zł):";
+        private const string _totalChangeTextProfit = "Zysk";
+        private const string _totalChangeTextLoss = "Straty";
         #endregion
 
         public static event EventHandler OnPageQuit;

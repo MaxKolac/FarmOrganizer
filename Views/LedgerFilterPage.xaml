@@ -26,9 +26,8 @@
             <Label Text="{Binding .}" Style="{StaticResource VisualStatesLabel}"/>
         </DataTemplate>
         <DataTemplate x:DataType="helper:CostTypeGroup" x:Key="CostTypeGroupTemplate">
-            <Label Text="{Binding Name}" 
-                   Style="{StaticResource BaseLabel}"
-                   HorizontalOptions="Center" />
+            <Label Text="{Binding Name}"
+                   Style="{StaticResource CollectionViewLabel}" />
         </DataTemplate>
 
         <Style TargetType="CollectionView">
@@ -74,6 +73,11 @@
         <Style TargetType="Label" x:Key="CollectionViewLabel" BasedOn="{StaticResource BaseLabel}">
             <Setter Property="HorizontalTextAlignment" Value="Center"/>
         </Style>
+        <Style TargetType="Label" x:Key="InstructionLabel">
+            <Setter Property="Margin" Value="10,0,10,10" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+        </Style>
         <Style TargetType="Label" x:Key="PickerLabel" BasedOn="{StaticResource BaseLabel}">
             <Setter Property="VerticalTextAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="14"/>
@@ -85,6 +89,15 @@
         <ScrollView HorizontalOptions="Center" 
                     VerticalOptions="Center">
             <VerticalStackLayout>
+                <Label Style="{StaticResource InstructionLabel}"
+                       Margin="10"
+                       Text="Poniżej znajduje się zestaw filtrów. Wszelkie zmiany należy zatwierdzić przyciskiem 'Zastosuj filtry' lub zresetować przyciskiem 'Resetuj filtry'." />
+                <Label Style="{StaticResource InstructionLabel}"
+                       Text="Na stronie z wpisami pokazane zostaną tylko wpisy, które posiadają wybrane na zielono elementy." />
+                <Label Style="{StaticResource InstructionLabel}"
+                       FontAttributes="Bold"
+                       Text="Filtry mają wpływ na to jakie wpisy zostaną uwzględnione podczas generowania raportu." />
+
                 <!-- CropFields -->
                 <Frame Style="{StaticResource FilterCategoryFrame}">
                     <VerticalStackLayout HorizontalOptions="Center">
@@ -109,8 +122,6 @@
                 <!-- CostTypes -->
                 <Frame Style="{StaticResource FilterCategoryFrame}">
                     <VerticalStackLayout HorizontalOptions="Center">
-                        <Label Text="Uwzględnij rodzaje wpisów:" 
-                               Style="{StaticResource CollectionViewLabel}"/>
                         <CollectionView ItemTemplate="{StaticResource CostTypeDataTemplate}"
                                         ItemsSource="{Binding AllCostTypes}"
                                         SelectedItems="{Binding SelectedCostTypes}"

@@ -9,27 +9,6 @@
         <Style TargetType="Label">
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
-        
-        <Style TargetType="Switch">
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="On">
-                            <VisualState.Setters>
-                                <Setter Property="OnColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray200}}" />
-                                <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Off">
-                            <VisualState.Setters>
-                                <Setter Property="OnColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray200}}" />
-                                <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
     </ContentPage.Resources>
     <ScrollView>
         <VerticalStackLayout Padding="5">
@@ -41,6 +20,7 @@
                 <Picker ItemsSource="{Binding CurrentCostTypes}" 
                         SelectedItem="{Binding SelectedCostType}" />
                 <Switch Grid.Column="1"
+                        Style="{StaticResource CostTypeExpenseSwitch}"
                         IsToggled="{Binding CostIsExpense}"/>
                 <Label Text="{Binding CostTypeLabel}" 
                        Grid.Column="2"

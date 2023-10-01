@@ -30,8 +30,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CropField.Validate(out List<CropField> allEntries);
-                CropFields.AddRange(allEntries);
+                CropFields = CropField.ValidateRetrieve();
             }
             catch (TableValidationException ex)
             {

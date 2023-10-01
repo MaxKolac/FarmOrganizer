@@ -96,12 +96,8 @@ namespace FarmOrganizer.ViewModels
                 //This triggers the partial method required to repopulate CurrentCostTypes
                 CostIsExpense = true;
 
-                CropField.Validate(out var allCropFields);
-                CropFields.AddRange(allCropFields);
-
-                Season.Validate(out var allSeasons);
-                Seasons.AddRange(allSeasons);
-
+                CropFields = CropField.ValidateRetrieve();
+                Seasons = Season.ValidateRetrieve();
                 SelectedSeason = Seasons.Find(season => season.Id == Season.GetCurrentSeason().Id);
             }
             catch (TableValidationException ex)

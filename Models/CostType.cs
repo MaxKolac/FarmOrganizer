@@ -29,12 +29,12 @@ public partial class CostType : IValidatable<CostType>
     }
 
     //Database related methods
-    public static void Validate() => Validate(out _);
+    public static void Validate() => _ = ValidateRetrieve();
 
-    public static void Validate(out List<CostType> allEntries)
+    public static List<CostType> ValidateRetrieve()
     {
         using var context = new DatabaseContext();
-        allEntries = new List<CostType>();
+        List<CostType> allEntries = new();
         allEntries.AddRange(context.CostTypes.ToList());
 
         //There needs to be at least 1 expense and 1 income category
@@ -55,6 +55,8 @@ public partial class CostType : IValidatable<CostType>
 
         if (!expenseFound || !incomeFound)
             throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego rodzaju wpisu traktowanego jako wydatek lub przynajmniej jednego rodzaju wpisu traktowanego jako zysk.");
+
+        return allEntries;
     }
 
     public static void AddEntry(CostType entry)
@@ -127,11 +129,18 @@ public partial class CostType : IValidatable<CostType>
     /// Builds and returns an <see cref="ObservableCollection{T}"/> containing two <see cref="CostTypeGroup"/>s.<br/>
     /// First group contains all <see cref="CostType"/>s with the value <c>isExpense = false</c>, second group contains <see cref="CostType"/>s with the value <c>isExpense = true</c>.
     /// </summary>
-    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups()
+    /// <param name="profitLabel">String label for the profit <see cref="CostType"/>s.</param>
+    /// <param name="expensesLabel">String label for the expense <see cref="CostType"/>s.</param>
+    /// <param name="activeContext">
+    /// The <see cref="DatabaseContext"/> instance used to retrieve <see cref="CostType"/> entries.<br/>
+    /// Use this context when filing a collection with selected <see cref="CostType"/> to make sure that the reference between them is preserved and applied.
+    /// </param>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups(string profitLabel, string expensesLabel, out DatabaseContext activeContext)
     {
         List<CostType> expenseCostTypes = new();
         List<CostType> profitCostTypes = new();
-        foreach (var entry in new DatabaseContext().CostTypes.ToList())
+        activeContext = new();
+        foreach (var entry in activeContext.CostTypes.ToList())
         {
             if (entry.IsExpense)
                 expenseCostTypes.Add(entry);
@@ -140,8 +149,16 @@ public partial class CostType : IValidatable<CostType>
         }
         return new()
             {
-                { new CostTypeGroup("Rodzaje przychodów", profitCostTypes) },
-                { new CostTypeGroup("Rodzaje wydatków", expenseCostTypes) }
+                { new CostTypeGroup(profitLabel, profitCostTypes) },
+                { new CostTypeGroup(expensesLabel, expenseCostTypes) }
             };
     }
+
+    /// <inheritdoc cref="BuildCostTypeGroups(string, string, out DatabaseContext)"/>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups(out DatabaseContext activeContext) =>
+        BuildCostTypeGroups("Rodzaje przychodów", "Rodzaje wydatków", out activeContext);
+
+    /// <inheritdoc cref="BuildCostTypeGroups(string, string, out DatabaseContext)"/>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups() =>
+        BuildCostTypeGroups(out _);
 }

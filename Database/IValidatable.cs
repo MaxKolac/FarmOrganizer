@@ -1,7 +1,7 @@
 ﻿namespace FarmOrganizer.Database
 {
     /// <summary>
-    /// Interface implemented by classes in <see cref="Models"/> namespace which require special care and validation for the application to operate correctly. This includes validation before loading their records, before adding new records to their tables or when editing existing records.
+    /// Interface implemented by classes in <see cref="Models"/> namespace which require special care and validation for the application to operate correctly. This includes validation before loading their records, before adding new records to their tables, when editing existing records or when deleting them.
     /// </summary>
     public interface IValidatable<T>
     {
@@ -13,14 +13,12 @@
         static abstract void Validate();
 
         /// <summary>
-        /// <inheritdoc cref="Validate()"/>
-        /// <para>
-        /// This overload allows to immediately retrieve all <typeparamref name="T"/> records to avoid querying the table twice for the same result.
-        /// </para>
+        /// <inheritdoc cref="Validate()"/><br/>
+        /// This method allows to immediately retrieve all <typeparamref name="T"/> records to avoid querying the table twice for the same result.
         /// </summary>
-        /// <param name="allEntries">A <see cref="List{T}"/> of all <typeparamref name="T"/> records in the database.</param>
+        /// <returns>A <see cref="List{T}"/> of all <typeparamref name="T"/> records in the database.</returns>
         /// <exception cref="Exceptions.TableValidationException"></exception>
-        static abstract void Validate(out List<T> allEntries);
+        static abstract List<T> ValidateRetrieve();
 
         /// <summary>
         /// Validates the <typeparamref name="T"/> entry and, if successful, adds it to the table.
