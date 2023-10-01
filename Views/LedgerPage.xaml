@@ -9,6 +9,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
              xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.LedgerPage"
              x:DataType="viewmodel:LedgerPageViewModel"
@@ -20,6 +21,8 @@
         <ToolbarItem Text="Dodaj nowy wpis" Command="{Binding AddRecordCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
+        <converter:NotesPropertyToBoolConverter x:Key="NotesConverter" />
+
         <DataTemplate x:DataType="model:BalanceLedger" x:Key="BalanceLedgerTemplate">
             <SwipeView>
                 <SwipeView.LeftItems>
@@ -50,35 +53,34 @@
                 </SwipeView.RightItems>
 
                 <Frame Style="{StaticResource TableEntryFrame}">
-                    <Grid ColumnDefinitions="Auto, *, Auto"
+                    <Grid ColumnDefinitions=".5*, .5*"
                           RowDefinitions="Auto, Auto, Auto">
                         <Label Text="{Binding IdCostTypeNavigation.Name}"
                                FontSize="16"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Start" />
+                               FontAttributes="Bold" />
                         <Label Text="{Binding BalanceChange, StringFormat='{0:F2} zł'}"
                                Grid.Row="1"
                                FontAttributes="Bold"
-                               FontSize="20"
-                               HorizontalTextAlignment="Start" />
+                               FontSize="20" />
 
                         <Label Text="{Binding IdSeasonNavigation.Name}"
-                               Grid.Column="2"
+                               Grid.Column="1"
                                FontSize="16"
                                FontAttributes="Bold"
-                               HorizontalTextAlignment="End" />
+                               HorizontalOptions="End" />
                         <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy }'}"
-                               Grid.Column="2"
+                               Grid.Column="1"
                                Grid.Row="1"
                                FontSize="16"
                                FontAttributes="Italic"
-                               HorizontalTextAlignment="End" />
+                               HorizontalOptions="End" />
 
                         <Label Text="{Binding Notes}"
+                               IsVisible="{Binding Notes, Converter={StaticResource NotesConverter}}"
                                Grid.Row="2"
-                               Grid.ColumnSpan="3"
+                               Grid.ColumnSpan="2"
                                LineBreakMode="WordWrap"
-                               FontAttributes="Italic"/>
+                               FontAttributes="Italic" />
                     </Grid>
                 </Frame>
             </SwipeView>

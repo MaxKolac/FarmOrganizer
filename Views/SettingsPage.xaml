@@ -27,36 +27,45 @@
             <Setter Property="HorizontalTextAlignment" Value="End"/>
         </Style>
     </ContentPage.Resources>
-    
-    <VerticalStackLayout Margin="10" Spacing="2">
-        <Label Text="Wygląd" Style="{StaticResource GroupTitle}"/>
-        <Grid>
-            <Label Style="{StaticResource BaseLabelStyle}" Text="Motyw"/>
-            <Picker Grid.Column="1" 
-                    ItemsSource="{Binding AppThemes}" 
-                    SelectedItem="{Binding SelectedTheme, Converter={StaticResource AppThemeToStringConverter}}"/>
-        </Grid>
 
-        <Label Text="Tabela kosztów" Style="{StaticResource GroupTitle}"/>
-        <Grid>
-            <Label Style="{StaticResource BaseLabelStyle}" Text="Domyślne pole:"/>
-            <Picker Grid.Column="1"
-                    IsEnabled="{Binding CropFieldPickerEnabled}"
-                    ItemsSource="{Binding CropFields}" 
-                    SelectedItem="{Binding DefaultCropField}"/>
-        </Grid>
+    <ScrollView>
+        <VerticalStackLayout Margin="10"
+                             Spacing="2">
+            <Label Text="Wygląd"
+                   Style="{StaticResource GroupTitle}" />
+            <Grid>
+                <Label Style="{StaticResource BaseLabelStyle}"
+                       Text="Motyw" />
+                <Picker Grid.Column="1"
+                        ItemsSource="{Binding AppThemes}"
+                        SelectedItem="{Binding SelectedTheme, Converter={StaticResource AppThemeToStringConverter}}" />
+            </Grid>
 
-        <Label Text="Baza danych" Style="{StaticResource GroupTitle}"/>
-        <Button Text="Eksportuj bazę danych"
-                Command="{Binding ExportDatabaseCommand}"/>
-        <Button Text="Importuj bazę danych"
-                Command="{Binding ImportDatabaseCommand}"/>
-        <Grid>
-            <Label Style="{StaticResource BaseLabelStyle}" Text="Zresetuj bazę danych"/>
-            <Button Grid.Column="1"
-                    BackgroundColor="Red"
-                    Command="{Binding ResetDatabaseCommand}"
-                    Text="Resetuj"/>
-        </Grid>
-    </VerticalStackLayout>
+            <Label Text="Tabela kosztów"
+                   Style="{StaticResource GroupTitle}" />
+            <Grid>
+                <Label Style="{StaticResource BaseLabelStyle}"
+                       Text="Domyślne pole:" />
+                <Picker Grid.Column="1"
+                        IsEnabled="{Binding CropFieldPickerEnabled}"
+                        ItemsSource="{Binding CropFields}"
+                        SelectedItem="{Binding DefaultCropField}" />
+            </Grid>
+
+            <Label Text="Baza danych"
+                   Style="{StaticResource GroupTitle}" />
+            <Button Text="Eksportuj bazę danych"
+                    Command="{Binding ExportDatabaseCommand}" />
+            <Button Text="Importuj bazę danych"
+                    Command="{Binding ImportDatabaseCommand}" />
+            <Grid>
+                <Label Style="{StaticResource BaseLabelStyle}"
+                       Text="Zresetuj bazę danych" />
+                <Button Grid.Column="1"
+                        BackgroundColor="Red"
+                        Command="{Binding ResetDatabaseCommand}"
+                        Text="Resetuj" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
