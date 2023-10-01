@@ -10,8 +10,10 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class SettingsPageViewModel : ObservableObject
     {
+        #region Preference Keys
         public const string AppThemeKey = "appTheme";
         public const string LedgerPage_DefaultCropField = "ledger_defaultCropFieldKey";
+        #endregion
 
         [ObservableProperty]
         private List<string> appThemes;
@@ -24,6 +26,8 @@ namespace FarmOrganizer.ViewModels
         private CropField defaultCropField;
         [ObservableProperty]
         private bool cropFieldPickerEnabled = true;
+
+        private const string _IOAlertNoPermissions = "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.\nJeżeli ten komunikat pokazuje się po zrestartowaniu aplikacji, możliwe że wymagane jest zresetowanie odmówionych uprawnień. Przejdź do ustawień swojego telefonu, a następnie w sekcji 'Aplikacje', odnajdź FarmOrganizer i nadaj mu uprawnienia do zapisu i odczytu plików.";
 
         public SettingsPageViewModel()
         {
@@ -83,9 +87,7 @@ namespace FarmOrganizer.ViewModels
             {
                 if (!await DatabaseFile.RequestPermissions())
                 {
-                    App.AlertSvc.ShowAlert(
-                        "Błąd",
-                        "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.");
+                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
                     return;
                 }
                 await DatabaseFile.Delete();
@@ -100,9 +102,7 @@ namespace FarmOrganizer.ViewModels
             {
                 if (!await DatabaseFile.RequestPermissions())
                 {
-                    App.AlertSvc.ShowAlert(
-                        "Błąd",
-                        "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.");
+                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
                     return;
                 }
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
@@ -127,9 +127,7 @@ namespace FarmOrganizer.ViewModels
             {
                 if (!await DatabaseFile.RequestPermissions())
                 {
-                    App.AlertSvc.ShowAlert(
-                        "Błąd",
-                        "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.");
+                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
                     return;
                 }
                 await DatabaseFile.CreateBackup();
