@@ -120,7 +120,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleAdding() 
+        private void ToggleAdding()
         {
             editingEntry = false;
             addingEntry = true;
@@ -128,7 +128,7 @@ namespace FarmOrganizer.ViewModels
             ShowCreatorFrame = !ShowCreatorFrame;
         }
 
-        partial void OnCostTypeIsExpenseChanged(bool value) => 
+        partial void OnCostTypeIsExpenseChanged(bool value) =>
             CostTypeLabel = value ? _costTypeLabelExpense : _costTypeLabelProfit;
     }
 }

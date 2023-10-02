@@ -59,7 +59,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private bool useDescendingSortOrder;
         #endregion
-        
+
         private LedgerFilterSet _filterSet;
 
         public LedgerFilterPageViewModel()
@@ -131,7 +131,7 @@ namespace FarmOrganizer.ViewModels
             if (refillAfterClearing)
             {
                 foreach (var cost in AllCostTypes[0])
-                    SelectedCostTypes.Add(cost); 
+                    SelectedCostTypes.Add(cost);
                 foreach (var cost in AllCostTypes[1])
                     SelectedCostTypes.Add(cost);
             }

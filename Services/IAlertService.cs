@@ -36,7 +36,7 @@
         /// <inheritdoc cref="ShowAlertAsync(string, string, string)"/>
         void ShowAlert(string title, string message, string cancel = "OK");
         /// <param name="callback">Action to perform afterwards.</param>
-        
+
         /// <summary>
         /// "Fire and forget" synchrous method. Returns BEFORE showing alert.
         /// Shows an alert to the user with two buttons for Accept and Cancel.

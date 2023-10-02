@@ -1,9 +1,9 @@
-﻿using FarmOrganizer.Database;
+﻿using CommunityToolkit.Maui;
+using FarmOrganizer.Database;
 using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
 
 namespace FarmOrganizer;
 public static class MauiProgram
@@ -20,9 +20,9 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        #if DEBUG
+#if DEBUG
         builder.Logging.AddDebug();
-        #endif
+#endif
 
         //Register singletons of view and VM types to dependency inject into XAML code-behinds and VM constructors
         //Singletons are created only once and remain through app's lifetime

@@ -105,7 +105,7 @@ namespace FarmOrganizer.ViewModels
         partial void OnExampleExpenseValueChanged(string oldValue, string newValue) =>
             CalculateExampleChange();
 
-        partial void OnExampleChangeValueChanged(string value) => 
+        partial void OnExampleChangeValueChanged(string value) =>
             ExampleChangeText = Utils.CastToValue(value) >= 0 ? _exampleChangeProfitText : _exampleChangeLossText;
 
         //Ugly workarounds. Yuck. It works though!

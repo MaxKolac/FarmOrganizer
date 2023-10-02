@@ -7,7 +7,7 @@ public partial class BalanceLedger
     public int IdCropField { get; set; }
     public int IdSeason { get; set; }
     public DateTime DateAdded { get; set; }
-    public decimal BalanceChange { get; set; } 
+    public decimal BalanceChange { get; set; }
     public string Notes { get; set; }
 
     public virtual CostType IdCostTypeNavigation { get; set; }

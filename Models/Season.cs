@@ -141,7 +141,7 @@ public partial class Season : IValidatable<Season>
     /// <inheritdoc/>
     public static void EditEntry(Season entry)
     {
-        #nullable enable
+#nullable enable
         using var context = new DatabaseContext();
         Season editedSeason = context.Seasons.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), $"Id == {entry.Id}");
         Season? previousSeason = null;
@@ -202,7 +202,7 @@ public partial class Season : IValidatable<Season>
         Season? seasonToDelete = context.Seasons.Find(entry.Id);
         if (seasonToDelete is null)
             return;
-        
+
         List<Season> allSeasonsOrdered = context.Seasons.OrderBy(season => season.DateStart).ToList();
 
         //Minimum of 1 season
@@ -212,7 +212,7 @@ public partial class Season : IValidatable<Season>
         //Find out if the deleted Season is the last Season.
         if (allSeasonsOrdered[^1].Id == seasonToDelete.Id)
         {
-            Season? previousSeason = context.Seasons.Find(allSeasonsOrdered[^2].Id) ?? 
+            Season? previousSeason = context.Seasons.Find(allSeasonsOrdered[^2].Id) ??
                 throw new RecordDeletionException("Sezony", "Odnaleziono więcej niż 1 sezon, ale nie udało się odnaleźć drugiego sezonu licząc od końca.");
             previousSeason.DateEnd = MaximumDate;
         }

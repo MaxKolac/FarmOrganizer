@@ -89,10 +89,10 @@ namespace FarmOrganizer.ViewModels
             seasonIds = query["seasons"] as List<int>;
 
             using var context = new DatabaseContext();
-                foreach (int id in cropFieldIds)
-                    PassedCropFields.Add(context.CropFields.Find(id));
-                foreach (int id in seasonIds)
-                    PassedSeasons.Add(context.Seasons.Find(id));
+            foreach (int id in cropFieldIds)
+                PassedCropFields.Add(context.CropFields.Find(id));
+            foreach (int id in seasonIds)
+                PassedSeasons.Add(context.Seasons.Find(id));
 
             if (PassedSeasons.Count > 1)
                 SeasonsLabel = _seasonLabelMultiple;

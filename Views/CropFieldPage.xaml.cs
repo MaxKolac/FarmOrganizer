@@ -4,9 +4,9 @@ namespace FarmOrganizer.Views;
 
 public partial class CropFieldPage : ContentPage
 {
-	public CropFieldPage(CropFieldPageViewModel vm)
-	{
-		InitializeComponent();
-		BindingContext = vm;
-	}
+    public CropFieldPage(CropFieldPageViewModel vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+    }
 }

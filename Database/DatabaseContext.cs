@@ -1,6 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using FarmOrganizer.Models;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using FarmOrganizer.Models;
 
 namespace FarmOrganizer.Database;
 

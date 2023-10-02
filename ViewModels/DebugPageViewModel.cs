@@ -209,7 +209,7 @@ namespace FarmOrganizer.ViewModels
                     SeasonValidAddTest(validSeason);
                     ids[3] = context.Seasons.FirstOrDefault(season => season.Name.Equals("validSeason3")).Id;
                     context.SaveChanges();
-                #endregion
+                    #endregion
                 }
 
                 #region UPDATE
@@ -232,7 +232,7 @@ namespace FarmOrganizer.ViewModels
                     AppendLine("Edit DateStart with a previous season (validSeason1 to start earlier inside Sezon23)");
                     Season validSeason1 = context.Seasons.Find(ids[1]);
                     validSeason1.DateStart = DateTime.Now.AddMonths(-1);
-                    SeasonValidEditTest(validSeason1); 
+                    SeasonValidEditTest(validSeason1);
 
                     AppendLine("Edit DateEnd with a next season (validSeason2 to end later inside validSeason3)");
                     Season validSeason2 = context.Seasons.Find(ids[2]);

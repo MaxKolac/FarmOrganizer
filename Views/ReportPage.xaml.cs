@@ -4,9 +4,9 @@ namespace FarmOrganizer.Views;
 
 public partial class ReportPage : ContentPage
 {
-	public ReportPage(ReportPageViewModel vm)
-	{
-		InitializeComponent();
+    public ReportPage(ReportPageViewModel vm)
+    {
+        InitializeComponent();
         BindingContext = vm;
     }
 }
