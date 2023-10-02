@@ -247,7 +247,8 @@
                               IsChecked="{Binding AddNewSeasonAfterSaving}"
                               IsEnabled="True"/>
                     <Label Grid.Column="1" 
-                           Text="Po zapisaniu wpisu, rozpocznij nowy sezon"/>
+                           VerticalOptions="Center"
+                           Text="Po dodaniu wpisu, rozpocznij nowy sezon"/>
                 </Grid>
                 <Label Text="Nazwa nowego sezonu:"
                        IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
@@ -255,7 +256,7 @@
                        IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
                 <Label Text="Kategoria nowego wpisu:"/>
                 <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
-                <Button Text="Dodaj zysk po wydatkach jako wpis"
+                <Button Text="{Binding TotalChangeText, StringFormat='Dodaj {0} przed wydatkami jako wpis'}"
                         Command="{Binding AddNewLedgerEntryCommand}"/>
             </VerticalStackLayout>
         </StackLayout>
