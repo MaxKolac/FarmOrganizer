@@ -10,8 +10,10 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class SettingsPageViewModel : ObservableObject
     {
+        #region Preference Keys
         public const string AppThemeKey = "appTheme";
         public const string LedgerPage_DefaultCropField = "ledger_defaultCropFieldKey";
+        #endregion
 
         [ObservableProperty]
         private List<string> appThemes;
@@ -19,40 +21,40 @@ namespace FarmOrganizer.ViewModels
         private AppTheme selectedTheme;
 
         [ObservableProperty]
-        private List<CropField> cropFields;
+        private List<CropField> cropFields = new();
         [ObservableProperty]
         private CropField defaultCropField;
+        [ObservableProperty]
+        private bool cropFieldPickerEnabled = true;
+
+        private const string _IOAlertNoPermissions = "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.\nJeżeli ten komunikat pokazuje się po zrestartowaniu aplikacji, możliwe że wymagane jest zresetowanie odmówionych uprawnień. Przejdź do ustawień swojego telefonu, a następnie w sekcji 'Aplikacje', odnajdź FarmOrganizer i nadaj mu uprawnienia do zapisu i odczytu plików.";
 
         public SettingsPageViewModel()
         {
-            try
-            {
-                using var context = new DatabaseContext();
-                AppThemes = new()
+            using var context = new DatabaseContext();
+            AppThemes = new()
                 {
                     AppThemeToStringConverter.Default,
                     AppThemeToStringConverter.Light,
                     AppThemeToStringConverter.Dark
                 };
-                SelectedTheme = Enum.Parse<AppTheme>(
-                    Preferences.Get(
-                        AppThemeKey,
-                        Enum.GetName(AppTheme.Unspecified)
-                        )
-                    );
+            SelectedTheme = Enum.Parse<AppTheme>(
+                Preferences.Get(
+                    AppThemeKey,
+                    Enum.GetName(AppTheme.Unspecified)
+                    )
+                );
 
-                CropFields = context.CropFields.ToList();
-                DefaultCropField = context.CropFields.Find(
-                    Preferences.Get(
-                        LedgerPage_DefaultCropField,
-                        context.CropFields.First().Id
-                        )
-                    );
+            try
+            {
+                CropFields = CropField.ValidateRetrieve();
+                DefaultCropField = CropFields.Find(field => field.Id == Preferences.Get(LedgerPage_DefaultCropField, CropFields.First().Id));
                 DefaultCropField ??= CropFields.First();
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                CropFieldPickerEnabled = false;
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -69,7 +71,8 @@ namespace FarmOrganizer.ViewModels
 
         partial void OnDefaultCropFieldChanged(CropField oldValue, CropField newValue)
         {
-            Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
+            if (CropFieldPickerEnabled)
+                Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
             ApplyPreferences();
         }
 
@@ -82,8 +85,13 @@ namespace FarmOrganizer.ViewModels
                 "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
                 "Tak", "Nie"))
             {
+                if (!await DatabaseFile.RequestPermissions())
+                {
+                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                    return;
+                }
                 await DatabaseFile.Delete();
-                await MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);
+                await DatabaseFile.Create();
             }
         }
 
@@ -92,6 +100,11 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                if (!await DatabaseFile.RequestPermissions())
+                {
+                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                    return;
+                }
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
                 if (!folder.IsSuccessful)
                     return;
@@ -101,9 +114,9 @@ namespace FarmOrganizer.ViewModels
                     $"Baza danych została pomyślnie wyeksportowana do lokalizacji: {folder.Folder.Path}"
                     );
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -112,6 +125,11 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                if (!await DatabaseFile.RequestPermissions())
+                {
+                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                    return;
+                }
                 await DatabaseFile.CreateBackup();
                 FileResult file = await FilePicker.PickAsync();
                 if (file == null)
@@ -126,10 +144,10 @@ namespace FarmOrganizer.ViewModels
                     );
                 DatabaseFile.DeleteBackup();
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 await DatabaseFile.RestoreBackup();
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
     }

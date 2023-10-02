@@ -17,24 +17,27 @@ public partial class CropField : IValidatable<CropField>
         return $"{Name} ({Hectares} ha)";
     }
 
-    public static void Validate() => Validate(out _);
+    public static void Validate() => _ = ValidateRetrieve();
 
-    public static void Validate(out List<CropField> allEntries)
+    public static List<CropField> ValidateRetrieve()
     {
         var context = new DatabaseContext();
-        allEntries = new();
+        List<CropField> allEntries = new();
         allEntries.AddRange(context.CropFields.ToList());
 
         //Check if there exists at least 1 crop field
         if (allEntries.Count == 0)
-            throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), "Nie odnaleziono żadnego rekordu pola uprawnego.");
+            throw new TableValidationException(nameof(DatabaseContext.CropFields), "Nie znaleziono żadnych rekordów.");
 
-        //Check if all records have positive non-zero hectares
+        //Check if all records have positive non-zero hectares and non-empty names
         foreach (CropField field in allEntries)
         {
+            if (string.IsNullOrEmpty(field.Name))
+                throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne z pustą nazwą.", field.ToString(), nameof(Name));
             if (field.Hectares <= 0)
-                throw new InvalidRecordException("Hectares", field.Hectares.ToString());
+                throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne, którego powierzchnia jest zerowa lub mniejsza.", field.ToString(), nameof(Hectares));
         }
+        return allEntries;
     }
 
     public static void AddEntry(CropField entry)
@@ -43,11 +46,10 @@ public partial class CropField : IValidatable<CropField>
 
         //Name can't be empty for the love of god
         if (string.IsNullOrEmpty(entry.Name))
-            throw new InvalidRecordException("Name", "Pusty");
-
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         //Hectares needs to be greater than 0
         if (entry.Hectares <= 0)
-            throw new InvalidRecordException("Hectares", entry.Hectares.ToString());
+            throw new InvalidRecordPropertyException("Hektary", entry.Hectares.ToString(), "Zwiększ pole powierzchni pola aby było większe od zera.");
 
         context.CropFields.Add(entry);
         context.SaveChanges();
@@ -56,15 +58,15 @@ public partial class CropField : IValidatable<CropField>
     public static void EditEntry(CropField entry)
     {
         using var context = new DatabaseContext();
-        CropField existingField = context.CropFields.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), "Nie odnaleziono takiego rekordu z tym Id");
+        CropField existingField = context.CropFields.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), $"Id == {entry.Id}");
 
         //Name can't be empty for the love of god
         if (string.IsNullOrEmpty(entry.Name))
-            throw new InvalidRecordException("Name", "Pusty");
+            throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
 
         //Hectares needs to be greater than 0
         if (entry.Hectares <= 0)
-            throw new InvalidRecordException("Hectares", entry.Hectares.ToString());
+            throw new InvalidRecordPropertyException("Hektary", entry.Hectares.ToString(), "Zwiększ pole powierzchni pola aby było większe od zera.");
 
         existingField.Name = entry.Name;
         existingField.Hectares = entry.Hectares;
@@ -81,7 +83,7 @@ public partial class CropField : IValidatable<CropField>
 
         //The requirement of at least 1 cropfield
         if (context.CropFields.ToList().Count <= 1)
-            throw new InvalidDbOperationException("Nie można usunąć ostatniego pola uprawnego. Aby aplikacja działała poprawnie, wymagany jest przynajmniej jeden rekord pola uprawnego. Zamiast usuwać pole, możesz edytować jego metraż oraz nazwę.");
+            throw new RecordDeletionException("Pola uprawne");
 
         context.CropFields.Remove(fieldToDelete);
         context.SaveChanges();

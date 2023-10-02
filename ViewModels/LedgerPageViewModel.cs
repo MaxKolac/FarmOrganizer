@@ -4,65 +4,63 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
-using FarmOrganizer.ViewModels.PopUps;
 using FarmOrganizer.Views;
-using FarmOrganizer.Views.PopUps;
 using Microsoft.EntityFrameworkCore;
-using Mopups.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class LedgerPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private List<BalanceLedger> ledgerEntries = new();
+        private ObservableCollection<BalanceLedger> ledgerEntries = new();
         [ObservableProperty]
-        private List<CostType> costTypes = new();
+        private bool showLedgerEmptyInfo = false;
         [ObservableProperty]
-        private List<CropField> cropFields = new();
+        private bool showLedger = false;
         [ObservableProperty]
-        private CropField selectedCropField;
+        private bool isBusy = true;
 
-        [ObservableProperty]
-        private bool filterPopupButtonEnabled = true;
+        #region Preferences
+        private CropField preferredCropField;
+        #endregion
 
         private LedgerFilterSet _filterSet;
-        private readonly IPopupNavigation _popUpSvc;
 
-        public LedgerPageViewModel(IPopupNavigation popupNavigation)
+        public LedgerPageViewModel()
         {
             LedgerRecordPageViewModel.OnPageQuit += QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit += QueryLedgerEntries;
-            LedgerFilterPopupViewModel.OnPageQuit += EnableFilterPopupButton;
-            LedgerFilterPopupViewModel.OnFilterSetCreated += ApplyFilters;
-            _popUpSvc = popupNavigation;
-            _filterSet = new()
-            {
-                //TODO: load default filters from Preferences
-                SmallestBalanceChange = 0,
-                LargestBalanceChange = 999_999m,
-                EarliestDate = DateTime.Now.AddMonths(-1),
-                LatestDate = DateTime.Now.Date.AddDays(1).AddMicroseconds(-1)
-            };
-            _filterSet.SelectedSeasonIds = new() { _filterSet.SelectedSeasonIds.Last() };
+            LedgerFilterPageViewModel.OnFilterSetCreated += ApplyFilters;
+            _filterSet = GetDefaultFilterSet();
+            Task.Run(LoadDatabaseDataAsync);
+        }
+
+        private async Task LoadDatabaseDataAsync()
+        {
             try
             {
-                CostType.Validate(out List<CostType> allCostTypes);
-                CostTypes.AddRange(allCostTypes);
-                CropField.Validate(out List<CropField> allCropFields);
-                CropFields.AddRange(allCropFields);
-                //OnSelectedCropField already triggers QueryLedgerTables(); no need to call it twice
-                SelectedCropField = CropFields.Find(field =>
+                Task costsValidation = Task.Run(CostType.Validate);
+                Task seasonValidation = Task.Run(Season.Validate);
+                Task<List<CropField>> cropFieldValidation = Task.Run(CropField.ValidateRetrieve);
+
+                //Load preferences
+                List<CropField> allCropFields = cropFieldValidation.Result;
+                preferredCropField = allCropFields.Find(field =>
                     field.Id == Preferences.Get(
                         SettingsPageViewModel.LedgerPage_DefaultCropField,
-                        CropFields.First().Id
+                        allCropFields.First().Id
                         )
                     );
-                SelectedCropField ??= CropFields.First();
+                preferredCropField ??= allCropFields.First();
+
+                await Task.WhenAll(costsValidation, cropFieldValidation, seasonValidation);
+                //await Task.Delay(1000);
+                QueryLedgerEntries(this, null);
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -71,10 +69,8 @@ namespace FarmOrganizer.ViewModels
         {
             LedgerRecordPageViewModel.OnPageQuit -= QueryLedgerEntries;
             ReportPageViewModel.OnPageQuit -= QueryLedgerEntries;
-            LedgerFilterPopupViewModel.OnPageQuit -= EnableFilterPopupButton;
-            LedgerFilterPopupViewModel.OnFilterSetCreated -= ApplyFilters;
+            LedgerFilterPageViewModel.OnFilterSetCreated -= ApplyFilters;
             await Shell.Current.GoToAsync("..");
-
         }
 
         [RelayCommand]
@@ -84,19 +80,19 @@ namespace FarmOrganizer.ViewModels
             {
                 { "mode", "add" },
                 { "id", 0 },
-                { "cropFieldId", SelectedCropField.Id }
+                { "cropFieldId", preferredCropField.Id }
             };
             await Shell.Current.GoToAsync(nameof(LedgerRecordPage), query);
         }
 
         [RelayCommand]
-        private static async Task EditRecord(BalanceLedger record)
+        private async Task EditRecord(BalanceLedger record)
         {
             var query = new Dictionary<string, object>
             {
                 { "mode", "edit" },
                 { "id", record.Id },
-                { "cropFieldId", 0 }
+                { "cropFieldId", preferredCropField.Id }
             };
             await Shell.Current.GoToAsync(nameof(LedgerRecordPage), query);
         }
@@ -104,20 +100,10 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private void DeleteRecord(BalanceLedger record)
         {
-            try
-            { 
-                using var context = new DatabaseContext();
-                context.BalanceLedgers.Remove(record);
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                new ExceptionHandler(ex).ShowAlert();
-            }
-            finally
-            {
-                QueryLedgerEntries(this, null);
-            }
+            using var context = new DatabaseContext();
+            context.BalanceLedgers.Remove(record);
+            context.SaveChanges();
+            QueryLedgerEntries(this, null);
         }
 
         [RelayCommand]
@@ -125,73 +111,92 @@ namespace FarmOrganizer.ViewModels
         {
             var query = new Dictionary<string, object>()
             {
-                { "entries", LedgerEntries },
-                { "cropfield", SelectedCropField },
-                { "season", Season.GetCurrentSeason() }
+                { "entries", LedgerEntries.ToList() },
+                { "cropfields", _filterSet.SelectedCropFieldIds },
+                { "seasons", _filterSet.SelectedSeasonIds }
             };
             await Shell.Current.GoToAsync(nameof(ReportPage), query);
         }
 
         [RelayCommand]
-        private void FilterAndSortRecords()
+        private async Task FilterAndSortRecords()
         {
-            FilterPopupButtonEnabled = false;
-            _popUpSvc.PushAsync(new LedgerFilterPopup(new LedgerFilterPopupViewModel(_filterSet, _popUpSvc)));
+            var query = new Dictionary<string, object>()
+            {
+                { "filterSet", _filterSet }
+            };
+            await Shell.Current.GoToAsync(nameof(LedgerFilterPage), query);
         }
 
         private void ApplyFilters(object sender, LedgerFilterSet newSet)
         {
             _filterSet = newSet;
             QueryLedgerEntries(this, null);
-            FilterPopupButtonEnabled = true;
+        }
+
+        public static LedgerFilterSet GetDefaultFilterSet()
+        {
+            LedgerFilterSet set = new()
+            {
+                //TODO: load default filters from Preferences
+                SmallestBalanceChange = 0,
+                LargestBalanceChange = 999_999m,
+                EarliestDate = DateTime.Now.AddMonths(-1),
+                LatestDate = DateTime.Now.Date.AddDays(1).AddMicroseconds(-1),
+                SelectedSeasonIds = new() { Season.GetCurrentSeason().Id }
+            };
+            return set;
         }
 
         public void QueryLedgerEntries(object sender, EventArgs e)
         {
-            try
+            IsBusy = true;
+            ShowLedger = false;
+            IEnumerable<BalanceLedger> query =
+                from entry in new DatabaseContext().BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
+                                                    .Include(entry => entry.IdSeasonNavigation)
+                where _filterSet.SelectedCropFieldIds.Contains(entry.IdCropField)
+                && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
+                && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
+                && _filterSet.EarliestDate <= entry.DateAdded
+                && entry.DateAdded <= _filterSet.LatestDate
+                && _filterSet.SmallestBalanceChange <= entry.BalanceChange
+                && entry.BalanceChange <= _filterSet.LargestBalanceChange
+                select entry;
+            //await Task.Delay(500);
+
+            List<BalanceLedger> retrievedEntries = query.ToList();
+            switch (_filterSet.SortingMethod)
             {
-                using var context = new DatabaseContext();
-                IEnumerable<BalanceLedger> query =
-                    from entry in context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
-                                                        .Include(entry => entry.IdSeasonNavigation)
-                    where entry.IdCropField == SelectedCropField.Id
-                    && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
-                    && _filterSet.EarliestDate <= entry.DateAdded 
-                    && entry.DateAdded <= _filterSet.LatestDate
-                    && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
-                    && _filterSet.SmallestBalanceChange <= entry.BalanceChange 
-                    && entry.BalanceChange <= _filterSet.LargestBalanceChange
-                    select entry;
-                LedgerEntries = query.ToList();
-                
-                switch (_filterSet.SortingMethod)
-                {
-                    case LedgerFilterSet.SortingCriteria.CostTypes:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdCostTypeNavigation.Name).ToList();
-                        break;
-                    case LedgerFilterSet.SortingCriteria.DateAdded:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.DateAdded).ToList();
-                        break;
-                    case LedgerFilterSet.SortingCriteria.SeasonStartDate:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.IdSeasonNavigation.DateStart).ToList();
-                        break;
-                    case LedgerFilterSet.SortingCriteria.BalanceChange:
-                        LedgerEntries = LedgerEntries.OrderBy(entry => entry.BalanceChange).ToList();
-                        break;
-                }
-                if (_filterSet.DescendingSort)
-                    LedgerEntries.Reverse();
+                case LedgerFilterSet.SortingCriteria.CostTypes:
+                    retrievedEntries = retrievedEntries.OrderBy(entry => entry.IdCostTypeNavigation.Name).ToList();
+                    break;
+                case LedgerFilterSet.SortingCriteria.DateAdded:
+                    retrievedEntries = retrievedEntries.OrderBy(entry => entry.DateAdded).ToList();
+                    break;
+                case LedgerFilterSet.SortingCriteria.SeasonStartDate:
+                    retrievedEntries = retrievedEntries.OrderBy(entry => entry.IdSeasonNavigation.DateStart).ToList();
+                    break;
+                case LedgerFilterSet.SortingCriteria.BalanceChange:
+                    retrievedEntries = retrievedEntries.OrderBy(entry => entry.BalanceChange).ToList();
+                    break;
             }
-            catch (Exception ex)
+            //await Task.Delay(500);
+
+            LedgerEntries.Clear();
+            if (_filterSet.DescendingSort)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                for (int i = retrievedEntries.Count - 1; i >= 0; i--)
+                    LedgerEntries.Add(retrievedEntries[i]);
             }
+            else
+            {
+                for (int i = 0; i < retrievedEntries.Count; i++)
+                    LedgerEntries.Add(retrievedEntries[i]);
+            }
+            ShowLedger = LedgerEntries.Any();
+            ShowLedgerEmptyInfo = !ShowLedger;
+            IsBusy = false;
         }
-
-        public void EnableFilterPopupButton(object sender, EventArgs e) =>
-            FilterPopupButtonEnabled = true;
-
-        partial void OnSelectedCropFieldChanged(CropField value) => 
-            QueryLedgerEntries(this, null);
     }
 }

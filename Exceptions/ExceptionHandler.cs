@@ -1,81 +1,68 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 namespace FarmOrganizer.Exceptions
 {
     /// <summary>
-    /// A wrapper class for exceptions, which allows the program to show the exception as a pop-up alert.
+    /// Static class containing static methods for handling exceptions as a pop-up alert to the user.
     /// </summary>
-    public class ExceptionHandler
+    public static class ExceptionHandler
     {
-        private readonly string _title;
-        private readonly string _message;
-        private const string _genericTitle = "Coś poszło nie tak";
-
         /// <summary>
-        /// Creates an instance for a thrown exception.
+        /// Handles exceptions which inherit <see cref="FarmOrganizerException"/> class.
         /// </summary>
         /// <param name="exception">The exception to handle.</param>
-        public ExceptionHandler(Exception exception)
+        /// <param name="returnToPreviousPage">If <c>true</c>, the app will return the user to the previous page on the navigation stack.</param>
+        public static void Handle(FarmOrganizerException exception, bool returnToPreviousPage)
         {
-            if (exception is SqliteException)
-            {
-                SqliteException ex = exception as SqliteException;
-                _title = _genericTitle;
-                _message = $"Program zwrócił błąd związany z bazą danych. " +
-                    $"Kod błędu SQLite: {ex.SqliteErrorCode} ({ex.SqliteExtendedErrorCode}).";
-            }
-            else if (exception is NoRecordFoundException)
-            {
-                NoRecordFoundException ex = exception as NoRecordFoundException;
-                _title = "Nie odnaleziono rekordu";
-                _message = $"W tabeli {ex.QuerriedTable} nie odnaleziono rekordu o następujących właściwościach: {ex.QuerriedRecord}.";
-            }
-            else if (exception is InvalidPageQueryException)
-            {
-                InvalidPageQueryException ex = exception as InvalidPageQueryException;
-                _title = "Błąd podczas ładowania nowej strony";
-                _message = $"Program próbował przejść do strony z nieprawidłowymi atrybutami: {ex}";
-            }
-            else if (exception is InvalidRecordException)
-            {
-                InvalidRecordException ex = exception as InvalidRecordException;
-                _title = "Nieprawidłowe dane";
-                _message = $"W rekordzie znajduje się niedozwolona wartość: {ex.InvalidProperty} = {ex.InvalidValue}";
-            }
-            else if (exception is DbUpdateException)
-            {
-                DbUpdateException ex = exception as DbUpdateException;
-                _title = "Błąd podczas aktualizacji bazy";
-                _message = ex.InnerException.Message;
-            }
-            else if (exception is InvalidDbOperationException)
-            {
-                InvalidDbOperationException ex = exception as InvalidDbOperationException;
-                _title = "Bład podczas operacji na bazie danych";
-                _message = ex.Message;
-            }
-            else
-            {
-                _title = "Coś poszło nie tak - Nieobsługiwany błąd";
-                _message = exception.Message;
-            }
+            App.AlertSvc.ShowAlert(exception.Title, exception.Message);
+            if (returnToPreviousPage)
+                ReturnToPreviousPage();
         }
 
         /// <summary>
-        /// Shows the pop-up alert containing info about the wrapped exception.
+        /// Handles the <see cref="SqliteException"/>, which require a different approach.
         /// </summary>
-        /// <param name="returnToPreviousPage">Whether or not, should the user be kicked back to the previous page before showing the pop-up.</param>
-        public void ShowAlert(bool returnToPreviousPage = true)
+        /// <inheritdoc cref="Handle(FarmOrganizerException, bool)"/>
+        public static void Handle(SqliteException exception, bool returnToPreviousPage)
         {
-            App.AlertSvc.ShowAlert(_title, _message);
+            string message = $"Kod błędu: ({exception.SqliteErrorCode}/{exception.SqliteExtendedErrorCode});";
+            if (exception.InnerException is not null)
+                message += $" Błąd wewnętrzny: {exception.InnerException.Message};";
+            if (exception.Message is not null)
+                message += $" Wiadomość: {exception.Message};";
+            App.AlertSvc.ShowAlert("Błąd SQLite", message);
             if (returnToPreviousPage)
+                ReturnToPreviousPage();
+        }
+
+        /// <summary>
+        /// Handles the <see cref="IOException"/> when manipulating files.
+        /// </summary>
+        /// <inheritdoc cref="Handle(FarmOrganizerException, bool)"/>
+        public static void Handle(IOException exception, bool returnToPreviousPage)
+        {
+            App.AlertSvc.ShowAlert("Błąd podczas pracy na plikach", exception.Message);
+            if (returnToPreviousPage)
+                ReturnToPreviousPage();
+        }
+
+        /// <summary>
+        /// <b>Important!</b> This method should NOT be used to handle actual exceptions. Attempting to handle exceptions this way is a bad practice. <br/>
+        /// Use this method only to diagnose the cause and type of exceptions being thrown at unexpected moments at runtime.
+        /// </summary>
+        [Obsolete("Do not use this method to handle actual exceptions. For debugging purposes only.")]
+        public static void EmergencyHandle(Exception exception)
+        {
+            App.AlertSvc.ShowAlert("Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
+            ReturnToPreviousPage();
+        }
+
+        private static void ReturnToPreviousPage()
+        {
+            Application.Current.MainPage.Dispatcher.Dispatch(async () =>
             {
-                Application.Current.MainPage.Dispatcher.Dispatch(async () =>
-                {
-                    await Shell.Current.GoToAsync("..");
-                });
-            }
+                await Shell.Current.GoToAsync("..");
+            });
         }
     }
 }

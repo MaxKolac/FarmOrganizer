@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -11,60 +12,124 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private List<Season> seasons = new();
         [ObservableProperty]
-        private bool addingNewSeason = false;
+        private bool showCreatorFrame = false;
+        [ObservableProperty]
+        private bool dateEndPickerEnabled = false;
+        [ObservableProperty]
+        private string saveButtonText = "Dodaj sezon i zapisz";
 
-        #region New Season Details
+        private bool addingSeason = false;
+        private bool editingSeason = false;
+        private int editedSeasonId;
+
+        #region Season Details
         [ObservableProperty]
-        private string newSeasonName;
+        private string seasonName = "Nowy sezon " + DateTime.Now.AddMonths(1).Year.ToString();
         [ObservableProperty]
-        private DateTime newSeasonDateStart;
+        private DateTime seasonDateStart = DateTime.Now;
+        [ObservableProperty]
+        private DateTime seasonDateEnd = DateTime.Now.AddYears(1);
         #endregion
 
         public SeasonsPageViewModel()
         {
             try
             {
-                Season.Validate(out List<Season> allEntries);
-                Seasons.AddRange(allEntries);
-                NewSeasonName = "Nowy sezon " + DateTime.Now.Year.ToString();
-                NewSeasonDateStart = DateTime.Now;
+                Seasons = Season.ValidateRetrieve();
             }
-            catch (Exception ex)
+            catch (TableValidationException ex)
             {
-                new ExceptionHandler(ex).ShowAlert();
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
         [RelayCommand]
-        private void StartNewSeason()
+        private void AddOrSave()
         {
             try
             {
-                Season newSeason = new()
+                if (addingSeason)
                 {
-                    Name = NewSeasonName,
-                    DateStart = NewSeasonDateStart,
-                    DateEnd = DateTime.MaxValue,
-                    HasConcluded = false
-                };
-                Season.AddEntry(newSeason);
+                    Season newSeason = new()
+                    {
+                        Name = SeasonName,
+                        DateStart = SeasonDateStart,
+                        DateEnd = Season.MaximumDate
+                    };
+                    Season.AddEntry(newSeason);
+                }
+                else if (editingSeason)
+                {
+                    Season seasonToEdit = new()
+                    {
+                        Id = editedSeasonId,
+                        Name = SeasonName,
+                        DateStart = SeasonDateStart,
+                        DateEnd = SeasonDateEnd
+                    };
+                    Season.EditEntry(seasonToEdit);
+                }
+
                 Seasons = new DatabaseContext().Seasons.ToList();
-                ToggleNewSeasonFrame();
+                ToggleAdding();
             }
-            catch (Exception ex)
+            catch (InvalidRecordPropertyException ex)
             {
-                new ExceptionHandler(ex).ShowAlert(false);
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (NoRecordFoundException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (SqliteException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
         [RelayCommand]
-        private static void ResumePreviousSeason()
+        private void Edit(Season seasonToEdit)
         {
-
+            DateEndPickerEnabled = seasonToEdit.DateEnd < Season.MaximumDate;
+            editedSeasonId = seasonToEdit.Id;
+            SeasonName = seasonToEdit.Name;
+            SeasonDateStart = seasonToEdit.DateStart;
+            SeasonDateEnd = seasonToEdit.DateEnd;
+            editingSeason = true;
+            addingSeason = false;
+            SaveButtonText = "Zapisz zmiany";
+            ShowCreatorFrame = true;
         }
 
         [RelayCommand]
-        private void ToggleNewSeasonFrame() =>
-            AddingNewSeason = !AddingNewSeason;
+        private async Task Remove(Season seasonToRemove)
+        {
+            try
+            {
+                if (!await App.AlertSvc.ShowConfirmationAsync(
+                    "Uwaga!",
+                    "Usunięcie sezonu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany sezon. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
+                    "Tak, usuń",
+                    "Anuluj"))
+                    return;
+                Season.DeleteEntry(seasonToRemove);
+                Seasons = new DatabaseContext().Seasons.ToList();
+            }
+            catch (RecordDeletionException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
+        }
+
+        [RelayCommand]
+        private void ToggleAdding()
+        {
+            editingSeason = false;
+            addingSeason = true;
+            SeasonDateEnd = Season.MaximumDate;
+            DateEndPickerEnabled = false;
+            SaveButtonText = "Dodaj sezon i zapisz";
+            ShowCreatorFrame = !ShowCreatorFrame;
+        }
     }
 }

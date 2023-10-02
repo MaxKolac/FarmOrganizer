@@ -6,93 +6,89 @@
              x:Class="FarmOrganizer.Views.CropFieldPage"
              x:DataType="viewmodel:CropFieldPageViewModel"
              Title="Pola uprawne">
+    <ContentPage.Resources>
+        <DataTemplate x:DataType="model:CropField"
+                      x:Key="CropFieldTemplate">
+            <SwipeView>
+                <SwipeView.LeftItems>
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=EditCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame BackgroundColor="LightYellow">
+                                <Label Text="Edytuj"
+                                       TextColor="Black"
+                                       FontAttributes="Bold" />
+                            </Frame>
+                        </SwipeItemView>
+                    </SwipeItems>
+                </SwipeView.LeftItems>
+                <SwipeView.RightItems>
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=RemoveCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame BackgroundColor="Firebrick">
+                                <Label Text="Usuń"
+                                       TextColor="White"
+                                       FontAttributes="Bold" />
+                            </Frame>
+                        </SwipeItemView>
+                    </SwipeItems>
+                </SwipeView.RightItems>
+
+                <Frame Style="{StaticResource TableEntryFrame}">
+                    <Grid RowDefinitions="45"
+                          ColumnDefinitions="*, Auto">
+                        <Label Text="{Binding Name}"
+                               FontAttributes="Bold"
+                               FontSize="20" />
+                        <Label Grid.Column="1"
+                               FontSize="20"
+                               Text="{Binding Hectares, StringFormat='{0} ha'}" />
+                    </Grid>
+                </Frame>
+            </SwipeView>
+        </DataTemplate>
+    </ContentPage.Resources>
     <ScrollView>
-        <Grid RowDefinitions=".8*, Auto, 65"
+        <Grid RowDefinitions=".85*, 65"
               RowSpacing="5"
               Margin="5">
-
             <!-- CropField CollectionView -->
-            <CollectionView ItemsSource="{Binding CropFields}" VerticalOptions="Fill">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="model:CropField">
-                        <SwipeView>
-                            <SwipeView.LeftItems>
-                                <SwipeItems>
-                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=EditCommand}" 
-                                                   CommandParameter="{Binding .}">
-                                        <Frame BackgroundColor="LightYellow">
-                                            <Label Text="Edytuj" 
-                                                   TextColor="Black"
-                                                   FontAttributes="Bold"/>
-                                        </Frame>
-                                    </SwipeItemView>
-                                </SwipeItems>
-                            </SwipeView.LeftItems>
-                            <SwipeView.RightItems>
-                                <SwipeItems>
-                                    <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=RemoveCommand}" 
-                                                   CommandParameter="{Binding .}">
-                                        <Frame BackgroundColor="Firebrick">
-                                            <Label Text="Usuń"
-                                                   TextColor="White"
-                                                   FontAttributes="Bold"/>
-                                        </Frame>
-                                    </SwipeItemView>
-                                </SwipeItems>
-                            </SwipeView.RightItems>
-
-                            <Frame Style="{StaticResource TableEntryFrame}">
-                                <Grid RowDefinitions="45" ColumnDefinitions="*, Auto">
-                                    <Label Text="{Binding Name}"
-                                           FontAttributes="Bold"
-                                           FontSize="20"/>
-                                    <Label Grid.Column="1"
-                                           FontSize="20"
-                                           Text="{Binding Hectares, StringFormat='{0} ha'}"/>
-                                </Grid>
-                            </Frame>
-                        </SwipeView>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <CollectionView ItemsSource="{Binding CropFields}"
+                            ItemTemplate="{StaticResource CropFieldTemplate}"
+                            Style="{StaticResource ViewmodelCollectionView}" />
 
             <!-- New CropField Creator Frame -->
-            <Frame Grid.Row="1"
-                   Margin="5,0,5,0"
-                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                   BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+            <Frame Style="{StaticResource ViewmodelCreatorFrame}"
                    IsVisible="{Binding ShowCreatorFrame}">
                 <Grid RowDefinitions="Auto, Auto, Auto"
                       ColumnDefinitions="Auto, *">
                     <HorizontalStackLayout>
-                        <Label Text="Nazwa:"/>
+                        <Label Text="Nazwa:" />
                         <Entry Grid.Column="1"
                                Margin="0,-11,0,0"
                                HorizontalOptions="Fill"
-                               Text="{Binding CropFieldName}"/>
+                               Text="{Binding CropFieldName}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="1">
-                        <Label Text="Pole powierzchni (ha):"/>
+                        <Label Text="Pole powierzchni (ha):" />
                         <Entry Margin="0,-11,0,0"
                                HorizontalOptions="Fill"
                                Style="{StaticResource NumericEntry}"
-                               Text="{Binding CropFieldHectares}"/>
+                               Text="{Binding CropFieldHectares}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">
                         <Button Text="{Binding SaveButtonText}"
-                                Command="{Binding AddOrSaveCommand}"/>
+                                Command="{Binding AddOrSaveCommand}" />
                     </HorizontalStackLayout>
                 </Grid>
             </Frame>
 
             <!-- Button at bottom -->
-            <HorizontalStackLayout Grid.Row="2" 
-                                   Margin="5"
-                                   Spacing="5" 
-                                   HorizontalOptions="Center">
-                <Button Text="Utwórz nowe pole uprawne" 
+            <HorizontalStackLayout Style="{StaticResource ViewmodelButtonsStackLayout}">
+                <Button Text="Utwórz nowe pole uprawne"
                         HorizontalOptions="Start"
-                        Command="{Binding ToggleAddingCommand}"/>
+                        Command="{Binding ToggleAddingCommand}" />
             </HorizontalStackLayout>
         </Grid>
     </ScrollView>
