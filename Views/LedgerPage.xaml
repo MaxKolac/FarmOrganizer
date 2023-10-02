@@ -22,6 +22,7 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <converter:NotesPropertyToBoolConverter x:Key="NotesConverter" />
+        <converter:CostTypeToColorConverter x:Key="CostTypeToColorConverter" />
 
         <DataTemplate x:DataType="model:BalanceLedger" x:Key="BalanceLedgerTemplate">
             <SwipeView>
@@ -59,6 +60,7 @@
                                FontSize="16"
                                FontAttributes="Bold" />
                         <Label Text="{Binding BalanceChange, StringFormat='{0:F2} zł'}"
+                               TextColor="{Binding IdCostTypeNavigation, Converter={StaticResource CostTypeToColorConverter}}"
                                Grid.Row="1"
                                FontAttributes="Bold"
                                FontSize="20" />
