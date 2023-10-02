@@ -14,7 +14,7 @@ namespace FarmOrganizer.ViewModels.Converters
             if (value is not CostType)
                 return Colors.Black;
             CostType cost = value as CostType;
-            return cost.IsExpense ? Colors.DarkRed : Colors.Black;
+            return cost.IsExpense ? Colors.DarkRed : Colors.DarkGreen;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
