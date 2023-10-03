@@ -28,33 +28,19 @@
             <SwipeView>
                 <SwipeView.LeftItems>
                     <SwipeItems>
-                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}"
-                                       CommandParameter="{Binding .}">
-                            <Frame Style="{StaticResource SwipeViewFrame}"
-                                   BackgroundColor="LightYellow">
-                                <Label Style="{StaticResource SwipeViewLabel}"
-                                       Text="Edytuj"
-                                       TextColor="Black" />
-                            </Frame>
-                        </SwipeItemView>
+                        <SwipeItemView Style="{StaticResource EditSwipeItem}"
+                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}" />
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
                     <SwipeItems>
-                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"
-                                       CommandParameter="{Binding .}">
-                            <Frame Style="{StaticResource SwipeViewFrame}"
-                                   BackgroundColor="Firebrick">
-                                <Label Style="{StaticResource SwipeViewLabel}"
-                                       Text="Usuń"
-                                       TextColor="White" />
-                            </Frame>
-                        </SwipeItemView>
+                        <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
+                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"/>
                     </SwipeItems>
                 </SwipeView.RightItems>
 
-                <Frame Style="{StaticResource TableEntryFrame}">
-                    <Grid ColumnDefinitions=".5*, .5*"
+                <Frame Style="{StaticResource CVItemFrame}">
+                    <Grid ColumnDefinitions="*, Auto, *"
                           RowDefinitions="Auto, Auto, Auto">
                         <Label Text="{Binding IdCostTypeNavigation.Name}"
                                FontSize="16"
@@ -87,14 +73,6 @@
                 </Frame>
             </SwipeView>
         </DataTemplate>
-        
-        <Style TargetType="Label" x:Key="SwipeViewLabel">
-            <Setter Property="FontAttributes" Value="Bold"/>
-            <Setter Property="VerticalOptions" Value="Center"/>
-        </Style>
-        <Style TargetType="Frame" x:Key="SwipeViewFrame">
-            <Setter Property="VerticalOptions" Value="FillAndExpand"/>
-        </Style>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="*, 65" Padding="5">

@@ -12,31 +12,19 @@
             <SwipeView>
                 <SwipeView.LeftItems>
                     <SwipeItems>
-                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=EditCommand}"
-                                       CommandParameter="{Binding .}">
-                            <Frame BackgroundColor="LightYellow">
-                                <Label Text="Edytuj"
-                                       TextColor="Black"
-                                       FontAttributes="Bold" />
-                            </Frame>
-                        </SwipeItemView>
+                        <SwipeItemView Style="{StaticResource EditSwipeItem}"
+                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=EditCommand}" />
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
                     <SwipeItems>
-                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=RemoveCommand}"
-                                       CommandParameter="{Binding .}">
-                            <Frame BackgroundColor="Firebrick">
-                                <Label Text="Usuń"
-                                       TextColor="White"
-                                       FontAttributes="Bold" />
-                            </Frame>
-                        </SwipeItemView>
+                        <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
+                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=RemoveCommand}" />
                     </SwipeItems>
                 </SwipeView.RightItems>
 
-                <Frame Style="{StaticResource TableEntryFrame}">
-                    <Grid RowDefinitions="45"
+                <Frame Style="{StaticResource CVItemFrame}">
+                    <Grid RowDefinitions="Auto, Auto"
                           ColumnDefinitions="*, Auto">
                         <Label Text="{Binding Name}"
                                FontAttributes="Bold"
@@ -56,10 +44,10 @@
             <!-- CropField CollectionView -->
             <CollectionView ItemsSource="{Binding CropFields}"
                             ItemTemplate="{StaticResource CropFieldTemplate}"
-                            Style="{StaticResource ViewmodelCollectionView}" />
+                            Style="{StaticResource ModelPageCollectionView}" />
 
             <!-- New CropField Creator Frame -->
-            <Frame Style="{StaticResource ViewmodelCreatorFrame}"
+            <Frame Style="{StaticResource ModelPageCreatorFrame}"
                    IsVisible="{Binding ShowCreatorFrame}">
                 <Grid RowDefinitions="Auto, Auto, Auto"
                       ColumnDefinitions="Auto, *">
@@ -85,7 +73,7 @@
             </Frame>
 
             <!-- Button at bottom -->
-            <HorizontalStackLayout Style="{StaticResource ViewmodelButtonsStackLayout}">
+            <HorizontalStackLayout Style="{StaticResource ModelPageButtonsStackLayout}">
                 <Button Text="Utwórz nowe pole uprawne"
                         HorizontalOptions="Start"
                         Command="{Binding ToggleAddingCommand}" />

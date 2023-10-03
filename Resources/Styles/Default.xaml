@@ -4,11 +4,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!-- Styles for Pages dedicated to provide CRUD functionality for Model classes -->
-    <Style TargetType="CollectionView" x:Key="ViewmodelCollectionView">
+    <Style TargetType="CollectionView" x:Key="ModelPageCollectionView">
         <Setter Property="MaximumHeightRequest" Value="800"/>
     </Style>
     
-    <Style TargetType="Frame" x:Key="ViewmodelCreatorFrame">
+    <Style TargetType="Frame" x:Key="ModelPageCreatorFrame">
         <Setter Property="VerticalOptions" Value="End"/>
         <Setter Property="Margin" Value="5,0,5,0"/>
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"/>
@@ -16,7 +16,7 @@
         <Setter Property="ZIndex" Value="2"/>
     </Style>
 
-    <Style TargetType="HorizontalStackLayout" x:Key="ViewmodelButtonsStackLayout">
+    <Style TargetType="HorizontalStackLayout" x:Key="ModelPageButtonsStackLayout">
         <Setter Property="Grid.Row" Value="1"/>
         <Setter Property="Margin" Value="5"/>
         <Setter Property="Spacing" Value="5"/>
@@ -43,19 +43,46 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
+
+    <!-- Styles for the View of records inside CollectionViews -->
+    <Style TargetType="Frame" x:Key="CVItemFrame">
+        <Setter Property="Margin" Value="5,2,5,2"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"/>
+        <Setter Property="BorderColor" Value="DarkGrey"/>
+    </Style>
+
+    <Style TargetType="SwipeItemView" x:Key="EditSwipeItem">
+        <Setter Property="CommandParameter" Value="{Binding .}" />
+        <Setter Property="Content">
+            <Frame BackgroundColor="LightYellow"
+                   VerticalOptions="FillAndExpand">
+                <Label Text="Edytuj"
+                       TextColor="Black" 
+                       FontAttributes="Bold"
+                       VerticalOptions="Center" />
+            </Frame>
+        </Setter>
+    </Style>
     
+    <Style TargetType="SwipeItemView" x:Key="DeleteSwipeItem">
+        <Setter Property="CommandParameter" Value="{Binding .}" />
+        <Setter Property="Content">
+            <Frame BackgroundColor="Firebrick"
+                   VerticalOptions="FillAndExpand">
+                <Label Text="Usuń"
+                       TextColor="White" 
+                       FontAttributes="Bold"
+                       VerticalOptions="Center" />
+            </Frame>
+        </Setter>
+    </Style>
+
     <!-- Misc global styles -->
     <Style TargetType="Entry" x:Key="NumericEntry">
         <Setter Property="Keyboard" Value="Numeric"/>
         <Setter Property="MaxLength" Value="8"/>
         <Setter Property="ClearButtonVisibility" Value="Never"/>
-    </Style>
-
-    <Style TargetType="Frame" x:Key="TableEntryFrame">
-        <Setter Property="Margin" Value="5,2,5,2"/>
-        <Setter Property="Padding" Value="8"/>
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}"/>
-        <Setter Property="BorderColor" Value="DarkGrey"/>
     </Style>
     
     <!-- Boolean values as Resource, because passing them as CommandParameter is hard i guess -->
