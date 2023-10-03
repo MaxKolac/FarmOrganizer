@@ -185,7 +185,8 @@
                                    Text="Ilość plonów (kg):"/>
                             <Entry x:Name="cropAmount" 
                                    Grid.Row="1"
-                                   Text="{Binding CropAmountValue}">
+                                   Text="{Binding CropAmountValue}"
+                                   Style="{StaticResource QuickCalcEntry}">
                                 <Entry.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
                                                           CommandParameter="cropAmount"/>
@@ -200,7 +201,8 @@
                                    Text="Cena za kilogram (zł/kg):"/>
                             <Entry x:Name="sellRate"
                                    Grid.Row="3"
-                                   Text="{Binding SellRateValue}">
+                                   Text="{Binding SellRateValue}"
+                                   Style="{StaticResource QuickCalcEntry}">
                                 <Entry.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
                                                           CommandParameter="sellRate"/>
@@ -215,7 +217,8 @@
                                    Text="Zysk ze sprzedaży (zł):"/>
                             <Entry x:Name="pureIncome"
                                    Grid.Row="5"
-                                   Text="{Binding PureIncomeValue}">
+                                   Text="{Binding PureIncomeValue}"
+                                   Style="{StaticResource QuickCalcEntry}">
                                 <Entry.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
                                                           CommandParameter="pureIncome"/>
@@ -228,7 +231,7 @@
                     <!-- Profit after expenses -->
                     <Label Grid.Row="8"
                            Grid.ColumnSpan="2"
-                           Text="{Binding TotalChangeText, StringFormat='{0} po wydatkach (zł):'}" 
+                           Text="{Binding ProfitAfterExpensesText, StringFormat='{0} po wydatkach (zł):'}" 
                            Style="{StaticResource QuickCalcLabel}"/>
                     <Label Grid.Row="9"
                            Grid.ColumnSpan="2"

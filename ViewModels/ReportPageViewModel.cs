@@ -62,9 +62,11 @@ namespace FarmOrganizer.ViewModels
         private const string _cropFieldLabelMultiple = "Pola uprawne:";
 
         [ObservableProperty]
-        private string totalChangeText = _totalChangeTextProfit;
-        private const string _totalChangeTextProfit = "Zysk";
-        private const string _totalChangeTextLoss = "Straty";
+        private string totalChangeText = _labelProfit;
+        [ObservableProperty]
+        private string profitAfterExpensesText = _labelProfit;
+        private const string _labelProfit = "Zysk";
+        private const string _labelLoss = "Straty";
         #endregion
 
         public static event EventHandler OnPageQuit;
@@ -186,13 +188,13 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
-        protected override void OnIncomeChanged(string value)
-        {
-            decimal pureIncome = Utils.CastToValue(value);
-            ProfitAfterExpenses = pureIncome + TotalChange;
-        }
+        protected override void OnIncomeChanged(string value) =>
+            ProfitAfterExpenses = Utils.CastToValue(value) + TotalChange;
 
         partial void OnTotalChangeChanged(decimal value) =>
-            TotalChangeText = value >= 0 ? _totalChangeTextProfit : _totalChangeTextLoss;
+            TotalChangeText = value >= 0 ? _labelProfit : _labelLoss;
+
+        partial void OnProfitAfterExpensesChanged(decimal value) => 
+            ProfitAfterExpensesText = value >= 0 ? _labelProfit : _labelLoss;
     }
 }
