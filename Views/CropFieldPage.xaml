@@ -28,10 +28,9 @@
                           ColumnDefinitions="*, Auto">
                         <Label Text="{Binding Name}"
                                FontAttributes="Bold"
-                               FontSize="20" />
-                        <Label Grid.Column="1"
-                               FontSize="20"
-                               Text="{Binding Hectares, StringFormat='{0} ha'}" />
+                               FontSize="16" />
+                        <Label Text="{Binding Hectares, StringFormat='{0} ha'}" 
+                               Grid.Row="1"/>
                     </Grid>
                 </Frame>
             </SwipeView>

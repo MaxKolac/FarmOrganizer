@@ -12,12 +12,12 @@
         <Style TargetType="Label" x:Key="BaseLabelStyle">
             <Setter Property="HorizontalOptions" Value="Start"/>
             <Setter Property="HorizontalTextAlignment" Value="Start"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalTextAlignment" Value="Center" />
+            <Setter Property="Margin" Value="5"/>
         </Style>
         <Style TargetType="Label" x:Key="GroupTitle" BasedOn="{StaticResource BaseLabelStyle}">
             <Setter Property="FontAttributes" Value="Bold"/>
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="16"/>
         </Style>
         <Style TargetType="Grid">
             <Setter Property="ColumnDefinitions" Value="Auto, *"/>
@@ -29,13 +29,12 @@
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Margin="10"
-                             Spacing="2">
+        <VerticalStackLayout Margin="5" Spacing="2">
             <Label Text="Wygląd"
                    Style="{StaticResource GroupTitle}" />
             <Grid>
                 <Label Style="{StaticResource BaseLabelStyle}"
-                       Text="Motyw" />
+                       Text="Motyw: " />
                 <Picker Grid.Column="1"
                         ItemsSource="{Binding AppThemes}"
                         SelectedItem="{Binding SelectedTheme, Converter={StaticResource AppThemeToStringConverter}}" />

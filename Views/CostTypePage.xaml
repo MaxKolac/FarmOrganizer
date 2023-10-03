@@ -14,7 +14,7 @@
         <DataTemplate x:DataType="helper:CostTypeGroup" x:Key="CostTypeGroupTemplate">
             <Label Text="{Binding Name}"
                    HorizontalOptions="Center"
-                   FontSize="20"
+                   FontSize="18"
                    FontAttributes="Bold" />
         </DataTemplate>
         <DataTemplate x:DataType="model:CostType" x:Key="CostTypeTemplate">
@@ -37,10 +37,9 @@
                           ColumnDefinitions="*, Auto">
                         <Label Text="{Binding Name}"
                                FontAttributes="Bold"
-                               FontSize="20" />
-                        <Label Grid.Column="1"
-                               FontSize="20"
-                               Text="{Binding IsExpense, Converter={StaticResource IsExpenseConverter}, StringFormat='{Kategoria: {0}}'}" />
+                               FontSize="16" />
+                        <Label Text="{Binding IsExpense, Converter={StaticResource IsExpenseConverter}}" 
+                               Grid.Row="1"/>
                     </Grid>
                 </Frame>
             </SwipeView>

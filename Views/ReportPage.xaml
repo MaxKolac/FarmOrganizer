@@ -15,7 +15,7 @@
         </Style>
         <Style TargetType="Entry" x:Key="QuickCalcEntry" BasedOn="{StaticResource NumericEntry}">
             <Setter Property="VerticalOptions" Value="Fill"/>
-            <Setter Property="FontSize" Value="Medium"/>
+            <Setter Property="FontSize" Value="16"/>
         </Style>
         <Style TargetType="Entry" x:Key="QuickCalcReadOnlyEntry" BaseResourceKey="QuickCalcEntry">
             <Setter Property="FontAttributes" Value="Bold"/>
@@ -30,14 +30,14 @@
         </Style>
 
         <Style TargetType="Label">
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
         <Style TargetType="Label" x:Key="BoldLabel">
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
         <Style TargetType="Label" x:Key="CollectionViewTitleLabel">
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
         <Style TargetType="Label" x:Key="InstructionLabel">
@@ -48,7 +48,7 @@
         <Style TargetType="Label" x:Key="QuickCalcLabel">
             <Setter Property="HorizontalTextAlignment" Value="Start"/>
             <Setter Property="VerticalTextAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="Medium"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
         <Style TargetType="Label" x:Key="QuickCalcTotalLabel" BasedOn="{StaticResource QuickCalcLabel}">
@@ -143,13 +143,11 @@
                     <Grid ColumnDefinitions="Auto, *">
                         <Label Grid.Column="0" 
                                Text="Razem:" 
-                               Style="{StaticResource BoldLabel}"
-                               FontSize="20"
+                               Style="{StaticResource CollectionViewTitleLabel}"
                                HorizontalOptions="Start"/>
                         <Label Grid.Column="1"
                                Text="{Binding TotalChange, StringFormat='{0:F2}'}" 
-                               Style="{StaticResource BoldLabel}"
-                               FontSize="20"
+                               Style="{StaticResource CollectionViewTitleLabel}"
                                HorizontalOptions="End"/>
                     </Grid>
                 </Frame>

@@ -31,23 +31,16 @@
                           ColumnDefinitions="*, Auto">
                         <Label Text="{Binding Name}"
                                FontAttributes="Bold"
-                               FontSize="20" />
+                               FontSize="16" />
                         <HorizontalStackLayout Grid.Row="1"
                                                Grid.ColumnSpan="2">
-                            <Label Text="{Binding DateStart, StringFormat='{0:d MMMM yy}'}"
-                                   Style="{StaticResource SeasonListMediumLabel}" />
-                            <Label Text="{Binding DateEnd, Converter={StaticResource DateEndConverter}}"
-                                   Style="{StaticResource SeasonListMediumLabel}" />
+                            <Label Text="{Binding DateStart, StringFormat='{0:d MMMM yy}'}" />
+                            <Label Text="{Binding DateEnd, Converter={StaticResource DateEndConverter}}" />
                         </HorizontalStackLayout>
                     </Grid>
                 </Frame>
             </SwipeView>
         </DataTemplate>
-        <Style TargetType="Label"
-               x:Key="SeasonListMediumLabel">
-            <Setter Property="FontSize"
-                    Value="16" />
-        </Style>
     </ContentPage.Resources>
 
     <ScrollView>
