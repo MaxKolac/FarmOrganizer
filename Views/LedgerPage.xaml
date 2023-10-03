@@ -43,23 +43,26 @@
                     <Grid ColumnDefinitions="*, Auto, *"
                           RowDefinitions="Auto, Auto, Auto">
                         <Label Text="{Binding IdCostTypeNavigation.Name}"
-                               FontSize="16"
                                FontAttributes="Bold" />
+                        <Label Text="{Binding IdCropFieldNavigation.Name}"
+                               Grid.Column="1"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding IdSeasonNavigation.Name}"
+                               Grid.Column="2"
+                               FontAttributes="Bold"
+                               HorizontalOptions="End" />
+
                         <Label Text="{Binding BalanceChange, StringFormat='{0:F2} zł'}"
                                TextColor="{Binding IdCostTypeNavigation, Converter={StaticResource CostTypeToColorConverter}}"
                                Grid.Row="1"
+                               Grid.ColumnSpan="2"
                                FontAttributes="Bold"
-                               FontSize="20" />
-
-                        <Label Text="{Binding IdSeasonNavigation.Name}"
-                               Grid.Column="1"
-                               FontSize="16"
-                               FontAttributes="Bold"
-                               HorizontalOptions="End" />
+                               FontSize="18" />
                         <Label Text="{Binding DateAdded, StringFormat='{0:d MMMM yy }'}"
-                               Grid.Column="1"
                                Grid.Row="1"
-                               FontSize="16"
+                               Grid.Column="1"
+                               Grid.ColumnSpan="2"
                                FontAttributes="Italic"
                                HorizontalOptions="End" />
 

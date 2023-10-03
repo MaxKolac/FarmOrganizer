@@ -153,8 +153,10 @@ namespace FarmOrganizer.ViewModels
             IsBusy = true;
             ShowLedger = false;
             IEnumerable<BalanceLedger> query =
-                from entry in new DatabaseContext().BalanceLedgers.Include(entry => entry.IdCostTypeNavigation)
-                                                    .Include(entry => entry.IdSeasonNavigation)
+                from entry in new DatabaseContext().BalanceLedgers
+                .Include(entry => entry.IdCostTypeNavigation)
+                .Include(entry => entry.IdSeasonNavigation)
+                .Include(entry => entry.IdCropFieldNavigation)
                 where _filterSet.SelectedCropFieldIds.Contains(entry.IdCropField)
                 && _filterSet.SelectedCostTypeIds.Contains(entry.IdCostType)
                 && _filterSet.SelectedSeasonIds.Contains(entry.IdSeason)
