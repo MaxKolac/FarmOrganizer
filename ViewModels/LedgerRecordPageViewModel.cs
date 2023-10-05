@@ -152,45 +152,24 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 using var context = new DatabaseContext();
+                BalanceLedger entry = new()
+                {
+                    IdCostType = SelectedCostType.Id,
+                    IdCropField = SelectedCropField.Id,
+                    IdSeason = SelectedSeason.Id,
+                    BalanceChange = Utils.CastToValue(BalanceChange),
+                    DateAdded = DateAdded,
+                    Notes = Notes
+                };
                 switch (PageMode)
                 {
                     case "add":
-                        var dateTime = new DateTime(
-                            dateAddedCorrected.Year,
-                            dateAddedCorrected.Month,
-                            dateAddedCorrected.Day,
-                            DateTime.Now.Hour,
-                            DateTime.Now.Minute,
-                            DateTime.Now.Second
-                            );
-                        BalanceLedger newRecord = new()
-                        {
-                            IdCostType = SelectedCostType.Id,
-                            IdCropField = SelectedCropField.Id,
-                            IdSeason = SelectedSeason.Id,
-                            DateAdded = dateTime,
-                            BalanceChange =
-                            Math.Abs(
-                                Math.Round(
-                                    Utils.CastToValue(this.BalanceChange.ToString()), 2)),
-                            Notes = this.Notes
-                        };
-                        context.BalanceLedgers.Add(newRecord);
-                        context.SaveChanges();
+                        BalanceLedger.AddEntry(entry, null);
                         await ReturnToPreviousPage();
                         break;
                     case "edit":
-                        BalanceLedger existingRecord = context.BalanceLedgers.Find(RecordId);
-                        existingRecord.IdCostType = SelectedCostType.Id;
-                        existingRecord.IdCropField = SelectedCropField.Id;
-                        existingRecord.IdSeason = SelectedSeason.Id;
-                        existingRecord.DateAdded = dateAddedCorrected;
-                        existingRecord.BalanceChange =
-                            Math.Abs(
-                                Math.Round(
-                                    Utils.CastToValue(this.BalanceChange.ToString()), 2));
-                        existingRecord.Notes = Notes;
-                        context.SaveChanges();
+                        entry.Id = RecordId;
+                        BalanceLedger.EditEntry(entry, null);
                         await ReturnToPreviousPage();
                         break;
                 }

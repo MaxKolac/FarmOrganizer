@@ -44,24 +44,19 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 decimal hectares = Utils.CastToValue(CropFieldHectares);
+                var cropField = new CropField()
+                {
+                    Name = CropFieldName,
+                    Hectares = hectares
+                };
                 if (addingEntry)
                 {
-                    CropField newField = new()
-                    {
-                        Name = CropFieldName,
-                        Hectares = hectares
-                    };
-                    CropField.AddEntry(newField, null);
+                    CropField.AddEntry(cropField, null);
                 }
                 else if (editingEntry)
                 {
-                    CropField newFieldValues = new()
-                    {
-                        Id = editedEntryId,
-                        Name = CropFieldName,
-                        Hectares = hectares
-                    };
-                    CropField.EditEntry(newFieldValues, null);
+                    cropField.Id = editedEntryId;
+                    CropField.EditEntry(cropField, null);
                 }
 
                 CropFields = new DatabaseContext().CropFields.ToList();

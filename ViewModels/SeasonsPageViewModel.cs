@@ -48,26 +48,21 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                var season = new Season()
+                {
+                    Name = SeasonName,
+                    DateStart = SeasonDateStart
+                };
                 if (addingSeason)
                 {
-                    Season newSeason = new()
-                    {
-                        Name = SeasonName,
-                        DateStart = SeasonDateStart,
-                        DateEnd = Season.MaximumDate
-                    };
-                    Season.AddEntry(newSeason, null);
+                    season.DateEnd = Season.MaximumDate;
+                    Season.AddEntry(season, null);
                 }
                 else if (editingSeason)
                 {
-                    Season seasonToEdit = new()
-                    {
-                        Id = editedSeasonId,
-                        Name = SeasonName,
-                        DateStart = SeasonDateStart,
-                        DateEnd = SeasonDateEnd
-                    };
-                    Season.EditEntry(seasonToEdit, null);
+                    season.Id = editedSeasonId;
+                    season.DateEnd = SeasonDateEnd;
+                    Season.EditEntry(season, null);
                 }
 
                 Seasons = new DatabaseContext().Seasons.ToList();

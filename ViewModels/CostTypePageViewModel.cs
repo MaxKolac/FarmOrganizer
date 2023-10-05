@@ -53,24 +53,19 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                var costType = new CostType()
+                {
+                    Name = CostTypeName,
+                    IsExpense = CostTypeIsExpense
+                };
                 if (addingEntry)
                 {
-                    CostType newCostType = new()
-                    {
-                        Name = CostTypeName,
-                        IsExpense = CostTypeIsExpense
-                    };
-                    CostType.AddEntry(newCostType, null);
+                    CostType.AddEntry(costType, null);
                 }
                 else if (editingEntry)
                 {
-                    CostType costTypeToEdit = new()
-                    {
-                        Id = editedEntryId,
-                        Name = CostTypeName,
-                        IsExpense = CostTypeIsExpense
-                    };
-                    CostType.EditEntry(costTypeToEdit, null);
+                    costType.Id = editedEntryId;
+                    CostType.EditEntry(costType, null);
                 }
                 CostTypeGroups = CostType.BuildCostTypeGroups(null);
                 ToggleAdding();
