@@ -44,7 +44,7 @@ namespace FarmOrganizer.Database
         /// </summary>
         public static async Task Delete()
         {
-            using var context = new DatabaseContext(true);
+            using var context = new DatabaseContext();
             await context.Database.EnsureDeletedAsync();
             //SqliteConnection.ClearAllPools();
             //File.Delete(FullPath);
