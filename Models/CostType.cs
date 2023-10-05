@@ -99,7 +99,6 @@ public partial class CostType : IDatabaseAccesible<CostType>
         }
 
         context.SaveChanges();
-        
     }
 
     public static void DeleteEntry(CostType entry, DatabaseContext context)
