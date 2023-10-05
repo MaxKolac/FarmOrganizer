@@ -139,13 +139,13 @@ namespace FarmOrganizer.ViewModels
                     #region VALIDATE
                     PrintWholeSeasonTable();
                     AppendLine("Season Table Validation");
-                    Season.Validate();
+                    Season.Validate(null);
 
                     AppendLine("Season Table Validation (with return table)");
                     //List<Season> allSeasons = new();
                     //Season.Validate(out List<Season> list1);
                     //allSeasons.AddRange(list1);
-                    List<Season> allSeasons = Season.ValidateRetrieve();
+                    List<Season> allSeasons = Season.RetrieveAll(null);
                     foreach (Season season in allSeasons)
                     {
                         AppendLine(season.ToDebugString() + "\n", false);
@@ -278,7 +278,7 @@ namespace FarmOrganizer.ViewModels
         void SeasonValidAddTest(Season seasonToAdd)
         {
             AppendLine(seasonToAdd.ToDebugString());
-            Season.AddEntry(seasonToAdd);
+            Season.AddEntry(seasonToAdd, null);
             PrintWholeSeasonTable();
         }
         void SeasonInvalidAddTest(Season seasonToAdd)
@@ -300,7 +300,7 @@ namespace FarmOrganizer.ViewModels
         void SeasonValidEditTest(Season seasonToEdit)
         {
             AppendLine(seasonToEdit.ToDebugString());
-            Season.EditEntry(seasonToEdit);
+            Season.EditEntry(seasonToEdit, null);
             PrintWholeSeasonTable();
         }
         void SeasonInvalidEditTest(Season seasonToEdit)
@@ -322,7 +322,7 @@ namespace FarmOrganizer.ViewModels
         void SeasonValidDeleteTest(Season seasonToDelete)
         {
             AppendLine(seasonToDelete.ToDebugString());
-            Season.DeleteEntry(seasonToDelete);
+            Season.DeleteEntry(seasonToDelete, null);
             PrintWholeSeasonTable();
         }
         void SeasonInvalidDeleteTest(Season seasonToDelete)

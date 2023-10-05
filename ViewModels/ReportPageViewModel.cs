@@ -75,7 +75,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate();
+                CostType.Validate(null);
                 CostTypes = new DatabaseContext().CostTypes.Where(cost => !cost.IsExpense).ToList();
             }
             catch (TableValidationException ex)
@@ -171,7 +171,7 @@ namespace FarmOrganizer.ViewModels
                         DateEnd = Season.MaximumDate
                         //HasConcluded = false
                     };
-                    Season.AddEntry(newSeason);
+                    Season.AddEntry(newSeason, null);
                 }
                 context.BalanceLedgers.Add(newEntry);
                 context.SaveChanges();

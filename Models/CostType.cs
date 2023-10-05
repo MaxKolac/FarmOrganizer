@@ -9,7 +9,7 @@ namespace FarmOrganizer.Models;
 /// A category of a <see cref="BalanceLedger"/> entry. Determines how it will be calculated when generating a new report.<br/>
 /// In user interface, it should be referred to as "Rodzaj wpisu".
 /// </summary>
-public partial class CostType : IValidatable<CostType>
+public partial class CostType : IDatabaseAccesible<CostType>
 {
     public int Id { get; set; }
     /// <summary>
@@ -29,12 +29,12 @@ public partial class CostType : IValidatable<CostType>
     }
 
     //Database related methods
-    public static void Validate() => _ = ValidateRetrieve();
+    public static void Validate(DatabaseContext context) => _ = RetrieveAll(context);
 
-    public static List<CostType> ValidateRetrieve()
+    public static List<CostType> RetrieveAll(DatabaseContext context)
     {
-        using var context = new DatabaseContext();
-        List<CostType> allEntries = new();
+        context ??= new();
+        var allEntries = new List<CostType>();
         allEntries.AddRange(context.CostTypes.ToList());
 
         //There needs to be at least 1 expense and 1 income category
@@ -56,21 +56,23 @@ public partial class CostType : IValidatable<CostType>
         if (!expenseFound || !incomeFound)
             throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego rodzaju wpisu traktowanego jako wydatek lub przynajmniej jednego rodzaju wpisu traktowanego jako zysk.");
 
+        
         return allEntries;
     }
 
-    public static void AddEntry(CostType entry)
+    public static void AddEntry(CostType entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
+        context ??= new();
         if (string.IsNullOrEmpty(entry.Name))
             throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         context.CostTypes.Add(entry);
         context.SaveChanges();
+        
     }
 
-    public static void EditEntry(CostType entry)
+    public static void EditEntry(CostType entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
+        context ??= new();
         CostType existingEntry = context.CostTypes.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), $"Id == {entry.Id}");
 
         if (string.IsNullOrEmpty(entry.Name))
@@ -97,11 +99,12 @@ public partial class CostType : IValidatable<CostType>
         }
 
         context.SaveChanges();
+        
     }
 
-    public static void DeleteEntry(CostType entry)
+    public static void DeleteEntry(CostType entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
+        context ??= new();
         CostType entryToDelete = context.CostTypes.Find(entry.Id);
         if (entryToDelete is null)
             return;
@@ -123,6 +126,7 @@ public partial class CostType : IValidatable<CostType>
 
         context.CostTypes.Remove(entryToDelete);
         context.SaveChanges();
+        
     }
 
     /// <summary>
@@ -131,22 +135,22 @@ public partial class CostType : IValidatable<CostType>
     /// </summary>
     /// <param name="profitLabel">String label for the profit <see cref="CostType"/>s.</param>
     /// <param name="expensesLabel">String label for the expense <see cref="CostType"/>s.</param>
-    /// <param name="activeContext">
-    /// The <see cref="DatabaseContext"/> instance used to retrieve <see cref="CostType"/> entries.<br/>
-    /// Use this context when filing a collection with selected <see cref="CostType"/> to make sure that the reference between them is preserved and applied.
-    /// </param>
-    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups(string profitLabel, string expensesLabel, out DatabaseContext activeContext)
+    /// <param name="context">
+    /// An optional <see cref="DatabaseContext"/> object. Use when retrieving records from multiple records and their links between primary and foreign keys should be preserved by retrieving them from the same <see cref="DatabaseContext"/> context.<br/>
+    /// If it is passed as <c>null</c>, method creates and disposes a context for itself and continues execution.</param>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups(string profitLabel, string expensesLabel, DatabaseContext context)
     {
-        List<CostType> expenseCostTypes = new();
-        List<CostType> profitCostTypes = new();
-        activeContext = new();
-        foreach (var entry in activeContext.CostTypes.ToList())
+        var expenseCostTypes = new List<CostType>();
+        var profitCostTypes = new List<CostType>();
+        context ??= new();
+        foreach (var entry in context.CostTypes.ToList())
         {
             if (entry.IsExpense)
                 expenseCostTypes.Add(entry);
             else
                 profitCostTypes.Add(entry);
         }
+        
         return new()
             {
                 { new CostTypeGroup(profitLabel, profitCostTypes) },
@@ -154,11 +158,7 @@ public partial class CostType : IValidatable<CostType>
             };
     }
 
-    /// <inheritdoc cref="BuildCostTypeGroups(string, string, out DatabaseContext)"/>
-    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups(out DatabaseContext activeContext) =>
-        BuildCostTypeGroups("Rodzaje przychodów", "Rodzaje wydatków", out activeContext);
-
-    /// <inheritdoc cref="BuildCostTypeGroups(string, string, out DatabaseContext)"/>
-    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups() =>
-        BuildCostTypeGroups(out _);
+    /// <inheritdoc cref="BuildCostTypeGroups(string, string, DatabaseContext)"/>
+    public static ObservableCollection<CostTypeGroup> BuildCostTypeGroups(DatabaseContext context) =>
+        BuildCostTypeGroups("Rodzaje przychodów", "Rodzaje wydatków", context);
 }

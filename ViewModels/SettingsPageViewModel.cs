@@ -47,7 +47,7 @@ namespace FarmOrganizer.ViewModels
 
             try
             {
-                CropFields = CropField.ValidateRetrieve();
+                CropFields = CropField.RetrieveAll(null);
                 DefaultCropField = CropFields.Find(field => field.Id == Preferences.Get(LedgerPage_DefaultCropField, CropFields.First().Id));
                 DefaultCropField ??= CropFields.First();
             }

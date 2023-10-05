@@ -40,9 +40,9 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                Task costsValidation = Task.Run(CostType.Validate);
-                Task seasonValidation = Task.Run(Season.Validate);
-                Task<List<CropField>> cropFieldValidation = Task.Run(CropField.ValidateRetrieve);
+                Task costsValidation = Task.Run(() => CostType.Validate(null));
+                Task seasonValidation = Task.Run(() => Season.Validate(null));
+                Task<List<CropField>> cropFieldValidation = Task.Run(() => CropField.RetrieveAll(null));
 
                 //Load preferences
                 List<CropField> allCropFields = cropFieldValidation.Result;

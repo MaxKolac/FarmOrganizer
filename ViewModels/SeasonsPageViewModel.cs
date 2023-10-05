@@ -35,7 +35,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                Seasons = Season.ValidateRetrieve();
+                Seasons = Season.RetrieveAll(null);
             }
             catch (TableValidationException ex)
             {
@@ -56,7 +56,7 @@ namespace FarmOrganizer.ViewModels
                         DateStart = SeasonDateStart,
                         DateEnd = Season.MaximumDate
                     };
-                    Season.AddEntry(newSeason);
+                    Season.AddEntry(newSeason, null);
                 }
                 else if (editingSeason)
                 {
@@ -67,7 +67,7 @@ namespace FarmOrganizer.ViewModels
                         DateStart = SeasonDateStart,
                         DateEnd = SeasonDateEnd
                     };
-                    Season.EditEntry(seasonToEdit);
+                    Season.EditEntry(seasonToEdit, null);
                 }
 
                 Seasons = new DatabaseContext().Seasons.ToList();
@@ -112,7 +112,7 @@ namespace FarmOrganizer.ViewModels
                     "Tak, usuń",
                     "Anuluj"))
                     return;
-                Season.DeleteEntry(seasonToRemove);
+                Season.DeleteEntry(seasonToRemove, null);
                 Seasons = new DatabaseContext().Seasons.ToList();
             }
             catch (RecordDeletionException ex)

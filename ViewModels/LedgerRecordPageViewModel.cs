@@ -91,13 +91,14 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate();
-                costTypeGroups = CostType.BuildCostTypeGroups().ToList();
+                using var context = new DatabaseContext();
+                CostType.Validate(context);
+                costTypeGroups = CostType.BuildCostTypeGroups(context).ToList();
                 //This triggers the partial method required to repopulate CurrentCostTypes
                 CostIsExpense = true;
 
-                CropFields = CropField.ValidateRetrieve();
-                Seasons = Season.ValidateRetrieve();
+                CropFields = CropField.RetrieveAll(context);
+                Seasons = Season.RetrieveAll(context);
                 SelectedSeason = Seasons.Find(season => season.Id == Season.GetCurrentSeason().Id);
             }
             catch (TableValidationException ex)

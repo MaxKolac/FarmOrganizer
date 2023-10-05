@@ -30,7 +30,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CropFields = CropField.ValidateRetrieve();
+                CropFields = CropField.RetrieveAll(null);
             }
             catch (TableValidationException ex)
             {
@@ -51,7 +51,7 @@ namespace FarmOrganizer.ViewModels
                         Name = CropFieldName,
                         Hectares = hectares
                     };
-                    CropField.AddEntry(newField);
+                    CropField.AddEntry(newField, null);
                 }
                 else if (editingEntry)
                 {
@@ -61,7 +61,7 @@ namespace FarmOrganizer.ViewModels
                         Name = CropFieldName,
                         Hectares = hectares
                     };
-                    CropField.EditEntry(newFieldValues);
+                    CropField.EditEntry(newFieldValues, null);
                 }
 
                 CropFields = new DatabaseContext().CropFields.ToList();
@@ -104,7 +104,7 @@ namespace FarmOrganizer.ViewModels
                 return;
             try
             {
-                CropField.DeleteEntry(cropFieldToRemove);
+                CropField.DeleteEntry(cropFieldToRemove, null);
                 CropFields = new DatabaseContext().CropFields.ToList();
             }
             catch (RecordDeletionException ex)

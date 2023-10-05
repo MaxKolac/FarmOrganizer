@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.HelperClasses;
@@ -37,8 +38,9 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate();
-                CostTypeGroups = CostType.BuildCostTypeGroups();
+                using var context = new DatabaseContext();
+                CostType.Validate(context);
+                CostTypeGroups = CostType.BuildCostTypeGroups(context);
             }
             catch (TableValidationException ex)
             {
@@ -58,7 +60,7 @@ namespace FarmOrganizer.ViewModels
                         Name = CostTypeName,
                         IsExpense = CostTypeIsExpense
                     };
-                    CostType.AddEntry(newCostType);
+                    CostType.AddEntry(newCostType, null);
                 }
                 else if (editingEntry)
                 {
@@ -68,9 +70,9 @@ namespace FarmOrganizer.ViewModels
                         Name = CostTypeName,
                         IsExpense = CostTypeIsExpense
                     };
-                    CostType.EditEntry(costTypeToEdit);
+                    CostType.EditEntry(costTypeToEdit, null);
                 }
-                CostTypeGroups = CostType.BuildCostTypeGroups();
+                CostTypeGroups = CostType.BuildCostTypeGroups(null);
                 ToggleAdding();
             }
             catch (InvalidRecordPropertyException ex)
@@ -110,8 +112,8 @@ namespace FarmOrganizer.ViewModels
                 "Tak, usuń",
                 "Anuluj"))
                     return;
-                CostType.DeleteEntry(costToRemove);
-                CostTypeGroups = CostType.BuildCostTypeGroups();
+                CostType.DeleteEntry(costToRemove, null);
+                CostTypeGroups = CostType.BuildCostTypeGroups(null);
             }
             catch (RecordDeletionException ex)
             {

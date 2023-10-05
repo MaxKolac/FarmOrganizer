@@ -4,7 +4,7 @@
 namespace FarmOrganizer.Exceptions
 {
     /// <summary>
-    /// Thrown by <see cref="IValidatable{T}.AddEntry(T)"/> and <see cref="IValidatable{T}.EditEntry(T)"/> when one of the properties could cause the entry to turn the table invalid, if added or edited. 
+    /// Thrown by <see cref="IDatabaseAccesible{T}.AddEntry(T, DatabaseContext)"/> and <see cref="IDatabaseAccesible{T}.EditEntry(T, DatabaseContext)"/> when one of the properties could cause the entry to turn the table invalid, if added or edited. 
     /// </summary>
     public class InvalidRecordPropertyException : FarmOrganizerException
     {
