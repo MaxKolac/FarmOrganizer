@@ -56,7 +56,7 @@ public partial class CostType : IDatabaseAccesible<CostType>
         if (!expenseFound || !incomeFound)
             throw new TableValidationException(nameof(DatabaseContext.CostTypes), "Nie znaleziono przynajmniej jednego rodzaju wpisu traktowanego jako wydatek lub przynajmniej jednego rodzaju wpisu traktowanego jako zysk.");
 
-        
+
         return allEntries;
     }
 
@@ -67,7 +67,7 @@ public partial class CostType : IDatabaseAccesible<CostType>
             throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
         context.CostTypes.Add(entry);
         context.SaveChanges();
-        
+
     }
 
     public static void EditEntry(CostType entry, DatabaseContext context)
@@ -125,7 +125,7 @@ public partial class CostType : IDatabaseAccesible<CostType>
 
         context.CostTypes.Remove(entryToDelete);
         context.SaveChanges();
-        
+
     }
 
     /// <summary>
@@ -149,7 +149,7 @@ public partial class CostType : IDatabaseAccesible<CostType>
             else
                 profitCostTypes.Add(entry);
         }
-        
+
         return new()
             {
                 { new CostTypeGroup(profitLabel, profitCostTypes) },

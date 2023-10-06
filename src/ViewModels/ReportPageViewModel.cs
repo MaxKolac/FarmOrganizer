@@ -194,7 +194,7 @@ namespace FarmOrganizer.ViewModels
         partial void OnTotalChangeChanged(decimal value) =>
             TotalChangeText = value >= 0 ? _labelProfit : _labelLoss;
 
-        partial void OnProfitAfterExpensesChanged(decimal value) => 
+        partial void OnProfitAfterExpensesChanged(decimal value) =>
             ProfitAfterExpensesText = value >= 0 ? _labelProfit : _labelLoss;
     }
 }
