@@ -4,7 +4,7 @@ using FarmOrganizer.Exceptions;
 namespace FarmOrganizer.Models;
 
 public partial class BalanceLedger : IDatabaseAccesible<BalanceLedger>
-{   
+{
     public int Id { get; set; }
     public int IdCostType { get; set; }
     public int IdCropField { get; set; }
@@ -65,7 +65,7 @@ public partial class BalanceLedger : IDatabaseAccesible<BalanceLedger>
     public static void EditEntry(BalanceLedger entry, DatabaseContext context)
     {
         context ??= new();
-        BalanceLedger existingRecord = context.BalanceLedgers.FirstOrDefault(e => e.Id == entry.Id) ?? 
+        BalanceLedger existingRecord = context.BalanceLedgers.FirstOrDefault(e => e.Id == entry.Id) ??
             throw new NoRecordFoundException(nameof(DatabaseContext.BalanceLedgers), $"Id == {entry.Id}");
 
         existingRecord.IdCostType = entry.IdCostType;

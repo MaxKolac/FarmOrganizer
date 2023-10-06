@@ -38,7 +38,7 @@ public partial class CropField : IDatabaseAccesible<CropField>
                 throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne, którego powierzchnia jest zerowa lub mniejsza.", field.ToString(), nameof(Hectares));
         }
 
-        
+
         return allEntries;
     }
 
@@ -55,13 +55,13 @@ public partial class CropField : IDatabaseAccesible<CropField>
 
         context.CropFields.Add(entry);
         context.SaveChanges();
-        
+
     }
 
     public static void EditEntry(CropField entry, DatabaseContext context)
     {
         context ??= new();
-        CropField existingField = context.CropFields.FirstOrDefault(e => e.Id == entry.Id) ?? 
+        CropField existingField = context.CropFields.FirstOrDefault(e => e.Id == entry.Id) ??
             throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), $"Id == {entry.Id}");
 
         //Name can't be empty for the love of god
@@ -75,7 +75,7 @@ public partial class CropField : IDatabaseAccesible<CropField>
         existingField.Name = entry.Name;
         existingField.Hectares = entry.Hectares;
         context.SaveChanges();
-        
+
     }
 
     public static void DeleteEntry(CropField entry, DatabaseContext context)
@@ -91,6 +91,6 @@ public partial class CropField : IDatabaseAccesible<CropField>
 
         context.CropFields.Remove(fieldToDelete);
         context.SaveChanges();
-        
+
     }
 }

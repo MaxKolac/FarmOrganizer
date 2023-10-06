@@ -127,7 +127,7 @@ public partial class Season : IDatabaseAccesible<Season>
         };
         context.Seasons.Add(entryValidated);
         context.SaveChanges();
-        
+
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public partial class Season : IDatabaseAccesible<Season>
     {
 #nullable enable
         context ??= new();
-        Season editedSeason = context.Seasons.FirstOrDefault(e => e.Id == entry.Id) ?? 
+        Season editedSeason = context.Seasons.FirstOrDefault(e => e.Id == entry.Id) ??
             throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), $"Id == {entry.Id}");
         Season? previousSeason = null;
         Season? nextSeason = null;
