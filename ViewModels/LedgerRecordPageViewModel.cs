@@ -99,7 +99,7 @@ namespace FarmOrganizer.ViewModels
 
                 CropFields = CropField.RetrieveAll(context);
                 Seasons = Season.RetrieveAll(context);
-                SelectedSeason = Seasons.Find(season => season.Id == Season.GetCurrentSeason().Id);
+                SelectedSeason = Seasons.FirstOrDefault(season => season.Id == Season.GetCurrentSeason().Id);
             }
             catch (TableValidationException ex)
             {
@@ -119,7 +119,7 @@ namespace FarmOrganizer.ViewModels
                     TitleText = "Dodawanie nowego wpisu";
                     SaveButtonText = "Dodaj i zapisz";
                     SelectedCostType = CurrentCostTypes.First();
-                    SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
+                    SelectedCropField = CropFields.FirstOrDefault(field => field.Id == QuerriedCropFieldId);
                     //SelectedSeason
                     dateAddedCorrected = DateTime.Now;
                     DateAdded = DateTime.Now;
@@ -131,12 +131,12 @@ namespace FarmOrganizer.ViewModels
                     SaveButtonText = "Zapisz zmiany";
                     using (var context = new DatabaseContext())
                     {
-                        BalanceLedger result = context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation).ToList().Find(entry => entry.Id == RecordId);
+                        BalanceLedger result = context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation).ToList().FirstOrDefault(entry => entry.Id == RecordId);
                         //This triggers the partial method required to repopulate CurrentCostTypes
                         CostIsExpense = result.IdCostTypeNavigation.IsExpense;
-                        SelectedCostType = CurrentCostTypes.ToList().Find(type => type.Id == result.IdCostType);
-                        SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
-                        SelectedSeason = Seasons.Find(season => season.Id == result.IdSeason);
+                        SelectedCostType = CurrentCostTypes.ToList().FirstOrDefault(type => type.Id == result.IdCostType);
+                        SelectedCropField = CropFields.FirstOrDefault(field => field.Id == result.IdCropField);
+                        SelectedSeason = Seasons.FirstOrDefault(season => season.Id == result.IdSeason);
                         dateAddedCorrected = result.DateAdded;
                         DateAdded = result.DateAdded;
                         BalanceChange = result.BalanceChange.ToString();

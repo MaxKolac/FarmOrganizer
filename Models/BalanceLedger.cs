@@ -65,7 +65,8 @@ public partial class BalanceLedger : IDatabaseAccesible<BalanceLedger>
     public static void EditEntry(BalanceLedger entry, DatabaseContext context)
     {
         context ??= new();
-        BalanceLedger existingRecord = context.BalanceLedgers.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.BalanceLedgers), $"Id == {entry.Id}");
+        BalanceLedger existingRecord = context.BalanceLedgers.FirstOrDefault(e => e.Id == entry.Id) ?? 
+            throw new NoRecordFoundException(nameof(DatabaseContext.BalanceLedgers), $"Id == {entry.Id}");
 
         existingRecord.IdCostType = entry.IdCostType;
         existingRecord.IdCropField = entry.IdCropField;
@@ -82,7 +83,7 @@ public partial class BalanceLedger : IDatabaseAccesible<BalanceLedger>
     public static void DeleteEntry(BalanceLedger entry, DatabaseContext context)
     {
         context ??= new();
-        BalanceLedger entryToDelete = context.BalanceLedgers.Find(entry.Id);
+        BalanceLedger entryToDelete = context.BalanceLedgers.FirstOrDefault(e => e.Id == entry.Id);
         if (entryToDelete is null)
             return;
         context.BalanceLedgers.Remove(entryToDelete);

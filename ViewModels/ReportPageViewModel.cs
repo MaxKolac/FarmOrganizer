@@ -92,9 +92,9 @@ namespace FarmOrganizer.ViewModels
 
             using var context = new DatabaseContext();
             foreach (int id in cropFieldIds)
-                PassedCropFields.Add(context.CropFields.Find(id));
+                PassedCropFields.Add(context.CropFields.FirstOrDefault(e => e.Id == id));
             foreach (int id in seasonIds)
-                PassedSeasons.Add(context.Seasons.Find(id));
+                PassedSeasons.Add(context.Seasons.FirstOrDefault(e => e.Id == id));
 
             if (PassedSeasons.Count > 1)
                 SeasonsLabel = _seasonLabelMultiple;

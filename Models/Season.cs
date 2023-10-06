@@ -144,7 +144,8 @@ public partial class Season : IDatabaseAccesible<Season>
     {
 #nullable enable
         context ??= new();
-        Season editedSeason = context.Seasons.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), $"Id == {entry.Id}");
+        Season editedSeason = context.Seasons.FirstOrDefault(e => e.Id == entry.Id) ?? 
+            throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), $"Id == {entry.Id}");
         Season? previousSeason = null;
         Season? nextSeason = null;
 
@@ -164,8 +165,8 @@ public partial class Season : IDatabaseAccesible<Season>
         {
             if (allSeasonsOrdered[i].Id == entry.Id)
             {
-                previousSeason = i == 0 ? null : context.Seasons.Find(allSeasonsOrdered[i - 1].Id);
-                nextSeason = i == allSeasonsOrdered.Count - 1 ? null : context.Seasons.Find(allSeasonsOrdered[i + 1].Id);
+                previousSeason = i == 0 ? null : context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i - 1].Id);
+                nextSeason = i == allSeasonsOrdered.Count - 1 ? null : context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i + 1].Id);
                 break;
             }
         }
@@ -200,7 +201,7 @@ public partial class Season : IDatabaseAccesible<Season>
     public static void DeleteEntry(Season entry, DatabaseContext? context)
     {
         context ??= new();
-        Season? seasonToDelete = context.Seasons.Find(entry.Id);
+        Season? seasonToDelete = context.Seasons.FirstOrDefault(e => e.Id == entry.Id);
         if (seasonToDelete is null)
             return;
 
@@ -213,7 +214,8 @@ public partial class Season : IDatabaseAccesible<Season>
         //Find out if the deleted Season is the last Season.
         if (allSeasonsOrdered[^1].Id == seasonToDelete.Id)
         {
-            Season? previousSeason = context.Seasons.Find(allSeasonsOrdered[^2].Id) ??
+            int predictedId = allSeasonsOrdered[^2].Id;
+            Season? previousSeason = context.Seasons.FirstOrDefault(e => e.Id == predictedId) ??
                 throw new RecordDeletionException("Sezony", "Odnaleziono więcej niż 1 sezon, ale nie udało się odnaleźć drugiego sezonu licząc od końca.");
             previousSeason.DateEnd = MaximumDate;
         }
@@ -224,7 +226,7 @@ public partial class Season : IDatabaseAccesible<Season>
             {
                 if (allSeasonsOrdered[i].Id == entry.Id)
                 {
-                    Season? nextSeason = context.Seasons.Find(allSeasonsOrdered[i + 1].Id) ??
+                    Season? nextSeason = context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i + 1].Id) ??
                         throw new RecordDeletionException("Sezony", "Nie odnaleziono sezonu następującego po sezonie usuwanym, mimo że powinien istnieć.");
                     nextSeason.DateStart = seasonToDelete.DateStart;
                 }

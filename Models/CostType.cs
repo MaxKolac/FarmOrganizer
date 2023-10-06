@@ -73,7 +73,7 @@ public partial class CostType : IDatabaseAccesible<CostType>
     public static void EditEntry(CostType entry, DatabaseContext context)
     {
         context ??= new();
-        CostType existingEntry = context.CostTypes.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), $"Id == {entry.Id}");
+        var existingEntry = context.CostTypes.FirstOrDefault(e => e.Id == entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CostTypes), $"Id == {entry.Id}");
 
         if (string.IsNullOrEmpty(entry.Name))
             throw new InvalidRecordPropertyException("Nazwa", null, "Pole musi posiadać niepustą nazwę.");
@@ -104,7 +104,7 @@ public partial class CostType : IDatabaseAccesible<CostType>
     public static void DeleteEntry(CostType entry, DatabaseContext context)
     {
         context ??= new();
-        CostType entryToDelete = context.CostTypes.Find(entry.Id);
+        var entryToDelete = context.CostTypes.FirstOrDefault(e => e.Id == entry.Id);
         if (entryToDelete is null)
             return;
 

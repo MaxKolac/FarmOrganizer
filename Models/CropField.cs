@@ -61,7 +61,8 @@ public partial class CropField : IDatabaseAccesible<CropField>
     public static void EditEntry(CropField entry, DatabaseContext context)
     {
         context ??= new();
-        CropField existingField = context.CropFields.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), $"Id == {entry.Id}");
+        CropField existingField = context.CropFields.FirstOrDefault(e => e.Id == entry.Id) ?? 
+            throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), $"Id == {entry.Id}");
 
         //Name can't be empty for the love of god
         if (string.IsNullOrEmpty(entry.Name))
@@ -80,8 +81,7 @@ public partial class CropField : IDatabaseAccesible<CropField>
     public static void DeleteEntry(CropField entry, DatabaseContext context)
     {
         context ??= new();
-        CropField fieldToDelete = context.CropFields.Find(entry.Id);
-
+        CropField fieldToDelete = context.CropFields.FirstOrDefault(e => e.Id == entry.Id);
         if (fieldToDelete is null)
             return;
 

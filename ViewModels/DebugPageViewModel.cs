@@ -53,7 +53,7 @@ namespace FarmOrganizer.ViewModels
 
             //Read existing entry
             AppendLine("READ EXISTING ENTRY");
-            var qr_existingEntry = context.BalanceLedgers.Find(7);
+            var qr_existingEntry = context.BalanceLedgers.FirstOrDefault(e => e.Id == 7);
             AppendLine(qr_existingEntry.ToString());
 
             //Read created entry
@@ -74,7 +74,7 @@ namespace FarmOrganizer.ViewModels
 
             //Read existing entry again
             AppendLine("READ EXISTING ENTRY AFTER UPDATE");
-            qr_existingEntry = context.BalanceLedgers.Find(7);
+            qr_existingEntry = context.BalanceLedgers.FirstOrDefault(e => e.Id == 7);
             AppendLine(qr_existingEntry.ToString());
 
             //Read created entry again
@@ -84,7 +84,7 @@ namespace FarmOrganizer.ViewModels
 
             //Delete existing entry
             AppendLine("DELETE EXISTING ENTRY");
-            qr_existingEntry = context.BalanceLedgers.Find(1);
+            qr_existingEntry = context.BalanceLedgers.FirstOrDefault(e => e.Id == 1);
             context.BalanceLedgers.Remove(qr_existingEntry);
             context.SaveChanges();
 
@@ -220,32 +220,32 @@ namespace FarmOrganizer.ViewModels
                     //PrintWholeSeasonTable();
 
                     AppendLine("Edit DateStart without previous season (Sezon 23 to start earlier)");
-                    Season sezon23 = context.Seasons.Find(ids[0]);
+                    Season sezon23 = context.Seasons.FirstOrDefault(e => e.Id == ids[0]);
                     sezon23.DateStart = new DateTime(2022, 2, 2);
                     SeasonValidEditTest(sezon23);
 
                     AppendLine("Edit DateEnd without next season (validSeason3 to end earlier)");
-                    Season validSeason3 = context.Seasons.Find(ids[3]);
+                    Season validSeason3 = context.Seasons.FirstOrDefault(e => e.Id == ids[3]);
                     validSeason3.DateEnd = new DateTime(7777, 1, 1);
                     SeasonValidEditTest(validSeason3);
 
                     AppendLine("Edit DateStart with a previous season (validSeason1 to start earlier inside Sezon23)");
-                    Season validSeason1 = context.Seasons.Find(ids[1]);
+                    Season validSeason1 = context.Seasons.FirstOrDefault(e => e.Id == ids[1]);
                     validSeason1.DateStart = DateTime.Now.AddMonths(-1);
                     SeasonValidEditTest(validSeason1);
 
                     AppendLine("Edit DateEnd with a next season (validSeason2 to end later inside validSeason3)");
-                    Season validSeason2 = context.Seasons.Find(ids[2]);
+                    Season validSeason2 = context.Seasons.FirstOrDefault(e => e.Id == ids[2]);
                     validSeason2.DateEnd = DateTime.Now.AddDays(1).AddYears(1).AddMonths(3);
                     SeasonValidEditTest(validSeason2);
 
                     AppendLine("Invalid: Edit DateStart to start too early (validSeason2 before sezon23)");
-                    Season invalidSeason1 = context.Seasons.Find(ids[2]);
+                    Season invalidSeason1 = context.Seasons.FirstOrDefault(e => e.Id == ids[2]);
                     invalidSeason1.DateStart = DateTime.Now;
                     SeasonInvalidEditTest(invalidSeason1);
 
                     AppendLine("Invalid: Edit DateEnd to end too late (Season23 after sezon23)");
-                    Season invalidSeason2 = context.Seasons.Find(ids[0]);
+                    Season invalidSeason2 = context.Seasons.FirstOrDefault(e => e.Id == ids[0]);
                     invalidSeason2.DateEnd = DateTime.Now.AddDays(1);
                     SeasonInvalidEditTest(invalidSeason2);
                 }
@@ -255,16 +255,16 @@ namespace FarmOrganizer.ViewModels
                 using (var context = new DatabaseContext())
                 {
                     AppendLine("Delete chronologically last season");
-                    SeasonValidDeleteTest(context.Seasons.Find(ids[3])); /////this did nothing???
+                    SeasonValidDeleteTest(context.Seasons.FirstOrDefault(e => e.Id == ids[3])); /////this did nothing???
 
                     AppendLine("Delete a session in between other seasons (Sezon23 / validSeason1 / validSeason2)");
-                    SeasonValidDeleteTest(context.Seasons.Find(ids[1]));
+                    SeasonValidDeleteTest(context.Seasons.FirstOrDefault(e => e.Id == ids[1]));
 
                     AppendLine("Delete a season with only a season after it and none before it");
-                    SeasonValidDeleteTest(context.Seasons.Find(ids[0]));
+                    SeasonValidDeleteTest(context.Seasons.FirstOrDefault(e => e.Id == ids[0]));
 
                     AppendLine("Invalid: Delete last season");
-                    SeasonInvalidDeleteTest(context.Seasons.Find(ids[2]));
+                    SeasonInvalidDeleteTest(context.Seasons.FirstOrDefault(e => e.Id == ids[2]));
                 }
                 #endregion
             }

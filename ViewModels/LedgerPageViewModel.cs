@@ -46,7 +46,7 @@ namespace FarmOrganizer.ViewModels
 
                 //Load preferences
                 List<CropField> allCropFields = cropFieldValidation.Result;
-                preferredCropField = allCropFields.Find(field =>
+                preferredCropField = allCropFields.FirstOrDefault(field =>
                     field.Id == Preferences.Get(
                         SettingsPageViewModel.LedgerPage_DefaultCropField,
                         allCropFields.First().Id
