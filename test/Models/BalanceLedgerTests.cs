@@ -13,9 +13,12 @@ namespace FarmOrganizerTests.Models
             {
                 yield return new object[]
                 {
-                    new BalanceLedger
+                    new List<BalanceLedger>()
                     {
-                        BalanceChange = -0.01m
+                        new()
+                        {
+                            BalanceChange = -0.1m,
+                        }
                     }
                 };
             }
@@ -28,7 +31,7 @@ namespace FarmOrganizerTests.Models
             var context = new Mock<DatabaseContext>();
             context.Setup<DbSet<BalanceLedger>>(e => e.BalanceLedgers).ReturnsDbSet(recordsToMock);
 
-            Assert.Throws<TableValidationException>(() => CropField.Validate(context.Object));
+            Assert.Throws<TableValidationException>(() => BalanceLedger.Validate(context.Object));
         }
     }
 }
