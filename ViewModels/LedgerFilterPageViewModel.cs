@@ -84,18 +84,17 @@ namespace FarmOrganizer.ViewModels
             AllCropFields = context.CropFields.OrderBy(field => field.Name).ToList();
             SelectedCropFields.Clear();
             foreach (int id in _filterSet.SelectedCropFieldIds)
-                SelectedCropFields.Add(context.CropFields.Find(id));
+                SelectedCropFields.Add(context.CropFields.FirstOrDefault(e => e.Id == id));
 
-            AllCostTypes = CostType.BuildCostTypeGroups("Uwzględnij rodzaje przychodów:", "Uwzględnij rodzaje wpisów:", out DatabaseContext costTypeContext);
+            AllCostTypes = CostType.BuildCostTypeGroups("Uwzględnij rodzaje przychodów:", "Uwzględnij rodzaje wpisów:", context);
             SelectedCostTypes.Clear();
             foreach (int id in _filterSet.SelectedCostTypeIds)
-                SelectedCostTypes.Add(costTypeContext.CostTypes.Find(id));
-            costTypeContext.Dispose();
+                SelectedCostTypes.Add(context.CostTypes.FirstOrDefault(e => e.Id == id));
 
             AllSeasons = context.Seasons.OrderBy(season => season.DateStart).ToList();
             SelectedSeasons.Clear();
             foreach (int id in _filterSet.SelectedSeasonIds)
-                SelectedSeasons.Add(context.Seasons.Find(id));
+                SelectedSeasons.Add(context.Seasons.FirstOrDefault(e => e.Id == id));
 
             UseCustomEarliestDate = _filterSet.EarliestDate != DateTime.MinValue;
             SelectedEarliestDate = UseCustomEarliestDate ? _filterSet.EarliestDate : DateTime.MinValue;

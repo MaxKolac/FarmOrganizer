@@ -8,7 +8,7 @@ namespace FarmOrganizer.Models;
 /// Represents a period of time, during which costs and profits can be accumulated. <br/>
 /// A collection of Seasons added together chronologically should perfectly recreate a timeline from 01.01.2023 to 12.31.9999 without any dates left out. Minimum length of a single Season is 1 day - 1 microsecond (23 hours, 59 minutes and 59 seconds).
 /// </summary>
-public partial class Season : IValidatable<Season>
+public partial class Season : IDatabaseAccesible<Season>
 {
     public int Id { get; set; }
     /// <summary>
@@ -56,12 +56,12 @@ public partial class Season : IValidatable<Season>
         $"{Id}: {Name} - ({DateStart} - {DateEnd})";
 
     //Database related methods
-    public static void Validate() => _ = ValidateRetrieve();
+    public static void Validate(DatabaseContext context) => _ = RetrieveAll(context);
 
-    public static List<Season> ValidateRetrieve()
+    public static List<Season> RetrieveAll(DatabaseContext context)
     {
-        var context = new DatabaseContext();
-        List<Season> allSeasons = new();
+        context ??= new DatabaseContext();
+        var allSeasons = new List<Season>();
         allSeasons.AddRange(context.Seasons.ToList());
 
         //Check if there is at least 1 season
@@ -97,9 +97,9 @@ public partial class Season : IValidatable<Season>
     /// </para>
     /// </summary>
     /// <inheritdoc/>
-    public static void AddEntry(Season entry)
+    public static void AddEntry(Season entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
+        context ??= new();
         Season lastSeason = context.Seasons.OrderBy(season => season.DateStart).Last();
 
         //New season cannot have empty name
@@ -127,6 +127,7 @@ public partial class Season : IValidatable<Season>
         };
         context.Seasons.Add(entryValidated);
         context.SaveChanges();
+        
     }
 
     /// <summary>
@@ -139,11 +140,12 @@ public partial class Season : IValidatable<Season>
     /// </para>
     /// </summary>
     /// <inheritdoc/>
-    public static void EditEntry(Season entry)
+    public static void EditEntry(Season entry, DatabaseContext context)
     {
 #nullable enable
-        using var context = new DatabaseContext();
-        Season editedSeason = context.Seasons.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), $"Id == {entry.Id}");
+        context ??= new();
+        Season editedSeason = context.Seasons.FirstOrDefault(e => e.Id == entry.Id) ?? 
+            throw new NoRecordFoundException(nameof(DatabaseContext.Seasons), $"Id == {entry.Id}");
         Season? previousSeason = null;
         Season? nextSeason = null;
 
@@ -163,8 +165,8 @@ public partial class Season : IValidatable<Season>
         {
             if (allSeasonsOrdered[i].Id == entry.Id)
             {
-                previousSeason = i == 0 ? null : context.Seasons.Find(allSeasonsOrdered[i - 1].Id);
-                nextSeason = i == allSeasonsOrdered.Count - 1 ? null : context.Seasons.Find(allSeasonsOrdered[i + 1].Id);
+                previousSeason = i == 0 ? null : context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i - 1].Id);
+                nextSeason = i == allSeasonsOrdered.Count - 1 ? null : context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i + 1].Id);
                 break;
             }
         }
@@ -196,10 +198,10 @@ public partial class Season : IValidatable<Season>
     /// </para>
     /// </summary>
     /// <inheritdoc/>
-    public static void DeleteEntry(Season entry)
+    public static void DeleteEntry(Season entry, DatabaseContext? context)
     {
-        using var context = new DatabaseContext();
-        Season? seasonToDelete = context.Seasons.Find(entry.Id);
+        context ??= new();
+        Season? seasonToDelete = context.Seasons.FirstOrDefault(e => e.Id == entry.Id);
         if (seasonToDelete is null)
             return;
 
@@ -212,7 +214,8 @@ public partial class Season : IValidatable<Season>
         //Find out if the deleted Season is the last Season.
         if (allSeasonsOrdered[^1].Id == seasonToDelete.Id)
         {
-            Season? previousSeason = context.Seasons.Find(allSeasonsOrdered[^2].Id) ??
+            int predictedId = allSeasonsOrdered[^2].Id;
+            Season? previousSeason = context.Seasons.FirstOrDefault(e => e.Id == predictedId) ??
                 throw new RecordDeletionException("Sezony", "Odnaleziono więcej niż 1 sezon, ale nie udało się odnaleźć drugiego sezonu licząc od końca.");
             previousSeason.DateEnd = MaximumDate;
         }
@@ -223,7 +226,7 @@ public partial class Season : IValidatable<Season>
             {
                 if (allSeasonsOrdered[i].Id == entry.Id)
                 {
-                    Season? nextSeason = context.Seasons.Find(allSeasonsOrdered[i + 1].Id) ??
+                    Season? nextSeason = context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i + 1].Id) ??
                         throw new RecordDeletionException("Sezony", "Nie odnaleziono sezonu następującego po sezonie usuwanym, mimo że powinien istnieć.");
                     nextSeason.DateStart = seasonToDelete.DateStart;
                 }

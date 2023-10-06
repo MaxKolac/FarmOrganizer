@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31611.283
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmOrganizerTests", "..\FarmOrganizerTests\FarmOrganizerTests.csproj", "{80F7725C-7089-458B-A581-65CF0790FD18}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmOrganizer-xUnitCompatible", "FarmOrganizer-xUnitCompatible.csproj", "{23095531-9B04-45F9-8D86-010D71180486}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Debug|x64.ActiveCfg = Debug|x64
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Debug|x64.Build.0 = Debug|x64
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Release|x64.ActiveCfg = Release|x64
+		{80F7725C-7089-458B-A581-65CF0790FD18}.Release|x64.Build.0 = Release|x64
+		{23095531-9B04-45F9-8D86-010D71180486}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23095531-9B04-45F9-8D86-010D71180486}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23095531-9B04-45F9-8D86-010D71180486}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{23095531-9B04-45F9-8D86-010D71180486}.Debug|x64.ActiveCfg = Debug|x64
+		{23095531-9B04-45F9-8D86-010D71180486}.Debug|x64.Build.0 = Debug|x64
+		{23095531-9B04-45F9-8D86-010D71180486}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23095531-9B04-45F9-8D86-010D71180486}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23095531-9B04-45F9-8D86-010D71180486}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{23095531-9B04-45F9-8D86-010D71180486}.Release|x64.ActiveCfg = Release|x64
+		{23095531-9B04-45F9-8D86-010D71180486}.Release|x64.Build.0 = Release|x64
+		{23095531-9B04-45F9-8D86-010D71180486}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
+	EndGlobalSection
+EndGlobal

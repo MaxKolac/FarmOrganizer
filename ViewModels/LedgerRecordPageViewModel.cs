@@ -91,14 +91,15 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                CostType.Validate();
-                costTypeGroups = CostType.BuildCostTypeGroups().ToList();
+                using var context = new DatabaseContext();
+                CostType.Validate(context);
+                costTypeGroups = CostType.BuildCostTypeGroups(context).ToList();
                 //This triggers the partial method required to repopulate CurrentCostTypes
                 CostIsExpense = true;
 
-                CropFields = CropField.ValidateRetrieve();
-                Seasons = Season.ValidateRetrieve();
-                SelectedSeason = Seasons.Find(season => season.Id == Season.GetCurrentSeason().Id);
+                CropFields = CropField.RetrieveAll(context);
+                Seasons = Season.RetrieveAll(context);
+                SelectedSeason = Seasons.FirstOrDefault(season => season.Id == Season.GetCurrentSeason().Id);
             }
             catch (TableValidationException ex)
             {
@@ -118,7 +119,7 @@ namespace FarmOrganizer.ViewModels
                     TitleText = "Dodawanie nowego wpisu";
                     SaveButtonText = "Dodaj i zapisz";
                     SelectedCostType = CurrentCostTypes.First();
-                    SelectedCropField = CropFields.Find(field => field.Id == QuerriedCropFieldId);
+                    SelectedCropField = CropFields.FirstOrDefault(field => field.Id == QuerriedCropFieldId);
                     //SelectedSeason
                     dateAddedCorrected = DateTime.Now;
                     DateAdded = DateTime.Now;
@@ -130,12 +131,12 @@ namespace FarmOrganizer.ViewModels
                     SaveButtonText = "Zapisz zmiany";
                     using (var context = new DatabaseContext())
                     {
-                        BalanceLedger result = context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation).ToList().Find(entry => entry.Id == RecordId);
+                        BalanceLedger result = context.BalanceLedgers.Include(entry => entry.IdCostTypeNavigation).ToList().FirstOrDefault(entry => entry.Id == RecordId);
                         //This triggers the partial method required to repopulate CurrentCostTypes
                         CostIsExpense = result.IdCostTypeNavigation.IsExpense;
-                        SelectedCostType = CurrentCostTypes.ToList().Find(type => type.Id == result.IdCostType);
-                        SelectedCropField = CropFields.Find(field => field.Id == result.IdCropField);
-                        SelectedSeason = Seasons.Find(season => season.Id == result.IdSeason);
+                        SelectedCostType = CurrentCostTypes.ToList().FirstOrDefault(type => type.Id == result.IdCostType);
+                        SelectedCropField = CropFields.FirstOrDefault(field => field.Id == result.IdCropField);
+                        SelectedSeason = Seasons.FirstOrDefault(season => season.Id == result.IdSeason);
                         dateAddedCorrected = result.DateAdded;
                         DateAdded = result.DateAdded;
                         BalanceChange = result.BalanceChange.ToString();
@@ -151,45 +152,24 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 using var context = new DatabaseContext();
+                BalanceLedger entry = new()
+                {
+                    IdCostType = SelectedCostType.Id,
+                    IdCropField = SelectedCropField.Id,
+                    IdSeason = SelectedSeason.Id,
+                    BalanceChange = Utils.CastToValue(BalanceChange),
+                    DateAdded = DateAdded,
+                    Notes = Notes
+                };
                 switch (PageMode)
                 {
                     case "add":
-                        var dateTime = new DateTime(
-                            dateAddedCorrected.Year,
-                            dateAddedCorrected.Month,
-                            dateAddedCorrected.Day,
-                            DateTime.Now.Hour,
-                            DateTime.Now.Minute,
-                            DateTime.Now.Second
-                            );
-                        BalanceLedger newRecord = new()
-                        {
-                            IdCostType = SelectedCostType.Id,
-                            IdCropField = SelectedCropField.Id,
-                            IdSeason = SelectedSeason.Id,
-                            DateAdded = dateTime,
-                            BalanceChange =
-                            Math.Abs(
-                                Math.Round(
-                                    Utils.CastToValue(this.BalanceChange.ToString()), 2)),
-                            Notes = this.Notes
-                        };
-                        context.BalanceLedgers.Add(newRecord);
-                        context.SaveChanges();
+                        BalanceLedger.AddEntry(entry, null);
                         await ReturnToPreviousPage();
                         break;
                     case "edit":
-                        BalanceLedger existingRecord = context.BalanceLedgers.Find(RecordId);
-                        existingRecord.IdCostType = SelectedCostType.Id;
-                        existingRecord.IdCropField = SelectedCropField.Id;
-                        existingRecord.IdSeason = SelectedSeason.Id;
-                        existingRecord.DateAdded = dateAddedCorrected;
-                        existingRecord.BalanceChange =
-                            Math.Abs(
-                                Math.Round(
-                                    Utils.CastToValue(this.BalanceChange.ToString()), 2));
-                        existingRecord.Notes = Notes;
-                        context.SaveChanges();
+                        entry.Id = RecordId;
+                        BalanceLedger.EditEntry(entry, null);
                         await ReturnToPreviousPage();
                         break;
                 }

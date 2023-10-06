@@ -3,7 +3,7 @@
 namespace FarmOrganizer.Exceptions
 {
     /// <summary>
-    /// A critical exception, thrown exclusively by <see cref="IValidatable{T}.Validate()"/> when the table failed a validation process.
+    /// A critical exception, thrown exclusively by <see cref="IDatabaseAccesible{T}.Validate(DatabaseContext)"/> when the table failed a validation process.
     /// </summary>
     public class TableValidationException : FarmOrganizerException
     {

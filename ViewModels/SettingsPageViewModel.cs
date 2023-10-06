@@ -47,8 +47,8 @@ namespace FarmOrganizer.ViewModels
 
             try
             {
-                CropFields = CropField.ValidateRetrieve();
-                DefaultCropField = CropFields.Find(field => field.Id == Preferences.Get(LedgerPage_DefaultCropField, CropFields.First().Id));
+                CropFields = CropField.RetrieveAll(null);
+                DefaultCropField = CropFields.FirstOrDefault(field => field.Id == Preferences.Get(LedgerPage_DefaultCropField, CropFields.First().Id));
                 DefaultCropField ??= CropFields.First();
             }
             catch (TableValidationException ex)

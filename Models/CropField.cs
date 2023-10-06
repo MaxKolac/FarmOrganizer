@@ -3,7 +3,7 @@ using FarmOrganizer.Exceptions;
 
 namespace FarmOrganizer.Models;
 
-public partial class CropField : IValidatable<CropField>
+public partial class CropField : IDatabaseAccesible<CropField>
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -17,12 +17,12 @@ public partial class CropField : IValidatable<CropField>
         return $"{Name} ({Hectares} ha)";
     }
 
-    public static void Validate() => _ = ValidateRetrieve();
+    public static void Validate(DatabaseContext context) => _ = RetrieveAll(context);
 
-    public static List<CropField> ValidateRetrieve()
+    public static List<CropField> RetrieveAll(DatabaseContext context)
     {
-        var context = new DatabaseContext();
-        List<CropField> allEntries = new();
+        context ??= new();
+        var allEntries = new List<CropField>();
         allEntries.AddRange(context.CropFields.ToList());
 
         //Check if there exists at least 1 crop field
@@ -37,12 +37,14 @@ public partial class CropField : IValidatable<CropField>
             if (field.Hectares <= 0)
                 throw new TableValidationException(nameof(DatabaseContext.CropFields), "Odnaleziono pole uprawne, którego powierzchnia jest zerowa lub mniejsza.", field.ToString(), nameof(Hectares));
         }
+
+        
         return allEntries;
     }
 
-    public static void AddEntry(CropField entry)
+    public static void AddEntry(CropField entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
+        context ??= new();
 
         //Name can't be empty for the love of god
         if (string.IsNullOrEmpty(entry.Name))
@@ -53,12 +55,14 @@ public partial class CropField : IValidatable<CropField>
 
         context.CropFields.Add(entry);
         context.SaveChanges();
+        
     }
 
-    public static void EditEntry(CropField entry)
+    public static void EditEntry(CropField entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
-        CropField existingField = context.CropFields.Find(entry.Id) ?? throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), $"Id == {entry.Id}");
+        context ??= new();
+        CropField existingField = context.CropFields.FirstOrDefault(e => e.Id == entry.Id) ?? 
+            throw new NoRecordFoundException(nameof(DatabaseContext.CropFields), $"Id == {entry.Id}");
 
         //Name can't be empty for the love of god
         if (string.IsNullOrEmpty(entry.Name))
@@ -71,13 +75,13 @@ public partial class CropField : IValidatable<CropField>
         existingField.Name = entry.Name;
         existingField.Hectares = entry.Hectares;
         context.SaveChanges();
+        
     }
 
-    public static void DeleteEntry(CropField entry)
+    public static void DeleteEntry(CropField entry, DatabaseContext context)
     {
-        using var context = new DatabaseContext();
-        CropField fieldToDelete = context.CropFields.Find(entry.Id);
-
+        context ??= new();
+        CropField fieldToDelete = context.CropFields.FirstOrDefault(e => e.Id == entry.Id);
         if (fieldToDelete is null)
             return;
 
@@ -87,5 +91,6 @@ public partial class CropField : IValidatable<CropField>
 
         context.CropFields.Remove(fieldToDelete);
         context.SaveChanges();
+        
     }
 }

@@ -35,7 +35,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                Seasons = Season.ValidateRetrieve();
+                Seasons = Season.RetrieveAll(null);
             }
             catch (TableValidationException ex)
             {
@@ -48,26 +48,21 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
+                var season = new Season()
+                {
+                    Name = SeasonName,
+                    DateStart = SeasonDateStart
+                };
                 if (addingSeason)
                 {
-                    Season newSeason = new()
-                    {
-                        Name = SeasonName,
-                        DateStart = SeasonDateStart,
-                        DateEnd = Season.MaximumDate
-                    };
-                    Season.AddEntry(newSeason);
+                    season.DateEnd = Season.MaximumDate;
+                    Season.AddEntry(season, null);
                 }
                 else if (editingSeason)
                 {
-                    Season seasonToEdit = new()
-                    {
-                        Id = editedSeasonId,
-                        Name = SeasonName,
-                        DateStart = SeasonDateStart,
-                        DateEnd = SeasonDateEnd
-                    };
-                    Season.EditEntry(seasonToEdit);
+                    season.Id = editedSeasonId;
+                    season.DateEnd = SeasonDateEnd;
+                    Season.EditEntry(season, null);
                 }
 
                 Seasons = new DatabaseContext().Seasons.ToList();
@@ -112,7 +107,7 @@ namespace FarmOrganizer.ViewModels
                     "Tak, usuń",
                     "Anuluj"))
                     return;
-                Season.DeleteEntry(seasonToRemove);
+                Season.DeleteEntry(seasonToRemove, null);
                 Seasons = new DatabaseContext().Seasons.ToList();
             }
             catch (RecordDeletionException ex)
