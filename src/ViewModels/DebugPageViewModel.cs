@@ -322,7 +322,7 @@ namespace FarmOrganizer.ViewModels
         void SeasonValidDeleteTest(Season seasonToDelete)
         {
             AppendLine(seasonToDelete.ToDebugString());
-            Season.DeleteEntry(seasonToDelete, null);
+            Season.DeleteEntry(seasonToDelete.Id, null);
             PrintWholeSeasonTable();
         }
         void SeasonInvalidDeleteTest(Season seasonToDelete)

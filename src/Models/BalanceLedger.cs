@@ -80,10 +80,10 @@ public partial class BalanceLedger : IDatabaseAccesible<BalanceLedger>
         context.SaveChanges();
     }
 
-    public static void DeleteEntry(BalanceLedger entry, DatabaseContext context)
+    public static void DeleteEntry(int id, DatabaseContext context)
     {
         context ??= new();
-        BalanceLedger entryToDelete = context.BalanceLedgers.FirstOrDefault(e => e.Id == entry.Id);
+        BalanceLedger entryToDelete = context.BalanceLedgers.FirstOrDefault(e => e.Id == id);
         if (entryToDelete is null)
             return;
         context.BalanceLedgers.Remove(entryToDelete);

@@ -99,7 +99,7 @@ namespace FarmOrganizer.ViewModels
                 return;
             try
             {
-                CropField.DeleteEntry(cropFieldToRemove, null);
+                CropField.DeleteEntry(cropFieldToRemove.Id, null);
                 CropFields = new DatabaseContext().CropFields.ToList();
             }
             catch (RecordDeletionException ex)

@@ -101,10 +101,10 @@ public partial class CostType : IDatabaseAccesible<CostType>
         context.SaveChanges();
     }
 
-    public static void DeleteEntry(CostType entry, DatabaseContext context)
+    public static void DeleteEntry(int id, DatabaseContext context)
     {
         context ??= new();
-        var entryToDelete = context.CostTypes.FirstOrDefault(e => e.Id == entry.Id);
+        var entryToDelete = context.CostTypes.FirstOrDefault(e => e.Id == id);
         if (entryToDelete is null)
             return;
 

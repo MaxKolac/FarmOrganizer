@@ -3,7 +3,7 @@
 namespace FarmOrganizer.Exceptions
 {
     /// <summary>
-    /// Thrown by <see cref="IDatabaseAccesible{T}.DeleteEntry(T, DatabaseContext)"/> if the user's attempt to delete a record would cause the table to become invalid, or would impact program's functionality.
+    /// Thrown by <see cref="IDatabaseAccesible{T}.DeleteEntry(int, DatabaseContext)"/> if the user's attempt to delete a record would cause the table to become invalid, or would impact program's functionality.
     /// </summary>
     public class RecordDeletionException : FarmOrganizerException
     {

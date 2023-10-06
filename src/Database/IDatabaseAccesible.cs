@@ -49,8 +49,8 @@
         /// If at any points any validity check fails, an unhandled exception is thrown. If the record isn't found, no action is taken.
         /// </summary>
         /// <exception cref="Exceptions.RecordDeletionException"></exception>
-        /// <param name="entry">The <typeparamref name="T"/> object to look for in the table. Only the object's ID property will be used.</param>
+        /// <param name="id">The <typeparamref name="T"/> record's ID property to look for in the table.</param>
         /// <param name="context"><inheritdoc cref="Validate(DatabaseContext)"/></param>
-        static abstract void DeleteEntry(T entry, DatabaseContext context);
+        static abstract void DeleteEntry(int id, DatabaseContext context);
     }
 }

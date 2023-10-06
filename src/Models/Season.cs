@@ -198,10 +198,10 @@ public partial class Season : IDatabaseAccesible<Season>
     /// </para>
     /// </summary>
     /// <inheritdoc/>
-    public static void DeleteEntry(Season entry, DatabaseContext? context)
+    public static void DeleteEntry(int id, DatabaseContext? context)
     {
         context ??= new();
-        Season? seasonToDelete = context.Seasons.FirstOrDefault(e => e.Id == entry.Id);
+        Season? seasonToDelete = context.Seasons.FirstOrDefault(e => e.Id == id);
         if (seasonToDelete is null)
             return;
 
@@ -224,7 +224,7 @@ public partial class Season : IDatabaseAccesible<Season>
         {
             for (int i = allSeasonsOrdered.Count - 2; i >= 0; i--)
             {
-                if (allSeasonsOrdered[i].Id == entry.Id)
+                if (allSeasonsOrdered[i].Id == id)
                 {
                     Season? nextSeason = context.Seasons.FirstOrDefault(e => e.Id == allSeasonsOrdered[i + 1].Id) ??
                         throw new RecordDeletionException("Sezony", "Nie odnaleziono sezonu następującego po sezonie usuwanym, mimo że powinien istnieć.");

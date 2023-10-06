@@ -78,10 +78,10 @@ public partial class CropField : IDatabaseAccesible<CropField>
 
     }
 
-    public static void DeleteEntry(CropField entry, DatabaseContext context)
+    public static void DeleteEntry(int id, DatabaseContext context)
     {
         context ??= new();
-        CropField fieldToDelete = context.CropFields.FirstOrDefault(e => e.Id == entry.Id);
+        CropField fieldToDelete = context.CropFields.FirstOrDefault(e => e.Id == id);
         if (fieldToDelete is null)
             return;
 

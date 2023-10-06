@@ -107,7 +107,7 @@ namespace FarmOrganizer.ViewModels
                 "Tak, usuń",
                 "Anuluj"))
                     return;
-                CostType.DeleteEntry(costToRemove, null);
+                CostType.DeleteEntry(costToRemove.Id, null);
                 CostTypeGroups = CostType.BuildCostTypeGroups(null);
             }
             catch (RecordDeletionException ex)

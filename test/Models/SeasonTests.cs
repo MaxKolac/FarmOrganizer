@@ -40,7 +40,6 @@ namespace FarmOrganizerTests.Models
             {
                 new Season()
                 {
-                    Id = 1,
                     Name = string.Empty,
                     DateStart = new(2025, 2, 1, 12, 30, 30)
                 }
@@ -49,7 +48,6 @@ namespace FarmOrganizerTests.Models
             {
                 new Season()
                 {
-                    Id = 1,
                     Name = "A",
                     DateStart = new(2025, 1, 1, 0, 0, 0)
                 }
@@ -58,7 +56,6 @@ namespace FarmOrganizerTests.Models
             {
                 new Season()
                 {
-                    Id = 1,
                     Name = "A",
                     DateStart = new(2024, 12, 31, 23, 59, 59)
                 }
@@ -67,7 +64,6 @@ namespace FarmOrganizerTests.Models
             {
                 new Season()
                 {
-                    Id = 1,
                     Name = "A",
                     DateStart = new(2023, 12, 31, 23, 59, 59)
                 }
@@ -269,9 +265,8 @@ namespace FarmOrganizerTests.Models
                 new Season() { Id = 1, Name = "Im last One", DateStart = new(2023, 1, 1, 0, 0, 0), DateEnd = Season.MaximumDate }
             };
             context.Setup(e => e.Seasons).ReturnsDbSet(oneSeason);
-            var seasonToDelete = new Season(){ Id = 1 };
 
-            Assert.Throws<RecordDeletionException>(() => Season.DeleteEntry(seasonToDelete, context.Object));
+            Assert.Throws<RecordDeletionException>(() => Season.DeleteEntry(1, context.Object));
         }
     }
 }

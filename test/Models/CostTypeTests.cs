@@ -132,7 +132,7 @@ namespace FarmOrganizerTests.Models
                 {
                     new CostType()
                     {
-                        Id = 1,
+                        Id = 2,
                         Name = "B",
                         IsExpense = true
                     }
@@ -206,8 +206,7 @@ namespace FarmOrganizerTests.Models
         public static void DeleteLastCostTypeWithUniqueIsExpenseProperty(int recordId)
         {
             var context = CostTypeTestData.GetMockWithValidData();
-            var costToDelete = new CostType() { Id = recordId };
-            Assert.Throws<RecordDeletionException>(() => CostType.DeleteEntry(costToDelete, context.Object));
+            Assert.Throws<RecordDeletionException>(() => CostType.DeleteEntry(recordId, context.Object));
         }
     }
 }

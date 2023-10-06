@@ -107,7 +107,7 @@ namespace FarmOrganizer.ViewModels
                     "Tak, usuń",
                     "Anuluj"))
                     return;
-                Season.DeleteEntry(seasonToRemove, null);
+                Season.DeleteEntry(seasonToRemove.Id, null);
                 Seasons = new DatabaseContext().Seasons.ToList();
             }
             catch (RecordDeletionException ex)
