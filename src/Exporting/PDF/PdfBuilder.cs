@@ -1,6 +1,6 @@
 ﻿using Android.Graphics.Pdf;
 using FarmOrganizer.Models;
-using FarmOrganizer.ViewModels.HelperClasses;
+using FarmOrganizer.ViewModels.Helpers;
 
 namespace FarmOrganizer.Exporting.PDF
 {

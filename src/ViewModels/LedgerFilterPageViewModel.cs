@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
-using FarmOrganizer.ViewModels.HelperClasses;
+using FarmOrganizer.ViewModels.Helpers;
 using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.ViewModels

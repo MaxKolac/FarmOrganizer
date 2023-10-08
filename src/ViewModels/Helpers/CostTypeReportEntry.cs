@@ -1,4 +1,4 @@
-﻿namespace FarmOrganizer.ViewModels.HelperClasses
+﻿namespace FarmOrganizer.ViewModels.Helpers
 {
     /// <summary>
     /// Used by <see cref="ReportPageViewModel"/> to show individual cost types and the sum of their expenses.

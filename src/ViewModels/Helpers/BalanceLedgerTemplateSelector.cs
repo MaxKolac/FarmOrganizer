@@ -1,6 +1,6 @@
 ﻿using FarmOrganizer.Models;
 
-namespace FarmOrganizer.ViewModels.HelperClasses
+namespace FarmOrganizer.ViewModels.Helpers
 {
     /// <summary>
     /// DataTemplateSelectors do not work as of current .NET MAUI version.<br/>

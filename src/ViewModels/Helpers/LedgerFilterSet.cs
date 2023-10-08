@@ -1,7 +1,7 @@
 ﻿using FarmOrganizer.Database;
 using FarmOrganizer.Models;
 
-namespace FarmOrganizer.ViewModels.HelperClasses
+namespace FarmOrganizer.ViewModels.Helpers
 {
     public class LedgerFilterSet
     {

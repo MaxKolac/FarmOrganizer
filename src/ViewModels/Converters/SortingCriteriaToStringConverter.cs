@@ -1,4 +1,4 @@
-﻿using FarmOrganizer.ViewModels.HelperClasses;
+﻿using FarmOrganizer.ViewModels.Helpers;
 using System.Globalization;
 
 namespace FarmOrganizer.ViewModels.Converters

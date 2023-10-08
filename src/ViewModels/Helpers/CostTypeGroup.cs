@@ -1,6 +1,6 @@
 ﻿using FarmOrganizer.Models;
 
-namespace FarmOrganizer.ViewModels.HelperClasses
+namespace FarmOrganizer.ViewModels.Helpers
 {
     public class CostTypeGroup : List<CostType>
     {
