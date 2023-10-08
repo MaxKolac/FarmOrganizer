@@ -79,17 +79,13 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async static Task ResetDatabase()
         {
+            //APPEARS TO WORK
             if (await App.AlertSvc.ShowConfirmationAsync(
                 "Uwaga!",
                 "Za chwilę bezpowrotnie wyczyścisz wszystkie dane z bazy danych. " +
                 "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
                 "Tak", "Nie"))
             {
-                if (!await DatabaseFile.RequestPermissions())
-                {
-                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
-                    return;
-                }
                 await DatabaseFile.Delete();
                 await DatabaseFile.Create();
             }
@@ -100,14 +96,14 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                if (!await DatabaseFile.RequestPermissions())
-                {
-                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
-                    return;
-                }
-                FolderPickerResult folder = await FolderPicker.PickAsync(default);
-                if (!folder.IsSuccessful)
-                    return;
+                //if (!await DatabaseFile.RequestPermissions())
+                //{
+                //    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                //    return;
+                //}
+                var folder = await FolderPicker.Default.PickAsync(default);
+                //if (!folder.IsSuccessful)
+                //    return;
                 await DatabaseFile.ExportTo(folder.Folder.Path);
                 App.AlertSvc.ShowAlert(
                     "Sukces",
@@ -125,11 +121,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                if (!await DatabaseFile.RequestPermissions())
-                {
-                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
-                    return;
-                }
+                // APPEARS TO WORK, BUT ONCE EXPORT WORKS, NEEDS TO BE TESTED
                 await DatabaseFile.CreateBackup();
                 FileResult file = await FilePicker.PickAsync();
                 if (file == null)
@@ -145,6 +137,11 @@ namespace FarmOrganizer.ViewModels
                 DatabaseFile.DeleteBackup();
             }
             catch (IOException ex)
+            {
+                await DatabaseFile.RestoreBackup();
+                ExceptionHandler.Handle(ex, false);
+            }
+            catch (TableValidationException ex)
             {
                 await DatabaseFile.RestoreBackup();
                 ExceptionHandler.Handle(ex, false);

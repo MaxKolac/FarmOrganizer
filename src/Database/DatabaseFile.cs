@@ -1,4 +1,5 @@
-﻿using FarmOrganizer.Models;
+﻿using FarmOrganizer.Exceptions;
+using FarmOrganizer.Models;
 
 namespace FarmOrganizer.Database
 {
@@ -84,20 +85,17 @@ namespace FarmOrganizer.Database
         /// </summary>
         /// <param name="sourceFilePath">The file which should be imported as the database.</param>
         /// <exception cref="IOException"/>
-        /// <exception cref="Microsoft.EntityFrameworkCore.DbUpdateException"/>
+        /// <exception cref="TableValidationException"/>
         public static async Task ImportFrom(string sourceFilePath)
         {
             using Stream sourceFile = File.OpenRead(sourceFilePath);
             using FileStream destinationFile = File.Create(FullPath);
             await sourceFile.CopyToAsync(destinationFile);
 
-            using var context = new DatabaseContext();
-            List<BalanceLedger> ledger = context.BalanceLedgers.ToList();
-            List<CostType> costTypes = context.CostTypes.ToList();
-            List<CropField> cropFields = context.CropFields.ToList();
-            List<FieldEfficiency> fieldEfficiencies = context.FieldEfficiencies.ToList();
-            List<Season> seasons = context.Seasons.ToList();
-            context.SaveChanges();
+            BalanceLedger.Validate(null);
+            CostType.Validate(null);
+            CropField.Validate(null);
+            Season.Validate(null);
         }
 
         /// <summary>
@@ -145,6 +143,7 @@ namespace FarmOrganizer.Database
         /// <para><see href="https://github.com/dotnet/maui/issues/11275">.NET MAUI GitHub Issue discussion regarding the workaround</see></para>
         /// </summary>
         /// <returns><c>true</c> if both permissions have been granted, <c>false</c> otherwise.</returns>
+        [Obsolete("This method should no longer be required for the app to receive proper permissions.")]
         public static async Task<bool> RequestPermissions()
         {
             PermissionStatus storageWritePerm = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
@@ -154,11 +153,13 @@ namespace FarmOrganizer.Database
 
             if (!writePermissionGranted)
             {
+                Permissions.ShouldShowRationale<Permissions.StorageWrite>();
                 storageWritePerm = await Permissions.RequestAsync<Permissions.StorageWrite>();
                 writePermissionGranted = storageWritePerm == PermissionStatus.Granted;
             }
             if (!readPermissionGranted)
             {
+                Permissions.ShouldShowRationale<Permissions.StorageRead>();
                 storageReadPerm = await Permissions.RequestAsync<Permissions.StorageRead>();
                 readPermissionGranted = storageReadPerm == PermissionStatus.Granted;
             }
