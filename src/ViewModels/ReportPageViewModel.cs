@@ -188,6 +188,12 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void ExportReportAsPDF()
+        {
+
+        }
+
         protected override void OnIncomeChanged(string value) =>
             ProfitAfterExpenses = Utils.CastToValue(value) + TotalChange;
 

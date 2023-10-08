@@ -258,7 +258,9 @@
                 <Label Text="Kategoria nowego wpisu:"/>
                 <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
                 <Button Text="{Binding TotalChangeText, StringFormat='Dodaj {0} przed wydatkami jako wpis'}"
-                        Command="{Binding AddNewLedgerEntryCommand}"/>
+                        Command="{Binding AddNewLedgerEntryCommand}" />
+                <Button Text="Eksportuj raport jako PDF"
+                        Command="{Binding ExportReportAsPDFCommand}" />
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>
