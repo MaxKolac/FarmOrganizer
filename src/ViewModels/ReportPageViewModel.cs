@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
@@ -7,6 +8,7 @@ using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Helpers;
 using Microsoft.Data.Sqlite;
+using PdfSharpCore.Pdf;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -191,9 +193,25 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private void ExportReportAsPDF()
+        private static async Task ExportReportAsPDF()
         {
+            var builder = new PdfBuilder();
+            ///builder.Add(...)
+            PdfDocument document = builder.BuildDemo();
 
+            try
+            {
+                if (!await PermissionManager.RequestPermissionsAsync())
+                    return;
+                FolderPickerResult folder = await FolderPicker.PickAsync(default);
+                if (!folder.IsSuccessful)
+                    return;
+                document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
+            }
+            catch (IOException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
         }
 
         protected override void OnIncomeChanged(string value) =>
