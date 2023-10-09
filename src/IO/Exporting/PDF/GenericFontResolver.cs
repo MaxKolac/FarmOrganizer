@@ -1,12 +1,10 @@
-﻿using System.IO;
-using System.Reflection;
-using FarmOrganizer.Exporting.PDF;
+﻿using System.Reflection;
 using PdfSharpCore.Fonts;
 
-namespace PDFDemo.Helpers
+namespace FarmOrganizer.IO.Exporting.PDF
 {
     /// <summary>
-    /// Author: <see href="https://github.com/icebeam7">Luis Beltran</see> | <see href="https://github.com/icebeam7/PDFDemo">Source GitHub repository - PDFDemo</see>
+    /// Original Author: <see href="https://github.com/icebeam7">Luis Beltran</see> | <see href="https://github.com/icebeam7/PDFDemo">Source GitHub repository - PDFDemo</see>
     /// </summary>
     public class GenericFontResolver : IFontResolver
     {
@@ -18,6 +16,7 @@ namespace PDFDemo.Helpers
             {
                 //var assembly = typeof(ProductsReport).GetTypeInfo().Assembly;
                 var assembly = typeof(PdfBuilder).GetTypeInfo().Assembly;
+                //TODO: this obviously shouldnt be pointing at demo's font files, but the FarmOrganizer fonts in Resources
                 var stream = assembly.GetManifestResourceStream($"PDFDemo.Fonts.{faceName}.ttf");
 
                 using (var reader = new StreamReader(stream))

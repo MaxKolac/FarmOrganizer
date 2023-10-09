@@ -1,6 +1,7 @@
-﻿using FarmOrganizer.Models;
+﻿using FarmOrganizer.Database;
+using FarmOrganizer.Models;
 
-namespace FarmOrganizer.Database
+namespace FarmOrganizer.IO
 {
     /// <summary>
     /// A class containing static methods for manipulation of the database's file.
@@ -34,8 +35,8 @@ namespace FarmOrganizer.Database
         /// </summary>
         public static async Task Create()
         {
-            using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(FullFilename);
-            using FileStream outputStream = File.Create(FullPath);
+            using var inputStream = await FileSystem.Current.OpenAppPackageFileAsync(FullFilename);
+            using var outputStream = File.Create(FullPath);
             await inputStream.CopyToAsync(outputStream);
         }
 
@@ -63,14 +64,14 @@ namespace FarmOrganizer.Database
         /// <param name="destinationFolderPath">The destination folder to copy the file to.</param>
         public static async Task ExportTo(string destinationFolderPath)
         {
-            string actualFilename = FullFilename;
-            int attempts = 0;
+            var actualFilename = FullFilename;
+            var attempts = 0;
             while (File.Exists(Path.Combine(destinationFolderPath, actualFilename)))
             {
                 attempts++;
                 actualFilename = $"{Filename}({attempts})" + Extension;
             };
-            using FileStream outputStream = File.Create(Path.Combine(destinationFolderPath, actualFilename));
+            using var outputStream = File.Create(Path.Combine(destinationFolderPath, actualFilename));
             await File.OpenRead(FullPath).CopyToAsync(outputStream);
         }
 
@@ -88,15 +89,15 @@ namespace FarmOrganizer.Database
         public static async Task ImportFrom(string sourceFilePath)
         {
             using Stream sourceFile = File.OpenRead(sourceFilePath);
-            using FileStream destinationFile = File.Create(FullPath);
+            using var destinationFile = File.Create(FullPath);
             await sourceFile.CopyToAsync(destinationFile);
 
             using var context = new DatabaseContext();
-            List<BalanceLedger> ledger = context.BalanceLedgers.ToList();
-            List<CostType> costTypes = context.CostTypes.ToList();
-            List<CropField> cropFields = context.CropFields.ToList();
-            List<FieldEfficiency> fieldEfficiencies = context.FieldEfficiencies.ToList();
-            List<Season> seasons = context.Seasons.ToList();
+            var ledger = context.BalanceLedgers.ToList();
+            var costTypes = context.CostTypes.ToList();
+            var cropFields = context.CropFields.ToList();
+            var fieldEfficiencies = context.FieldEfficiencies.ToList();
+            var seasons = context.Seasons.ToList();
             context.SaveChanges();
         }
 
@@ -105,8 +106,8 @@ namespace FarmOrganizer.Database
         /// </summary>
         public static async Task CreateBackup()
         {
-            using FileStream dbBackupFile = File.Create(Path.Combine(InternalStorage, BackupFilename));
-            using FileStream database = File.OpenRead(FullPath);
+            using var dbBackupFile = File.Create(Path.Combine(InternalStorage, BackupFilename));
+            using var database = File.OpenRead(FullPath);
             await database.CopyToAsync(dbBackupFile);
         }
 
@@ -116,9 +117,9 @@ namespace FarmOrganizer.Database
         /// <param name="deleteOnCompletion">Should the used backup file be deleted after restoring.</param>
         public static async Task RestoreBackup(bool deleteOnCompletion = true)
         {
-            using (FileStream dbBackupFile = File.OpenRead(Path.Combine(InternalStorage, BackupFilename)))
+            using (var dbBackupFile = File.OpenRead(Path.Combine(InternalStorage, BackupFilename)))
             {
-                using FileStream database = File.Create(FullPath);
+                using var database = File.Create(FullPath);
                 await dbBackupFile.CopyToAsync(database);
             }
             if (deleteOnCompletion)
@@ -130,39 +131,5 @@ namespace FarmOrganizer.Database
         /// </summary>
         public static void DeleteBackup() =>
             File.Delete(Path.Combine(InternalStorage, BackupFilename));
-
-        /// <summary>
-        /// <para>
-        /// Checks if the user granted <see cref="Permissions.StorageWrite"/> and <see cref="Permissions.StorageRead"/>. 
-        /// If any of those permissions turns out to be <see cref="PermissionStatus.Denied"/>, attempts to request it from the user through a pop-up.
-        /// </para>
-        /// <para>
-        /// <b>Important!</b> The pop-ups do not show on Android API level greater than 31. 
-        /// According to the linked StackOverflow question, the <see cref="Permissions.StorageWrite"/> has been discontinued from Android API 33.
-        /// The current workaround is purposefuly downgrading the app to API 31.
-        /// </para>
-        /// <para><see href="https://stackoverflow.com/a/75331176/21342746">Liyun Zhang's answer on StackOverflow</see></para>
-        /// <para><see href="https://github.com/dotnet/maui/issues/11275">.NET MAUI GitHub Issue discussion regarding the workaround</see></para>
-        /// </summary>
-        /// <returns><c>true</c> if both permissions have been granted, <c>false</c> otherwise.</returns>
-        public static async Task<bool> RequestPermissions()
-        {
-            PermissionStatus storageWritePerm = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
-            PermissionStatus storageReadPerm = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
-            bool writePermissionGranted = storageWritePerm == PermissionStatus.Granted;
-            bool readPermissionGranted = storageReadPerm == PermissionStatus.Granted;
-
-            if (!writePermissionGranted)
-            {
-                storageWritePerm = await Permissions.RequestAsync<Permissions.StorageWrite>();
-                writePermissionGranted = storageWritePerm == PermissionStatus.Granted;
-            }
-            if (!readPermissionGranted)
-            {
-                storageReadPerm = await Permissions.RequestAsync<Permissions.StorageRead>();
-                readPermissionGranted = storageReadPerm == PermissionStatus.Granted;
-            }
-            return writePermissionGranted && readPermissionGranted;
-        }
     }
 }

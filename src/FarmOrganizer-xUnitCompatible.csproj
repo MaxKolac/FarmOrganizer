@@ -172,10 +172,6 @@
 	  </Resource>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Helpers\" />
-	</ItemGroup>
-
 	<ProjectExtensions>
 		<VisualStudio>
 			<UserProperties XamarinHotReloadDebuggerTimeoutExceptionfarmorganizerHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarFarmOrganizerHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionFarmOrganizerHideInfoBar="True" XamarinHotReloadWrongLinkerErrorInfoBarFarmOrganizerHideInfoBar="True" />
