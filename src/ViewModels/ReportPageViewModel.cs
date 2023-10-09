@@ -196,7 +196,7 @@ namespace FarmOrganizer.ViewModels
         private static async Task ExportReportAsPDF()
         {
             var builder = new PdfBuilder();
-            ///builder.Add(...)
+            //builder.Add(...)
             PdfDocument document = builder.BuildDemo();
 
             try

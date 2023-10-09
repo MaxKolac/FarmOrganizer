@@ -8,6 +8,13 @@ using System.Globalization;
 
 namespace FarmOrganizer.IO.Exporting.PDF
 {
+    /// <summary>
+    /// Responsible for instantiating, creating and then building reports as PDF files.<br/>
+    /// First, create a new object instance. Use any method with <c>Add</c> prefix to add data to the report. Once ready to be rendered, use <see cref="Build"/> to return a rendered a <see cref="PdfDocument"/> and call <see cref="PdfDocument.Save(Stream)"/> or any of its overloads to save it as a PDF file.
+    /// <para>
+    /// Class contains some code originally written by <see href="https://github.com/icebeam7">Luis Beltran</see>. Some of it was also taken from his <see href="https://github.com/icebeam7/PDFDemo"> example GitHub repository - PDFDemo</see>
+    /// </para>
+    /// </summary>
     public class PdfBuilder
     {
         private readonly Document _document = new();
