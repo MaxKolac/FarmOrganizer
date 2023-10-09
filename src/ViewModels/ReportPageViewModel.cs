@@ -207,6 +207,7 @@ namespace FarmOrganizer.ViewModels
                 if (!folder.IsSuccessful)
                     return;
                 document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
+                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path}");
             }
             catch (IOException ex)
             {
