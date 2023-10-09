@@ -17,7 +17,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
     /// </summary>
     public class PdfBuilder
     {
-        private readonly Document _document = new();
+        private readonly Document _document;
 
         private string _cropFieldsLabel = "Pole uprawne:";
         private readonly List<CropField> _cropFields = new();
@@ -32,6 +32,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
         {
             GlobalFontSettings.FontResolver = new GenericFontResolver();
             CultureInfo.CurrentCulture = new CultureInfo("pl-PL", false);
+            _document = new();
 
             _document.Info.Title = "Title";
             _document.Info.Subject = "Subject";

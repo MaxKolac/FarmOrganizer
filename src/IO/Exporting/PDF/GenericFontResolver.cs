@@ -1,10 +1,12 @@
-﻿using System.Reflection;
-using PdfSharpCore.Fonts;
+﻿using PdfSharpCore.Fonts;
 
 namespace FarmOrganizer.IO.Exporting.PDF
 {
     /// <summary>
+    /// Generic implementation of <see cref="IFontResolver"/>, originally written by <see href="https://github.com/icebeam7">Luis Beltran</see>, modified to be compatible with .NET MAUI by <see href="https://github.com/MaxKolac">me</see>.
+    /// <para>
     /// Original Author: <see href="https://github.com/icebeam7">Luis Beltran</see> | <see href="https://github.com/icebeam7/PDFDemo">Source GitHub repository - PDFDemo</see>
+    /// </para>
     /// </summary>
     public class GenericFontResolver : IFontResolver
     {
@@ -14,23 +16,10 @@ namespace FarmOrganizer.IO.Exporting.PDF
         {
             if (faceName.Contains(DefaultFontName))
             {
-                //var assembly = typeof(ProductsReport).GetTypeInfo().Assembly;
-                var assembly = typeof(PdfBuilder).GetTypeInfo().Assembly;
-                //var stream = assembly.GetManifestResourceStream($"PDFDemo.Fonts.{faceName}.ttf");
-                var stream = assembly.GetManifestResourceStream($"FarmOrganizer.Resources.Fonts.{faceName}.ttf");
-
-                using (var reader = new StreamReader(stream))
-                {
-                    var bytes = default(byte[]);
-
-                    using (var ms = new MemoryStream())
-                    {
-                        reader.BaseStream.CopyTo(ms);
-                        bytes = ms.ToArray();
-                    }
-
-                    return bytes;
-                }
+                using var reader = new StreamReader(FileSystem.Current.OpenAppPackageFileAsync($"{faceName}.ttf").Result);
+                using var memoryStream = new MemoryStream();
+                reader.BaseStream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
             }
             else
             {
@@ -40,15 +29,12 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
         public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
         {
-            string fontName;
-            switch (familyName)
+            var fontName = familyName switch
             {
-                case "Open Sans":
-                case "OpenSans":
-                default:
-                    fontName = "OpenSans";
-                    break;
-            }
+                "Open Sans" => "OpenSans",
+                "OpenSans" => "OpenSans",
+                _ => "OpenSans",
+            };
 
             if (isBold && isItalic)
                 fontName = $"{fontName}-BoldItalic";
@@ -58,7 +44,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
                 fontName = $"{fontName}-Italic";
             else
                 fontName = $"{fontName}-Regular";
-            
+
             return new FontResolverInfo(fontName);
         }
     }
