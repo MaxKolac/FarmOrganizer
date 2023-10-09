@@ -28,8 +28,6 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private bool cropFieldPickerEnabled = true;
 
-        private const string _IOAlertNoPermissions = "Aby aplikacja mogła zresetować bazę danych, potrzebne są odpowiednie uprawnienia.\nJeżeli ten komunikat pokazuje się po zrestartowaniu aplikacji, możliwe że wymagane jest zresetowanie odmówionych uprawnień. Przejdź do ustawień swojego telefonu, a następnie w sekcji 'Aplikacje', odnajdź FarmOrganizer i nadaj mu uprawnienia do zapisu i odczytu plików.";
-
         public SettingsPageViewModel()
         {
             using var context = new DatabaseContext();
@@ -86,11 +84,9 @@ namespace FarmOrganizer.ViewModels
                 "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
                 "Tak", "Nie"))
             {
-                if (!await DatabaseFile.RequestPermissions())
-                {
-                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                if (!await PermissionManager.RequestPermissionsAsync())
                     return;
-                }
+                
                 await DatabaseFile.Delete();
                 await DatabaseFile.Create();
             }
@@ -101,11 +97,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                if (!await DatabaseFile.RequestPermissions())
-                {
-                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                if (!await PermissionManager.RequestPermissionsAsync())
                     return;
-                }
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
                 if (!folder.IsSuccessful)
                     return;
@@ -126,11 +119,8 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                if (!await DatabaseFile.RequestPermissions())
-                {
-                    App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                if (!await PermissionManager.RequestPermissionsAsync())
                     return;
-                }
                 await DatabaseFile.CreateBackup();
                 FileResult file = await FilePicker.PickAsync();
                 if (file == null)
