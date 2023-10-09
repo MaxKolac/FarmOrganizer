@@ -16,8 +16,8 @@ namespace FarmOrganizer.IO.Exporting.PDF
             {
                 //var assembly = typeof(ProductsReport).GetTypeInfo().Assembly;
                 var assembly = typeof(PdfBuilder).GetTypeInfo().Assembly;
-                //TODO: this obviously shouldnt be pointing at demo's font files, but the FarmOrganizer fonts in Resources
-                var stream = assembly.GetManifestResourceStream($"PDFDemo.Fonts.{faceName}.ttf");
+                //var stream = assembly.GetManifestResourceStream($"PDFDemo.Fonts.{faceName}.ttf");
+                var stream = assembly.GetManifestResourceStream($"FarmOrganizer.Resources.Fonts.{faceName}.ttf");
 
                 using (var reader = new StreamReader(stream))
                 {
@@ -33,34 +33,33 @@ namespace FarmOrganizer.IO.Exporting.PDF
                 }
             }
             else
+            {
                 return GetFont(DefaultFontName);
+            }
         }
 
         public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
         {
-            //var fontName = string.Empty;
-
+            string fontName;
             switch (familyName)
             {
                 case "Open Sans":
                 case "OpenSans":
-                    var fontName = "OpenSans";
-
-                    if (isBold && isItalic)
-                        fontName = $"{fontName}-BoldItalic";
-                    else if (isBold)
-                        fontName = $"{fontName}-Bold";
-                    else if (isItalic)
-                        fontName = $"{fontName}-Italic";
-                    else
-                        fontName = $"{fontName}-Regular";
-
-                    return new FontResolverInfo(fontName);
                 default:
+                    fontName = "OpenSans";
                     break;
             }
 
-            return null;
+            if (isBold && isItalic)
+                fontName = $"{fontName}-BoldItalic";
+            else if (isBold)
+                fontName = $"{fontName}-Bold";
+            else if (isItalic)
+                fontName = $"{fontName}-Italic";
+            else
+                fontName = $"{fontName}-Regular";
+            
+            return new FontResolverInfo(fontName);
         }
     }
 }
