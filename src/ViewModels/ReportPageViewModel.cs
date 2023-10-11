@@ -224,4 +224,9 @@ namespace FarmOrganizer.ViewModels
         partial void OnProfitAfterExpensesChanged(decimal value) =>
             ProfitAfterExpensesText = value >= 0 ? _labelProfit : _labelLoss;
     }
+
+    /// <summary>
+    /// Used by <see cref="ReportPageViewModel"/> to show individual cost types and the sum of their expenses.
+    /// </summary>
+    public record class CostTypeReportEntry(string Name, decimal Amount);
 }
