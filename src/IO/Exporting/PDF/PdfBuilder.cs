@@ -1,5 +1,4 @@
 ﻿using FarmOrganizer.Models;
-using FarmOrganizer.ViewModels.Helpers;
 using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;

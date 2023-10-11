@@ -86,7 +86,7 @@ namespace FarmOrganizer.ViewModels
             {
                 if (!await PermissionManager.RequestPermissionsAsync())
                     return;
-                
+
                 await DatabaseFile.Delete();
                 await DatabaseFile.Create();
             }

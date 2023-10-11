@@ -1,9 +1,9 @@
 ﻿using FarmOrganizer.Database;
 using FarmOrganizer.Models;
 
-namespace FarmOrganizerTests.Database 
+namespace FarmOrganizerTests.Database
 {
-    public class IDatabaseAccesibleTests 
+    public class IDatabaseAccesibleTests
     {
         [Fact]
         public static void PassingSameContextIntoManyMethods()
@@ -32,7 +32,7 @@ namespace FarmOrganizerTests.Database
             context.Setup(e => e.CostTypes).ReturnsDbSet(costTypes);
 
             BalanceLedger.RetrieveAll(context.Object);
-            
+
             Assert.NotNull(context.Object);
 
             CostType.BuildCostTypeGroups(context.Object);

@@ -6,7 +6,6 @@ using FarmOrganizer.Exceptions;
 using FarmOrganizer.IO;
 using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
-using FarmOrganizer.ViewModels.Helpers;
 using Microsoft.Data.Sqlite;
 using PdfSharpCore.Pdf;
 

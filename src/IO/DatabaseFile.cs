@@ -1,5 +1,4 @@
 ﻿using FarmOrganizer.Database;
-using FarmOrganizer.Models;
 
 namespace FarmOrganizer.IO
 {
