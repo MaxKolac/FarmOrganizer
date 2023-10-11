@@ -5,6 +5,7 @@ using MigraDocCore.Rendering;
 using PdfSharpCore.Fonts;
 using PdfSharpCore.Pdf;
 using System.Globalization;
+using static MigraDocCore.DocumentObjectModel.Colors;
 
 namespace FarmOrganizer.IO.Exporting.PDF
 {
@@ -48,7 +49,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
             // Modifying default style
             var style = _document.Styles["Normal"];
             style.Font.Name = "OpenSans";
-            style.Font.Color = MigraDocCore.DocumentObjectModel.Colors.Black;
+            style.Font.Color = Black;
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
             style.ParagraphFormat.PageBreakBefore = false;
 
@@ -56,7 +57,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
             style = _document.Styles[StyleNames.Header];
             style.Font.Name = "OpenSans";
             style.Font.Size = 18;
-            style.Font.Color = MigraDocCore.DocumentObjectModel.Colors.Black;
+            style.Font.Color = Black;
             style.Font.Bold = true;
             style.Font.Underline = Underline.Single;
             style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
@@ -71,11 +72,11 @@ namespace FarmOrganizer.IO.Exporting.PDF
             style.Font.Size = 14;
             style.Font.Bold = true;
             style.Font.Italic = false;
-            style.Font.Color = MigraDocCore.DocumentObjectModel.Colors.DarkBlue;
-            style.ParagraphFormat.Shading.Color = MigraDocCore.DocumentObjectModel.Colors.SkyBlue;
+            style.Font.Color = DarkBlue;
+            style.ParagraphFormat.Shading.Color = SkyBlue;
             style.ParagraphFormat.Borders.Distance = "3pt";
             style.ParagraphFormat.Borders.Width = 2.5;
-            style.ParagraphFormat.Borders.Color = MigraDocCore.DocumentObjectModel.Colors.CadetBlue;
+            style.ParagraphFormat.Borders.Color = CadetBlue;
             style.ParagraphFormat.SpaceAfter = "1cm";
 
             // Modifying predefined style: Heading2
@@ -83,8 +84,8 @@ namespace FarmOrganizer.IO.Exporting.PDF
             style.Font.Size = 12;
             style.Font.Bold = false;
             style.Font.Italic = true;
-            style.Font.Color = MigraDocCore.DocumentObjectModel.Colors.DeepSkyBlue;
-            style.ParagraphFormat.Shading.Color = MigraDocCore.DocumentObjectModel.Colors.White;
+            style.Font.Color = DeepSkyBlue;
+            style.ParagraphFormat.Shading.Color = White;
             style.ParagraphFormat.Borders.Width = 0;
             style.ParagraphFormat.SpaceAfter = 3;
             style.ParagraphFormat.SpaceBefore = 3;
@@ -92,12 +93,12 @@ namespace FarmOrganizer.IO.Exporting.PDF
             // Adding new style
             style = _document.Styles.AddStyle("MyParagraphStyle", "Normal");
             style.Font.Size = 10;
-            style.Font.Color = MigraDocCore.DocumentObjectModel.Colors.Blue;
+            style.Font.Color = Blue;
             style.ParagraphFormat.SpaceAfter = 3;
 
             style = _document.Styles.AddStyle("MyTableStyle", "Normal");
             style.Font.Size = 9;
-            style.Font.Color = MigraDocCore.DocumentObjectModel.Colors.SlateBlue;
+            style.Font.Color = SlateBlue;
 
             //Adding a header
             var headerSection = _document.AddSection();
@@ -158,7 +159,27 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
         public PdfDocument Build()
         {
-            throw new NotImplementedException();
+            //Setup styles:
+            // Header style
+            // TableHeader style
+            // TableColumnHeader style
+            // TableRowContent style
+            // TableRowSum style
+            // Footer style
+
+            //Populate with content
+            // Add Header
+            // Create table with Expenses
+            // Create table with Profits
+            // Create table with Grand Total
+            // Add Footer
+
+            var renderer = new PdfDocumentRenderer
+            {
+                Document = _document
+            };
+            renderer.RenderDocument();
+            return renderer.PdfDocument;
         }
 
         public void AddCropField(CropField cropField)
