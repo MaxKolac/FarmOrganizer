@@ -23,8 +23,8 @@ namespace FarmOrganizer.IO.Exporting.PDF
         private readonly List<CropField> _cropFields = new();
         private string _seasonsLabel = "Sezon:";
         private readonly List<Season> _seasons = new();
-        private readonly List<CostTypeGroup> _expenses = new();
-        private readonly List<CostTypeGroup> _profits = new();
+        private readonly List<CostTypeReportEntry> _expenses = new();
+        private readonly List<CostTypeReportEntry> _profits = new();
 
         public static string Filename { get; } = $"Raport-{DateTime.Now:HH-mm-ss-dd-MM-yy}.pdf";
 
@@ -173,7 +173,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
             _seasonsLabel = _seasons.Count > 1 ? "Sezony:" : "Sezon:";
         }
 
-        public void AddExpense(CostTypeGroup costTypeGroup) => _expenses.Add(costTypeGroup);
-        public void AddProfit(CostTypeGroup costTypeGroup) => _profits.Add(costTypeGroup);
+        public void AddExpenseEntry(CostTypeReportEntry costTypeEntry) => _expenses.Add(costTypeEntry);
+        public void AddProfitEntry(CostTypeReportEntry costTypeEntry) => _profits.Add(costTypeEntry);
     }
 }
