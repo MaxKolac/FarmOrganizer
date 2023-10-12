@@ -44,11 +44,7 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 decimal hectares = Utils.CastToValue(CropFieldHectares);
-                var cropField = new CropField()
-                {
-                    Name = CropFieldName,
-                    Hectares = hectares
-                };
+                var cropField = new CropField(CropFieldName, hectares);
                 if (addingEntry)
                 {
                     CropField.AddEntry(cropField, null);
