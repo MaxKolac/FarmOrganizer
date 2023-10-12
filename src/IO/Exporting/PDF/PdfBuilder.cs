@@ -1,9 +1,13 @@
-﻿using FarmOrganizer.Models;
+﻿using CommunityToolkit.Maui.Storage;
+using FarmOrganizer.Exceptions;
+using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;
 using PdfSharpCore.Fonts;
 using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.Content.Objects;
+using PdfSharpCore.Pdf.Content;
 using System.Globalization;
 using static MigraDocCore.DocumentObjectModel.Colors;
 
@@ -13,32 +17,41 @@ namespace FarmOrganizer.IO.Exporting.PDF
     /// Responsible for instantiating, creating and then building reports as PDF files.<br/>
     /// First, create a new object instance. Use any method with <c>Add</c> prefix to add data to the report. Once ready to be rendered, use <see cref="Build"/> to return a rendered a <see cref="PdfDocument"/> and call <see cref="PdfDocument.Save(Stream)"/> or any of its overloads to save it as a PDF file.
     /// <para>
-    /// Class contains some code originally written by <see href="https://github.com/icebeam7">Luis Beltran</see>. Some of it was also taken from his <see href="https://github.com/icebeam7/PDFDemo"> example GitHub repository - PDFDemo</see>
+    /// Class contains some code originally written by <see href="https://github.com/icebeam7">Luis Beltran</see>. His code was copied and partially modified from his <see href="https://github.com/icebeam7/PDFDemo"> example GitHub repository - PDFDemo</see>
     /// </para>
     /// </summary>
     public class PdfBuilder
     {
-        private readonly Document _document;
-
-        private string _cropFieldsLabel = "Pole uprawne:";
+        private Document _document;
         private readonly List<CropField> _cropFields = new();
-        private string _seasonsLabel = "Sezon:";
         private readonly List<Season> _seasons = new();
         private readonly List<CostTypeReportEntry> _expenses = new();
         private readonly List<CostTypeReportEntry> _profits = new();
 
-        public static string Filename { get; } = $"Raport-{DateTime.Now:HH-mm-ss-dd-MM-yy}.pdf";
+        /// <summary>
+        /// The 0. index holds the total sum of expenses, and 1. index is the total sum of profits.
+        /// </summary>
+        private readonly decimal[] _totalAmounts = new decimal[] { 0, 0 };
+
+        public static string Filename { get; } = $"Raport_{DateTime.Now:HH-mm-ss_dd-MM-yy}.pdf";
 
         public PdfBuilder()
         {
             GlobalFontSettings.FontResolver = new GenericFontResolver();
             CultureInfo.CurrentCulture = new CultureInfo("pl-PL", false);
-            _document = new();
+            InitializeDocument();
+        }
 
-            _document.Info.Title = "Title";
-            _document.Info.Subject = "Subject";
-            _document.Info.Author = "Author";
-            _document.Info.Keywords = "Keywords";
+        public PdfBuilder(List<CropField> cropFields, List<Season> seasons, List<CostTypeReportEntry> expenses, List<CostTypeReportEntry> profits) : base()
+        {
+            foreach (var field in cropFields)
+                AddCropField(field);
+            foreach (var season in seasons)
+                AddSeason(season);
+            foreach (var expense in expenses)
+                AddExpenseEntry(expense);
+            foreach (var profit in profits)
+                AddProfitEntry(profit);
         }
 
         /// <summary>
@@ -157,22 +170,32 @@ namespace FarmOrganizer.IO.Exporting.PDF
             return renderer.PdfDocument;
         }
 
+        /// <summary>
+        /// Creates a new blank document, runs a sequence of methods which populate it with content, applies styles to it and finally renders it.
+        /// </summary>
+        /// <returns>
+        /// A rendered <see cref="PdfDocument"/>. 
+        /// </returns>
         public PdfDocument Build()
         {
-            //Setup styles:
-            // Header style
-            // TableHeader style
-            // TableColumnHeader style
-            // TableRowContent style
-            // TableRowSum style
-            // Footer style
+            InitializeDocument();
+            SetupStyles();
 
-            //Populate with content
-            // Add Header
-            // Create table with Expenses
-            // Create table with Profits
-            // Create table with Grand Total
-            // Add Footer
+            AddHeader();
+            AddReportInfo();
+            AddGap();
+            AddTable(_expenses);
+            AddGap();
+            AddTable(_profits);
+
+            var grandTotalList = new List<CostTypeReportEntry>
+            {
+                new("Suma wydatków", _totalAmounts[0]),
+                new("Suma przychodów", _totalAmounts[1])
+            };
+            AddTable(grandTotalList);
+
+            AddFooter();
 
             var renderer = new PdfDocumentRenderer
             {
@@ -182,19 +205,234 @@ namespace FarmOrganizer.IO.Exporting.PDF
             return renderer.PdfDocument;
         }
 
-        public void AddCropField(CropField cropField)
+        void InitializeDocument()
         {
+            _document = new();
+
+            _document.Info.Title = "Title";
+            _document.Info.Subject = "Subject";
+            _document.Info.Author = "Author";
+            _document.Info.Keywords = "Keywords";
+
+            var config = _document.AddSection().PageSetup;
+            config.Orientation = Orientation.Portrait;
+            config.TopMargin = "3cm";
+            config.LeftMargin = 15;
+            config.BottomMargin = "3cm";
+            config.RightMargin = 15;
+            config.PageFormat = PageFormat.A4;
+            config.OddAndEvenPagesHeaderFooter = true;
+            config.StartingNumber = 1;
+        }
+
+        void SetupStyles()
+        {
+            //Header
+            var header = _document.Styles[StyleNames.Header];
+
+            //TableHeader
+            var tableHeader = _document.Styles.AddStyle("TableHeader", "Normal");
+            tableHeader.Font.Size = 20;
+            tableHeader.Font.Bold = true;
+            tableHeader.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
+            //TableColumnHeader
+            var tableColumnHeader = _document.Styles.AddStyle("TableColumnHeader", "Normal");
+            tableColumnHeader.Font.Size = 16;
+            tableColumnHeader.Font.Bold = true;
+
+            //TableRowContent
+            var tableRowContent = _document.Styles.AddStyle("TableRowContent", "Normal");
+            tableRowContent.Font.Size = 12;
+
+            //TableRowSum
+            var tableRowSum = _document.Styles.AddStyle("TableRowSum", "TableRowContent");
+            tableRowSum.Font.Bold = true;
+
+            //Footer
+            var footer = _document.Styles[StyleNames.Footer];
+            footer.Font.Italic = true;
+            footer.Font.Color = Gray;
+        }
+
+        void AddHeader()
+        {
+            var content = new Paragraph
+            {
+                Style = StyleNames.Header
+            };
+            content.AddText("Zestawienie przychodów/wydatków");
+
+            _document.LastSection.Headers.Primary.Add(content);
+        }
+
+        void AddReportInfo()
+        {
+            _document.LastSection.AddParagraph("Informacje o danych w raporcie", "TableHeader");
+
+            var table = _document.LastSection.AddTable();
+            table.Rows.HeightRule = MigraDocCore.DocumentObjectModel.Tables.RowHeightRule.Auto;
+
+            var column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            column.Format.Alignment = ParagraphAlignment.Left;
+
+            column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            column.Format.Alignment = ParagraphAlignment.Right;
+
+            var seasonHeader = table.AddRow();
+            seasonHeader.Style = "TableRowContent";
+            seasonHeader.Cells[0].AddParagraph(_seasons.Count > 1 ? "Sezony:" : "Sezon:");
+            seasonHeader.Cells[1].AddParagraph(_seasons.Count == 0 ? "<brak>" : _seasons[0].ToString());
+            for (int i = 1; i < _seasons.Count; i++)
+            {
+                var anotherSeason = table.AddRow();
+                anotherSeason.Style = "TableRowContent";
+                anotherSeason.Cells[1].AddParagraph(_seasons[i].ToString());
+            }
+
+            var cropfieldHeader = table.AddRow();
+            cropfieldHeader.Style = "TableRowContent";
+            cropfieldHeader.Cells[0].AddParagraph(_cropFields.Count > 1 ? "Pola uprawne:" : "Pole uprawne:");
+            cropfieldHeader.Cells[1].AddParagraph(_cropFields.Count == 0 ? "<brak>" : _cropFields[0].ToString());
+            for (int i = 1; i < _cropFields.Count; i++)
+            {
+                var anotherField = table.AddRow();
+                anotherField.Style = "TableRowContent";
+                anotherField.Cells[1].AddParagraph(_cropFields[i].ToString());
+            }
+        }
+
+        void AddTable(List<CostTypeReportEntry> tableContents)
+        {
+            var table = _document.LastSection.AddTable();
+            table.Rows.HeightRule = MigraDocCore.DocumentObjectModel.Tables.RowHeightRule.Auto;
+
+            var column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            column.Format.Alignment = ParagraphAlignment.Left;
+
+            column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            column.Format.Alignment = ParagraphAlignment.Right;
+
+            var headerRow = table.AddRow();
+            headerRow.Style = "TableColumnHeader";
+            headerRow.Cells[0].AddParagraph("Kategoria");
+            headerRow.Cells[1].AddParagraph("Suma");
+
+            decimal grandTotal = 0m;
+            foreach (CostTypeReportEntry entry in tableContents)
+            {
+                var contentRow = table.AddRow();
+                contentRow.Style = "TableRowContent";
+                contentRow.Cells[0].AddParagraph(entry.Name);
+                contentRow.Cells[1].AddParagraph($"{entry.Amount:F2}");
+                grandTotal += entry.Amount;
+            }
+
+            var grandTotalRow = table.AddRow();
+            grandTotalRow.Style = "TableRowSum";
+            grandTotalRow.Cells[0].AddParagraph("Razem:");
+            grandTotalRow.Cells[1].AddParagraph($"{grandTotal:F2}");
+        }
+
+        void AddGap()
+        {
+            var gap = _document.LastSection.AddParagraph();
+            gap.AddSpace(10);
+        }
+
+        void AddFooter()
+        {
+            var content = new Paragraph
+            {
+                Style = StyleNames.Footer
+            };
+            content.AddText(" Strona ");
+            content.AddPageField();
+            content.AddText(" z ");
+            content.AddNumPagesField();
+            content.AddTab();
+            content.AddText($"Raport wygenerowano dnia {DateTime.Now:G}. ");
+            content.AddText($"Wygenerowano w {AppInfo.Current.Name} w wersji {AppInfo.Current.VersionString}.");
+
+            _document.LastSection.Footers.Primary.Add(content);
+        }
+
+        public void AddCropField(CropField cropField) =>
             _cropFields.Add(cropField);
-            _cropFieldsLabel = _cropFields.Count > 1 ? "Pola uprawne:" : "Pole uprawne:";
-        }
 
-        public void AddSeason(Season season)
-        {
+        public void AddSeason(Season season) =>
             _seasons.Add(season);
-            _seasonsLabel = _seasons.Count > 1 ? "Sezony:" : "Sezon:";
+
+        public void AddExpenseEntry(CostTypeReportEntry costTypeEntry)
+        {
+            _totalAmounts[0] += costTypeEntry.Amount;
+            _expenses.Add(costTypeEntry);
         }
 
-        public void AddExpenseEntry(CostTypeReportEntry costTypeEntry) => _expenses.Add(costTypeEntry);
-        public void AddProfitEntry(CostTypeReportEntry costTypeEntry) => _profits.Add(costTypeEntry);
+        public void AddProfitEntry(CostTypeReportEntry costTypeEntry)
+        {
+            _totalAmounts[1] += costTypeEntry.Amount;
+            _profits.Add(costTypeEntry);
+        }
+
+        public static async Task Export(PdfDocument document)
+        {
+            try
+            {
+                if (!await PermissionManager.RequestPermissionsAsync())
+                    return;
+                FolderPickerResult folder = await FolderPicker.PickAsync(default);
+                if (!folder.IsSuccessful)
+                    return;
+                document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
+                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path} z nazwą {PdfBuilder.Filename}.");
+            }
+            catch (IOException ex)
+            {
+                ExceptionHandler.Handle(ex, false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Origin of code: <see href="https://stackoverflow.com/questions/10141143/c-sharp-extract-text-from-pdf-using-pdfsharp"/><br/>
+    /// Author: <see href="https://stackoverflow.com/users/355899/sergio">Sergio</see>; 
+    /// Modified by: <see href="https://stackoverflow.com/users/64334/ronnie-overby">Ronnie Overby</see>.
+    /// </summary>
+    public static class PdfSharpExtensions
+    {
+        public static IEnumerable<string> ExtractText(this PdfPage page)
+        {
+            var content = ContentReader.ReadContent(page);
+            var text = content.ExtractText();
+            return text;
+        }
+
+        public static IEnumerable<string> ExtractText(this CObject cObject)
+        {
+            if (cObject is COperator)
+            {
+                var cOperator = cObject as COperator;
+                if (cOperator.OpCode.Name == OpCodeName.Tj.ToString() ||
+                    cOperator.OpCode.Name == OpCodeName.TJ.ToString())
+                {
+                    foreach (var cOperand in cOperator.Operands)
+                        foreach (var txt in ExtractText(cOperand))
+                            yield return txt;
+                }
+            }
+            else if (cObject is CSequence)
+            {
+                var cSequence = cObject as CSequence;
+                foreach (var element in cSequence)
+                    foreach (var txt in ExtractText(element))
+                        yield return txt;
+            }
+            else if (cObject is CString)
+            {
+                var cString = cObject as CString;
+                yield return cString.Value;
+            }
+        }
     }
 }

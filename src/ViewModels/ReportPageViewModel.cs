@@ -188,26 +188,11 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private static async Task ExportReportAsPDF()
+        private async Task ExportReportAsPDF()
         {
-            var builder = new PdfBuilder();
-            //builder.Add(...)
-            PdfDocument document = builder.BuildDemo();
-
-            try
-            {
-                if (!await PermissionManager.RequestPermissionsAsync())
-                    return;
-                FolderPickerResult folder = await FolderPicker.PickAsync(default);
-                if (!folder.IsSuccessful)
-                    return;
-                document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
-                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path}");
-            }
-            catch (IOException ex)
-            {
-                ExceptionHandler.Handle(ex, false);
-            }
+            var builder = new PdfBuilder(PassedCropFields, PassedSeasons, ExpenseEntries, ProfitEntries);
+            var document = builder.Build();
+            await PdfBuilder.Export(document);
         }
 
         protected override void OnIncomeChanged(string value) =>
