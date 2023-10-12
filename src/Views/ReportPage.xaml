@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:helper="clr-namespace:FarmOrganizer.ViewModels.Helpers"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.ReportPage"
@@ -55,7 +54,7 @@
             <Setter Property="Margin" Value="5"/>
         </Style>
 
-        <DataTemplate x:DataType="helper:CostTypeReportEntry" x:Key="CostTypeReportEntryTemplate">
+        <DataTemplate x:DataType="viewmodel:CostTypeReportEntry" x:Key="CostTypeReportEntryTemplate">
             <Frame Style="{StaticResource EntriesFrame}">
                 <Grid ColumnDefinitions="Auto, *">
                     <Label Grid.Column="0" 

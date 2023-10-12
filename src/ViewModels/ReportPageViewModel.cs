@@ -121,11 +121,7 @@ namespace FarmOrganizer.ViewModels
 
             foreach (KeyValuePair<CostType, decimal> kvp in costDictionary)
             {
-                CostTypeReportEntry entry = new()
-                {
-                    Name = kvp.Key.Name,
-                    Amount = kvp.Value
-                };
+                var entry = new CostTypeReportEntry(kvp.Key.Name, kvp.Value);
                 if (kvp.Key.IsExpense)
                     ExpenseEntries.Add(entry);
                 else
