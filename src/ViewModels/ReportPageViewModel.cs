@@ -42,7 +42,7 @@ namespace FarmOrganizer.ViewModels
         private decimal profitAfterExpenses = 0.0m;
         #endregion
 
-        #region Properties related to adding new records
+        #region Properties related to options at view's bottom
         [ObservableProperty]
         private bool addNewSeasonAfterSaving = false;
         [ObservableProperty]
@@ -51,6 +51,8 @@ namespace FarmOrganizer.ViewModels
         private List<CostType> costTypes;
         [ObservableProperty]
         private CostType selectedCostType;
+        [ObservableProperty]
+        private bool exportPdfWithPureIncome = false;
         #endregion
 
         #region Dynamic text
@@ -191,6 +193,8 @@ namespace FarmOrganizer.ViewModels
         private async Task ExportReportAsPDF()
         {
             var builder = new PdfBuilder(PassedCropFields, PassedSeasons, ExpenseEntries, ProfitEntries);
+            if (ExportPdfWithPureIncome)
+                builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", Utils.CastToValue(PureIncomeValue)));
             var document = builder.Build();
             await PdfBuilder.Export(document);
         }

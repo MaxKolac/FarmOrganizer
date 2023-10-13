@@ -270,8 +270,20 @@
                         <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
                         <Button Text="{Binding TotalChangeText, StringFormat='Dodaj zysk ze sprzedaży jako wpis'}"
                                 Command="{Binding AddNewLedgerEntryCommand}" />
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- PDF Exporting -->
+                <Frame Style="{StaticResource OptionsFrame}">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="Auto, *"
+                              RowDefinitions="Auto">        
+                            <CheckBox Grid.Row="1"
+                                      Grid.Column="0" 
+                                      IsEnabled="True"
                                       IsChecked="{Binding ExportPdfWithPureIncome}"/>
                             <Label Grid.Column="1" 
+                                   VerticalOptions="Center"
                                    Text="Uwzględnij zysk ze sprzedaży w PDF"/>
                         </Grid>
                         <Button Text="Eksportuj raport jako PDF"
