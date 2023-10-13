@@ -27,6 +27,11 @@
             <Setter Property="BorderColor" Value="Transparent"/>
             <Setter Property="BackgroundColor" Value="Transparent"/>
         </Style>
+        <Style TargetType="Frame" x:Key="OptionsFrame" BasedOn="{StaticResource ModelPageCreatorFrame}">
+            <Setter Property="BorderColor" Value="LightGray" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
 
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
@@ -238,28 +243,43 @@
             </VerticalStackLayout>
 
             <!-- Options at the bottom -->
-            <VerticalStackLayout>
-                <Grid ColumnDefinitions="Auto, *"
-                      RowDefinitions="Auto">
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="0"
-                              x:Name="AddNewSeasonAfterSavingCheckBox"
-                              IsChecked="{Binding AddNewSeasonAfterSaving}"
-                              IsEnabled="True"/>
-                    <Label Grid.Column="1" 
-                           VerticalOptions="Center"
-                           Text="Po dodaniu wpisu, rozpocznij nowy sezon"/>
-                </Grid>
-                <Label Text="Nazwa nowego sezonu:"
-                       IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
-                <Entry Text="{Binding NewSeasonName}"
-                       IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
-                <Label Text="Kategoria nowego wpisu:"/>
-                <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
-                <Button Text="{Binding TotalChangeText, StringFormat='Dodaj zysk ze sprzedaży jako wpis'}"
-                        Command="{Binding AddNewLedgerEntryCommand}" />
-                <Button Text="Eksportuj raport jako PDF"
-                        Command="{Binding ExportReportAsPDFCommand}" />
+            <VerticalStackLayout Spacing="5">
+                <!-- New Season adding -->
+                <Frame Style="{StaticResource OptionsFrame}">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="Auto, *"
+                              RowDefinitions="Auto">
+                            <CheckBox Grid.Row="1"
+                                      Grid.Column="0"
+                                      x:Name="AddNewSeasonAfterSavingCheckBox"
+                                      IsChecked="{Binding AddNewSeasonAfterSaving}"
+                                      IsEnabled="True"/>
+                            <Label Grid.Column="1" 
+                                   VerticalOptions="Center"
+                                   Text="Po dodaniu wpisu, rozpocznij nowy sezon"/>
+                        </Grid>
+                        <Label Text="Nazwa nowego sezonu:"
+                               IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
+                        <Entry Text="{Binding NewSeasonName}"
+                               IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- New Entry adding -->
+                <Frame Style="{StaticResource OptionsFrame}">
+                    <VerticalStackLayout>
+                        <Label Text="Kategoria nowego wpisu:"/>
+                        <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
+                        <Button Text="{Binding TotalChangeText, StringFormat='Dodaj zysk ze sprzedaży jako wpis'}"
+                                Command="{Binding AddNewLedgerEntryCommand}" />
+                                      IsChecked="{Binding ExportPdfWithPureIncome}"/>
+                            <Label Grid.Column="1" 
+                                   Text="Uwzględnij zysk ze sprzedaży w PDF"/>
+                        </Grid>
+                        <Button Text="Eksportuj raport jako PDF"
+                                Command="{Binding ExportReportAsPDFCommand}" />
+                    </VerticalStackLayout>
+                </Frame>
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>
