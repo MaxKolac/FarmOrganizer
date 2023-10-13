@@ -22,6 +22,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
     /// </summary>
     public class PdfBuilder
     {
+        //TODO: Polish special characters do not work when using Font object, but some research showed that Japanese text works with PdfSharp's original XFont object. Should look into that.
         private Document _document;
         private readonly List<CropField> _cropFields = new();
         private readonly List<Season> _seasons = new();
@@ -33,14 +34,14 @@ namespace FarmOrganizer.IO.Exporting.PDF
         /// </summary>
         private readonly decimal[] _totalAmounts = new decimal[] { 0, 0 };
 
-        public static string Filename { get; } = $"Raport_{DateTime.Now:HH-mm-ss_dd-MM-yy}.pdf";
+        public static string Filename { get { return $"Raport_{DateTime.Now:dd.MM.yy_HH.mm.ss}.pdf"; } }
 
         public PdfBuilder()
         {
             InitializeDocument();
         }
 
-        public PdfBuilder(List<CropField> cropFields, List<Season> seasons, List<CostTypeReportEntry> expenses, List<CostTypeReportEntry> profits) : base()
+        public PdfBuilder(List<CropField> cropFields, List<Season> seasons, List<CostTypeReportEntry> expenses, List<CostTypeReportEntry> profits) : this()
         {
             foreach (var field in cropFields)
                 AddCropField(field);
@@ -182,16 +183,17 @@ namespace FarmOrganizer.IO.Exporting.PDF
             AddHeader();
             AddReportInfo();
             AddGap();
-            AddTable(_expenses);
+            AddTable(_expenses, "Wydatki");
             AddGap();
-            AddTable(_profits);
+            AddTable(_profits, "Przychody");
+            AddGap();
 
             var grandTotalList = new List<CostTypeReportEntry>
             {
-                new("Suma wydatków", _totalAmounts[0]),
+                new("Suma wydatków", _totalAmounts[0] * -1),
                 new("Suma przychodów", _totalAmounts[1])
             };
-            AddTable(grandTotalList);
+            AddTable(grandTotalList, "Zmiana ąęłńśćóżź");
 
             AddFooter();
 
@@ -214,12 +216,11 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
             var config = _document.AddSection().PageSetup;
             config.Orientation = Orientation.Portrait;
-            config.TopMargin = "3cm";
-            config.LeftMargin = 15;
-            config.BottomMargin = "3cm";
-            config.RightMargin = 15;
             config.PageFormat = PageFormat.A4;
-            config.OddAndEvenPagesHeaderFooter = true;
+            config.TopMargin = new Unit(3, UnitType.Centimeter);
+            config.LeftMargin = new Unit(1.5, UnitType.Centimeter);
+            config.BottomMargin = new Unit(3, UnitType.Centimeter);
+            config.RightMargin = new Unit(1.5, UnitType.Centimeter);
             config.StartingNumber = 1;
         }
 
@@ -227,25 +228,23 @@ namespace FarmOrganizer.IO.Exporting.PDF
         {
             //Header
             var header = _document.Styles[StyleNames.Header];
+            header.Font.Size = 16;
+            header.Font.Bold = true;
+            header.ParagraphFormat.Alignment = ParagraphAlignment.Center;
 
             //TableHeader
             var tableHeader = _document.Styles.AddStyle("TableHeader", "Normal");
-            tableHeader.Font.Size = 20;
+            tableHeader.Font.Size = 14;
             tableHeader.Font.Bold = true;
             tableHeader.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-
-            //TableColumnHeader
-            var tableColumnHeader = _document.Styles.AddStyle("TableColumnHeader", "Normal");
-            tableColumnHeader.Font.Size = 16;
-            tableColumnHeader.Font.Bold = true;
 
             //TableRowContent
             var tableRowContent = _document.Styles.AddStyle("TableRowContent", "Normal");
             tableRowContent.Font.Size = 12;
 
-            //TableRowSum
-            var tableRowSum = _document.Styles.AddStyle("TableRowSum", "TableRowContent");
-            tableRowSum.Font.Bold = true;
+            //TableRowBold
+            var tableRowBold = _document.Styles.AddStyle("TableRowBold", "TableRowContent");
+            tableRowBold.Font.Bold = true;
 
             //Footer
             var footer = _document.Styles[StyleNames.Footer];
@@ -259,61 +258,69 @@ namespace FarmOrganizer.IO.Exporting.PDF
             {
                 Style = StyleNames.Header
             };
-            content.AddText("Zestawienie przychodów/wydatków");
+            content.AddText("Zestawienie przychodów i wydatków");
 
             _document.LastSection.Headers.Primary.Add(content);
         }
 
         void AddReportInfo()
         {
-            _document.LastSection.AddParagraph("Informacje o danych w raporcie", "TableHeader");
+            _document.LastSection.AddParagraph("Informacje o raporcie", "TableHeader");
 
             var table = _document.LastSection.AddTable();
             table.Rows.HeightRule = MigraDocCore.DocumentObjectModel.Tables.RowHeightRule.Auto;
 
-            var column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            var column = table.AddColumn(new Unit(9, UnitType.Centimeter));
             column.Format.Alignment = ParagraphAlignment.Left;
 
-            column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            column = table.AddColumn(new Unit(9, UnitType.Centimeter));
             column.Format.Alignment = ParagraphAlignment.Right;
 
             var seasonHeader = table.AddRow();
             seasonHeader.Style = "TableRowContent";
             seasonHeader.Cells[0].AddParagraph(_seasons.Count > 1 ? "Sezony:" : "Sezon:");
             seasonHeader.Cells[1].AddParagraph(_seasons.Count == 0 ? "<brak>" : _seasons[0].ToString());
+            seasonHeader.Cells[1].Format.Alignment = ParagraphAlignment.Right;
             for (int i = 1; i < _seasons.Count; i++)
             {
                 var anotherSeason = table.AddRow();
                 anotherSeason.Style = "TableRowContent";
                 anotherSeason.Cells[1].AddParagraph(_seasons[i].ToString());
+                anotherSeason.Cells[1].Format.Alignment = ParagraphAlignment.Right;
             }
 
             var cropfieldHeader = table.AddRow();
             cropfieldHeader.Style = "TableRowContent";
             cropfieldHeader.Cells[0].AddParagraph(_cropFields.Count > 1 ? "Pola uprawne:" : "Pole uprawne:");
             cropfieldHeader.Cells[1].AddParagraph(_cropFields.Count == 0 ? "<brak>" : _cropFields[0].ToString());
+            cropfieldHeader.Cells[1].Format.Alignment = ParagraphAlignment.Right;
             for (int i = 1; i < _cropFields.Count; i++)
             {
                 var anotherField = table.AddRow();
                 anotherField.Style = "TableRowContent";
+                anotherField.Cells[1].Format.Alignment = ParagraphAlignment.Right;
                 anotherField.Cells[1].AddParagraph(_cropFields[i].ToString());
             }
         }
 
-        void AddTable(List<CostTypeReportEntry> tableContents)
+        void AddTable(List<CostTypeReportEntry> tableContents, string tableHeaderText)
         {
+            if (!string.IsNullOrEmpty(tableHeaderText))
+                _document.LastSection.AddParagraph(tableHeaderText, "TableHeader");
+
             var table = _document.LastSection.AddTable();
             table.Rows.HeightRule = MigraDocCore.DocumentObjectModel.Tables.RowHeightRule.Auto;
 
-            var column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            var column = table.AddColumn(new Unit(9, UnitType.Centimeter));
             column.Format.Alignment = ParagraphAlignment.Left;
 
-            column = table.AddColumn(new Unit(9.5d, UnitType.Centimeter));
+            column = table.AddColumn(new Unit(9, UnitType.Centimeter));
             column.Format.Alignment = ParagraphAlignment.Right;
 
             var headerRow = table.AddRow();
-            headerRow.Style = "TableColumnHeader";
+            headerRow.Style = "TableRowBold";
             headerRow.Cells[0].AddParagraph("Kategoria");
+            headerRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
             headerRow.Cells[1].AddParagraph("Suma");
 
             decimal grandTotal = 0m;
@@ -322,14 +329,16 @@ namespace FarmOrganizer.IO.Exporting.PDF
                 var contentRow = table.AddRow();
                 contentRow.Style = "TableRowContent";
                 contentRow.Cells[0].AddParagraph(entry.Name);
-                contentRow.Cells[1].AddParagraph($"{entry.Amount:F2}");
+                contentRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
+                contentRow.Cells[1].AddParagraph($"{entry.Amount:F2} zł");
                 grandTotal += entry.Amount;
             }
 
             var grandTotalRow = table.AddRow();
-            grandTotalRow.Style = "TableRowSum";
+            grandTotalRow.Style = "TableRowBold";
             grandTotalRow.Cells[0].AddParagraph("Razem:");
-            grandTotalRow.Cells[1].AddParagraph($"{grandTotal:F2}");
+            grandTotalRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
+            grandTotalRow.Cells[1].AddParagraph($"{grandTotal:F2} zł");
         }
 
         void AddGap()
