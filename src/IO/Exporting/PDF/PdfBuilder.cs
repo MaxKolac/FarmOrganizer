@@ -37,8 +37,6 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
         public PdfBuilder()
         {
-            GlobalFontSettings.FontResolver = new GenericFontResolver();
-            CultureInfo.CurrentCulture = new CultureInfo("pl-PL", false);
             InitializeDocument();
         }
 
