@@ -163,16 +163,24 @@
                        Style="{StaticResource InstructionLabel}"/>
 
                 <Grid ColumnDefinitions=".9*, Auto"
-                      RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+                      RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
 
                     <!-- Total change -->
                     <Label Grid.Row="0"
-                           Grid.ColumnSpan="2"
                            Text="{Binding TotalChangeText, StringFormat='{0}:'}" 
                            Style="{StaticResource QuickCalcLabel}"/>
                     <Label Grid.Row="1"
-                           Grid.ColumnSpan="2"
                            Text="{Binding TotalChange, StringFormat='{0:F2} zł'}"
+                           Style="{StaticResource QuickCalcTotalLabel}"/>
+
+                    <!-- Profit after expenses -->
+                    <Label Grid.Row="0"
+                           HorizontalOptions="End"
+                           Text="{Binding ProfitAfterExpensesText, StringFormat='{0} po wydatkach:'}" 
+                           Style="{StaticResource QuickCalcLabel}"/>
+                    <Label Grid.Row="1"
+                           HorizontalOptions="End"
+                           Text="{Binding ProfitAfterExpenses, StringFormat='{0:F2} zł'}"
                            Style="{StaticResource QuickCalcTotalLabel}"/>
 
                     <Frame Grid.Row="2" 
@@ -229,16 +237,6 @@
                             <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
                         </Grid>
                     </Frame>
-
-                    <!-- Profit after expenses -->
-                    <Label Grid.Row="8"
-                           Grid.ColumnSpan="2"
-                           Text="{Binding ProfitAfterExpensesText, StringFormat='{0} po wydatkach:'}" 
-                           Style="{StaticResource QuickCalcLabel}"/>
-                    <Label Grid.Row="9"
-                           Grid.ColumnSpan="2"
-                           Text="{Binding ProfitAfterExpenses, StringFormat='{0:F2} zł'}"
-                           Style="{StaticResource QuickCalcTotalLabel}"/>
                 </Grid>
             </VerticalStackLayout>
 
