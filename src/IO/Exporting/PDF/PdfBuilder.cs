@@ -108,7 +108,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
                 new("Suma wydatków", _totalAmounts[0] * -1),
                 new("Suma przychodów", _totalAmounts[1])
             };
-            AddTable(grandTotalList, "Zmiana ąęłńśćóżź");
+            AddTable(grandTotalList, _totalAmounts[0] <= _totalAmounts[1] ? "Zyski" : "Straty");
 
             AddFooter();
 
