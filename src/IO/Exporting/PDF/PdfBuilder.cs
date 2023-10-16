@@ -4,7 +4,6 @@ using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;
-using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.Content;
 using PdfSharpCore.Pdf.Content.Objects;
@@ -22,6 +21,10 @@ namespace FarmOrganizer.IO.Exporting.PDF
     public class PdfBuilder
     {
         //TODO: Polish special characters do not work when using Font object, but some research showed that Japanese text works with PdfSharp's original XFont object. Should look into that.
+        //TODO: Swapping the OpenSans font for Arial-Regular (and only regular because according to this dumb computer Italic != Italic) did not fix the issue of special characters. It's 100% to be something within MigraDoc rendering process, its not the font file's fault.
+        //TODO: the console application which used PdfSharpCore's DrawString correctly renders Polish characters
+        // You bumbling imbecil. All that was needed was to call PdfRenderer constructor with one bool parameter.
+        // Because I guess Unicode encoding isn't turned on by default???? This API sucks.
         private Document _document;
         private readonly List<CropField> _cropFields = new();
         private readonly List<Season> _seasons = new();
@@ -87,122 +90,6 @@ namespace FarmOrganizer.IO.Exporting.PDF
         }
 
         /// <summary>
-        /// Original Author: <see href="https://github.com/icebeam7">Luis Beltran</see> | <see href="https://github.com/icebeam7/PDFDemo">Source GitHub repository - PDFDemo</see>
-        /// </summary>
-        public PdfDocument BuildDemo()
-        {
-            // Modifying default style
-            var style = _document.Styles["Normal"];
-            style.Font.Name = "OpenSans";
-            style.Font.Color = Black;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.PageBreakBefore = false;
-
-            // Header style
-            style = _document.Styles[StyleNames.Header];
-            style.Font.Name = "OpenSans";
-            style.Font.Size = 18;
-            style.Font.Color = Black;
-            style.Font.Bold = true;
-            style.Font.Underline = Underline.Single;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-
-            // Footer style
-            style = _document.Styles[StyleNames.Footer];
-            style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Right);
-
-            // Modifying predefined style: HeadingN (where N goes from 1 to 9)
-            style = _document.Styles["Heading1"];
-            style.Font.Name = "OpenSans"; // Can be changed (don't forget to add and register the Fonts!)
-            style.Font.Size = 14;
-            style.Font.Bold = true;
-            style.Font.Italic = false;
-            style.Font.Color = DarkBlue;
-            style.ParagraphFormat.Shading.Color = SkyBlue;
-            style.ParagraphFormat.Borders.Distance = "3pt";
-            style.ParagraphFormat.Borders.Width = 2.5;
-            style.ParagraphFormat.Borders.Color = CadetBlue;
-            style.ParagraphFormat.SpaceAfter = "1cm";
-
-            // Modifying predefined style: Heading2
-            style = _document.Styles["Heading2"];
-            style.Font.Size = 12;
-            style.Font.Bold = false;
-            style.Font.Italic = true;
-            style.Font.Color = DeepSkyBlue;
-            style.ParagraphFormat.Shading.Color = White;
-            style.ParagraphFormat.Borders.Width = 0;
-            style.ParagraphFormat.SpaceAfter = 3;
-            style.ParagraphFormat.SpaceBefore = 3;
-
-            // Adding new style
-            style = _document.Styles.AddStyle("MyParagraphStyle", "Normal");
-            style.Font.Size = 10;
-            style.Font.Color = Blue;
-            style.ParagraphFormat.SpaceAfter = 3;
-
-            style = _document.Styles.AddStyle("MyTableStyle", "Normal");
-            style.Font.Size = 9;
-            style.Font.Color = SlateBlue;
-
-            //Adding a header
-            var headerSection = _document.AddSection();
-
-            var headerConfig = headerSection.PageSetup;
-            headerConfig.Orientation = Orientation.Portrait;
-            headerConfig.TopMargin = "3cm";
-            headerConfig.LeftMargin = 15;
-            headerConfig.BottomMargin = "3cm";
-            headerConfig.RightMargin = 15;
-            headerConfig.PageFormat = PageFormat.A4;
-            headerConfig.OddAndEvenPagesHeaderFooter = true;
-            headerConfig.StartingNumber = 1;
-
-            var oddHeader = headerSection.Headers.Primary;
-
-            var headerContent = new Paragraph();
-            headerContent.AddText("\tProduct Catalog 2021 - Tech Solutions Inc\t");
-            oddHeader.Add(headerContent);
-            oddHeader.AddTable();
-
-            var headerForEvenPages = headerSection.Headers.EvenPage;
-            headerForEvenPages.AddParagraph("Product Catalog 2021");
-            headerForEvenPages.AddTable();
-
-            //Adding a footer
-            var footerContent = new Paragraph();
-            footerContent.AddText(" Page ");
-            footerContent.AddPageField();
-            footerContent.AddText(" of ");
-            footerContent.AddNumPagesField();
-
-            _document.LastSection.Footers.Primary.Add(footerContent);
-
-            var contentForEvenPages = footerContent.Clone();
-            contentForEvenPages.AddTab();
-            contentForEvenPages.AddText("\tDate: ");
-            contentForEvenPages.AddDateField("dddd, MMMM dd, yyyy HH:mm:ss tt");
-
-            headerSection.Footers.EvenPage.Add(contentForEvenPages);
-
-            //Adding text
-            var text1 = "At Tech Solutions Inc, it is our top priority to bring only products of the highest quality to our customers. Products always pass a strict quality control process before they are delivered to you. We put ourselves in the customer's shoes, and only want to offer products that will make our clients happy.";
-
-            var mainParagraph = _document.LastSection.AddParagraph(text1, "Heading1");
-            mainParagraph.AddLineBreak();
-
-            text1 = "All components of Tech Solutions Inc sample products have undergone strict laboratory tests for lead, nickel and cadmium content. A world-leading inspection, testing, and certification company has conducted these testsm and as you can see below, our products have passed with perfect note.";
-            _document.LastSection.AddParagraph(text1, "Heading2");
-
-            var renderer = new PdfDocumentRenderer
-            {
-                Document = _document
-            };
-            renderer.RenderDocument();
-            return renderer.PdfDocument;
-        }
-
-        /// <summary>
         /// Creates a new blank document, runs a sequence of methods which populate it with content, applies styles to it and finally renders it.
         /// </summary>
         /// <returns>
@@ -230,7 +117,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
             AddFooter();
 
-            var renderer = new PdfDocumentRenderer
+            var renderer = new PdfDocumentRenderer(true)
             {
                 Document = _document
             };
@@ -424,8 +311,8 @@ namespace FarmOrganizer.IO.Exporting.PDF
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
                 if (!folder.IsSuccessful)
                     return;
-                document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
-                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path} z nazwą {PdfBuilder.Filename}.");
+                document.Save(Path.Combine(folder.Folder.Path, Filename));
+                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path} z nazwą {Filename}.");
             }
             catch (IOException ex)
             {
