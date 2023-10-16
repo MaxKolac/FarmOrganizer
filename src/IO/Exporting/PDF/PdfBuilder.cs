@@ -4,18 +4,17 @@ using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;
-using PdfSharpCore.Fonts;
+using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.Content.Objects;
 using PdfSharpCore.Pdf.Content;
-using System.Globalization;
+using PdfSharpCore.Pdf.Content.Objects;
 using static MigraDocCore.DocumentObjectModel.Colors;
 
 namespace FarmOrganizer.IO.Exporting.PDF
 {
     /// <summary>
     /// Responsible for instantiating, creating and then building reports as PDF files.<br/>
-    /// First, create a new object instance. Use any method with <c>Add</c> prefix to add data to the report. Once ready to be rendered, use <see cref="Build"/> to return a rendered a <see cref="PdfDocument"/> and call <see cref="PdfDocument.Save(Stream)"/> or any of its overloads to save it as a PDF file.
+    /// First, create a new object instance. Initialize the object with predefined lists right away or use any method with <c>Add</c> prefix to add data to the report. Once ready to be rendered, use <see cref="Build"/> to return a rendered a <see cref="PdfDocument"/> and call <see cref="Export(PdfDocument)"/> to save it as a PDF file on the device.
     /// <para>
     /// Class contains some code originally written by <see href="https://github.com/icebeam7">Luis Beltran</see>. His code was copied and partially modified from his <see href="https://github.com/icebeam7/PDFDemo"> example GitHub repository - PDFDemo</see>
     /// </para>
@@ -34,14 +33,48 @@ namespace FarmOrganizer.IO.Exporting.PDF
         /// </summary>
         private readonly decimal[] _totalAmounts = new decimal[] { 0, 0 };
 
+        /// <summary>
+        /// The name of the application, which will show up in the footer of the document<br/>
+        /// This needs to be passed from outside the <see cref="PdfBuilder"/> class. 
+        /// Directly putting <see cref="AppInfo"/> properties causes an exception when running tests in FarmOrganizerTests, because that project doesn't have a reference to .NET MAUI in its assembly. Which is where <see cref="AppInfo"/> properties, such as <see cref="AppInfo.Name"/> and <see cref="AppInfo.VersionString"/>, come from.
+        /// </summary>
+        public string AppName { get; init; }
+        /// <summary>
+        /// The string representation of the current application's version.<br/>
+        /// This needs to be passed from outside the <see cref="PdfBuilder"/> class. 
+        /// Directly putting <see cref="AppInfo"/> properties causes an exception when running tests in FarmOrganizerTests, because that project doesn't have a reference to .NET MAUI in its assembly. Which is where <see cref="AppInfo"/> properties, such as <see cref="AppInfo.Name"/> and <see cref="AppInfo.VersionString"/>, come from.
+        /// </summary>
+        public string AppVersion { get; init; }
+
         public static string Filename { get { return $"Raport_{DateTime.Now:dd.MM.yy_HH.mm.ss}.pdf"; } }
 
-        public PdfBuilder()
+        /// <summary>
+        /// Creates a new <see cref="PdfBuilder"/> with all its lists empty.
+        /// </summary>
+        /// <param name="appName"><see cref="AppName"/></param>
+        /// <param name="version"><see cref="AppVersion"/></param>
+        public PdfBuilder(string appName, string version)
         {
+            AppName = appName;
+            AppVersion = version;
             InitializeDocument();
         }
 
-        public PdfBuilder(List<CropField> cropFields, List<Season> seasons, List<CostTypeReportEntry> expenses, List<CostTypeReportEntry> profits) : this()
+        /// <summary>
+        /// Creates a new <see cref="PdfBuilder"/> with its lists containing predefined entries.
+        /// </summary>
+        /// <param name="appName"><see cref="AppName"/></param>
+        /// <param name="version"><see cref="AppVersion"/></param>
+        /// <param name="cropFields"><see cref="CropField"/> entries to add.</param>
+        /// <param name="seasons"><see cref="Season"/> entries to add.</param>
+        /// <param name="expenses"><see cref="CostType"/> entries to add under Expenses section.</param>
+        /// <param name="profits"><see cref="CostType"/> entries to add under Profits section.</param>
+        public PdfBuilder(string appName,
+                          string version,
+                          List<CropField> cropFields,
+                          List<Season> seasons,
+                          List<CostTypeReportEntry> expenses,
+                          List<CostTypeReportEntry> profits) : this(appName, version)
         {
             foreach (var field in cropFields)
                 AddCropField(field);
@@ -359,7 +392,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
             content.AddNumPagesField();
             content.AddTab();
             content.AddText($"Raport wygenerowano dnia {DateTime.Now:G}. ");
-            content.AddText($"Wygenerowano w {AppInfo.Current.Name} w wersji {AppInfo.Current.VersionString}.");
+            content.AddText($"Wygenerowano w {AppName} w wersji {AppVersion}.");
 
             _document.LastSection.Footers.Primary.Add(content);
         }
@@ -402,12 +435,14 @@ namespace FarmOrganizer.IO.Exporting.PDF
     }
 
     /// <summary>
+    /// <b>Be warned when using this method!</b> I'm not sure what it does exactly.
     /// Origin of code: <see href="https://stackoverflow.com/questions/10141143/c-sharp-extract-text-from-pdf-using-pdfsharp"/><br/>
     /// Author: <see href="https://stackoverflow.com/users/355899/sergio">Sergio</see>; 
     /// Modified by: <see href="https://stackoverflow.com/users/64334/ronnie-overby">Ronnie Overby</see>.
     /// </summary>
     public static class PdfSharpExtensions
     {
+        ///<inheritdoc cref="PdfSharpExtensions"/>
         public static IEnumerable<string> ExtractText(this PdfPage page)
         {
             var content = ContentReader.ReadContent(page);
@@ -415,6 +450,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
             return text;
         }
 
+        ///<inheritdoc cref="PdfSharpExtensions"/>
         public static IEnumerable<string> ExtractText(this CObject cObject)
         {
             if (cObject is COperator)
