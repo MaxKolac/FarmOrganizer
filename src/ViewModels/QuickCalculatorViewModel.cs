@@ -25,6 +25,7 @@ namespace FarmOrganizer.ViewModels
         protected bool pureIncomeFocused;
 
         protected readonly Queue<string> lastEditedControls = new();
+        protected const string maxLengthExceededMessage = "Za dużo";
         #endregion
 
         #region Additional Private Fields
@@ -58,15 +59,21 @@ namespace FarmOrganizer.ViewModels
 
             if (lastEditedControls.Contains(pureIncomeName) && lastEditedControls.Contains(sellRateName))
             {
-                CropAmountValue = SellRate != 0 ? (PureIncome / SellRate).ToString("0.00") : "0";
+                CropAmount = SellRate != 0 ? decimal.Divide(PureIncome, SellRate) : 0;
+                string CropAmountFormatted = CropAmount.ToString("0.00");
+                CropAmountValue = CropAmountFormatted.Length > Globals.NumericEntryMaxLength ? maxLengthExceededMessage : CropAmountFormatted;
             }
             else if (lastEditedControls.Contains(pureIncomeName) && lastEditedControls.Contains(cropAmountName))
             {
-                SellRateValue = CropAmount != 0 ? (PureIncome / CropAmount).ToString("0.00") : "0";
+                SellRate = CropAmount != 0 ? decimal.Divide(PureIncome, CropAmount) : 0;
+                string SellRateFormatted = SellRate.ToString("0.00");
+                SellRateValue = SellRateFormatted.Length > Globals.NumericEntryMaxLength ? maxLengthExceededMessage : SellRateFormatted;
             }
             else if (lastEditedControls.Contains(cropAmountName) && lastEditedControls.Contains(sellRateName))
             {
-                PureIncomeValue = (CropAmount * SellRate).ToString("0.00");
+                PureIncome = decimal.Multiply(CropAmount, SellRate);
+                string PureIncomeFormatted = PureIncome.ToString("0.00");
+                PureIncomeValue = PureIncomeFormatted.Length > Globals.NumericEntryMaxLength ? maxLengthExceededMessage : PureIncomeFormatted;
             }
         }
 
