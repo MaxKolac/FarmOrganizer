@@ -20,11 +20,6 @@ namespace FarmOrganizer.IO.Exporting.PDF
     /// </summary>
     public class PdfBuilder
     {
-        //TODO: Polish special characters do not work when using Font object, but some research showed that Japanese text works with PdfSharp's original XFont object. Should look into that.
-        //TODO: Swapping the OpenSans font for Arial-Regular (and only regular because according to this dumb computer Italic != Italic) did not fix the issue of special characters. It's 100% to be something within MigraDoc rendering process, its not the font file's fault.
-        //TODO: the console application which used PdfSharpCore's DrawString correctly renders Polish characters
-        // You bumbling imbecil. All that was needed was to call PdfRenderer constructor with one bool parameter.
-        // Because I guess Unicode encoding isn't turned on by default???? This API sucks.
         private Document _document;
         private readonly List<CropField> _cropFields = new();
         private readonly List<Season> _seasons = new();
