@@ -1,13 +1,10 @@
-﻿using CommunityToolkit.Maui.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
-using FarmOrganizer.IO;
 using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
 using Microsoft.Data.Sqlite;
-using PdfSharpCore.Pdf;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -192,7 +189,12 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task ExportReportAsPDF()
         {
-            var builder = new PdfBuilder(PassedCropFields, PassedSeasons, ExpenseEntries, ProfitEntries);
+            var builder = new PdfBuilder(AppInfo.Current.Name,
+                                         AppInfo.Current.VersionString,
+                                         PassedCropFields,
+                                         PassedSeasons,
+                                         ExpenseEntries,
+                                         ProfitEntries);
             if (ExportPdfWithPureIncome)
                 builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", Utils.CastToValue(PureIncomeValue)));
             var document = builder.Build();
