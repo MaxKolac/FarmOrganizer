@@ -12,6 +12,20 @@ public partial class CropField : IDatabaseAccesible<CropField>
     public virtual ICollection<BalanceLedger> BalanceLedgers { get; set; } = new List<BalanceLedger>();
     public virtual ICollection<FieldEfficiency> FieldEfficiencies { get; set; } = new List<FieldEfficiency>();
 
+    public CropField()
+    {
+    }
+
+    public CropField(string name, decimal hectares)
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Name cannot be empty", nameof(name));
+        if (hectares <= 0)
+            throw new ArgumentException("Hectares need to be a positive non-zero integer", nameof(hectares));
+        Name = name;
+        Hectares = hectares;
+    }
+
     public override string ToString()
     {
         return $"{Name} ({Hectares} ha)";

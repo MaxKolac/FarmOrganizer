@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
+using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
-using FarmOrganizer.ViewModels.HelperClasses;
 using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
@@ -39,7 +39,7 @@ namespace FarmOrganizer.ViewModels
         private decimal profitAfterExpenses = 0.0m;
         #endregion
 
-        #region Properties related to adding new records
+        #region Properties related to options at view's bottom
         [ObservableProperty]
         private bool addNewSeasonAfterSaving = false;
         [ObservableProperty]
@@ -48,6 +48,8 @@ namespace FarmOrganizer.ViewModels
         private List<CostType> costTypes;
         [ObservableProperty]
         private CostType selectedCostType;
+        [ObservableProperty]
+        private bool exportPdfWithPureIncome = false;
         #endregion
 
         #region Dynamic text
@@ -118,11 +120,7 @@ namespace FarmOrganizer.ViewModels
 
             foreach (KeyValuePair<CostType, decimal> kvp in costDictionary)
             {
-                CostTypeReportEntry entry = new()
-                {
-                    Name = kvp.Key.Name,
-                    Amount = kvp.Value
-                };
+                var entry = new CostTypeReportEntry(kvp.Key.Name, kvp.Value);
                 if (kvp.Key.IsExpense)
                     ExpenseEntries.Add(entry);
                 else
@@ -188,6 +186,21 @@ namespace FarmOrganizer.ViewModels
             }
         }
 
+        [RelayCommand]
+        private async Task ExportReportAsPDF()
+        {
+            var builder = new PdfBuilder(AppInfo.Current.Name,
+                                         AppInfo.Current.VersionString,
+                                         PassedCropFields,
+                                         PassedSeasons,
+                                         ExpenseEntries,
+                                         ProfitEntries);
+            if (ExportPdfWithPureIncome)
+                builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", Utils.CastToValue(PureIncomeValue)));
+            var document = builder.Build();
+            await PdfBuilder.Export(document);
+        }
+
         protected override void OnIncomeChanged(string value) =>
             ProfitAfterExpenses = Utils.CastToValue(value) + TotalChange;
 
@@ -197,4 +210,9 @@ namespace FarmOrganizer.ViewModels
         partial void OnProfitAfterExpensesChanged(decimal value) =>
             ProfitAfterExpensesText = value >= 0 ? _labelProfit : _labelLoss;
     }
+
+    /// <summary>
+    /// Used by <see cref="ReportPageViewModel"/> to show individual cost types and the sum of their expenses.
+    /// </summary>
+    public record class CostTypeReportEntry(string Name, decimal Amount);
 }

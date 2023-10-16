@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:helper="clr-namespace:FarmOrganizer.ViewModels.HelperClasses"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              xmlns:model="clr-namespace:FarmOrganizer.Models"
              x:Class="FarmOrganizer.Views.ReportPage"
@@ -27,6 +26,11 @@
             <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="BorderColor" Value="Transparent"/>
             <Setter Property="BackgroundColor" Value="Transparent"/>
+        </Style>
+        <Style TargetType="Frame" x:Key="OptionsFrame" BasedOn="{StaticResource ModelPageCreatorFrame}">
+            <Setter Property="BorderColor" Value="LightGray" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="0" />
         </Style>
 
         <Style TargetType="Label">
@@ -55,14 +59,14 @@
             <Setter Property="Margin" Value="5"/>
         </Style>
 
-        <DataTemplate x:DataType="helper:CostTypeReportEntry" x:Key="CostTypeReportEntryTemplate">
+        <DataTemplate x:DataType="viewmodel:CostTypeReportEntry" x:Key="CostTypeReportEntryTemplate">
             <Frame Style="{StaticResource EntriesFrame}">
                 <Grid ColumnDefinitions="Auto, *">
                     <Label Grid.Column="0" 
                            Text="{Binding Name}" 
                            HorizontalOptions="Start"/>
                     <Label Grid.Column="1" 
-                           Text="{Binding Amount, StringFormat='{0:F2}'}"
+                           Text="{Binding Amount, StringFormat='{0:F2} zł'}"
                            HorizontalOptions="End"/>
                 </Grid>
             </Frame>
@@ -111,7 +115,7 @@
                                Style="{StaticResource BoldLabel}"
                                HorizontalOptions="Start"/>
                         <Label Grid.Column="1" 
-                               Text="{Binding TotalExpense, StringFormat='{0:F2}'}" 
+                               Text="{Binding TotalExpense, StringFormat='{0:F2} zł'}" 
                                Style="{StaticResource BoldLabel}"
                                HorizontalOptions="End"/>
                     </Grid>
@@ -130,7 +134,7 @@
                                Style="{StaticResource BoldLabel}"
                                HorizontalOptions="Start"/>
                         <Label Grid.Column="1"
-                               Text="{Binding TotalProfit, StringFormat='{0:F2}'}" 
+                               Text="{Binding TotalProfit, StringFormat='{0:F2} zł'}" 
                                Style="{StaticResource BoldLabel}"
                                HorizontalOptions="End"/>
                     </Grid>
@@ -146,7 +150,7 @@
                                Style="{StaticResource CollectionViewTitleLabel}"
                                HorizontalOptions="Start"/>
                         <Label Grid.Column="1"
-                               Text="{Binding TotalChange, StringFormat='{0:F2}'}" 
+                               Text="{Binding TotalChange, StringFormat='{0:F2} zł'}" 
                                Style="{StaticResource CollectionViewTitleLabel}"
                                HorizontalOptions="End"/>
                     </Grid>
@@ -159,16 +163,24 @@
                        Style="{StaticResource InstructionLabel}"/>
 
                 <Grid ColumnDefinitions=".9*, Auto"
-                      RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+                      RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
 
                     <!-- Total change -->
                     <Label Grid.Row="0"
-                           Grid.ColumnSpan="2"
-                           Text="{Binding TotalChangeText, StringFormat='{0} (zł):'}" 
+                           Text="{Binding TotalChangeText, StringFormat='{0}:'}" 
                            Style="{StaticResource QuickCalcLabel}"/>
                     <Label Grid.Row="1"
-                           Grid.ColumnSpan="2"
-                           Text="{Binding TotalChange, StringFormat='{0:F2}'}"
+                           Text="{Binding TotalChange, StringFormat='{0:F2} zł'}"
+                           Style="{StaticResource QuickCalcTotalLabel}"/>
+
+                    <!-- Profit after expenses -->
+                    <Label Grid.Row="0"
+                           HorizontalOptions="End"
+                           Text="{Binding ProfitAfterExpensesText, StringFormat='{0} po wydatkach:'}" 
+                           Style="{StaticResource QuickCalcLabel}"/>
+                    <Label Grid.Row="1"
+                           HorizontalOptions="End"
+                           Text="{Binding ProfitAfterExpenses, StringFormat='{0:F2} zł'}"
                            Style="{StaticResource QuickCalcTotalLabel}"/>
 
                     <Frame Grid.Row="2" 
@@ -225,40 +237,59 @@
                             <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
                         </Grid>
                     </Frame>
-
-                    <!-- Profit after expenses -->
-                    <Label Grid.Row="8"
-                           Grid.ColumnSpan="2"
-                           Text="{Binding ProfitAfterExpensesText, StringFormat='{0} po wydatkach (zł):'}" 
-                           Style="{StaticResource QuickCalcLabel}"/>
-                    <Label Grid.Row="9"
-                           Grid.ColumnSpan="2"
-                           Text="{Binding ProfitAfterExpenses, StringFormat='{0:F2}'}"
-                           Style="{StaticResource QuickCalcTotalLabel}"/>
                 </Grid>
             </VerticalStackLayout>
 
             <!-- Options at the bottom -->
-            <VerticalStackLayout>
-                <Grid ColumnDefinitions="Auto, *"
-                      RowDefinitions="Auto">
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="0"
-                              x:Name="AddNewSeasonAfterSavingCheckBox"
-                              IsChecked="{Binding AddNewSeasonAfterSaving}"
-                              IsEnabled="True"/>
-                    <Label Grid.Column="1" 
-                           VerticalOptions="Center"
-                           Text="Po dodaniu wpisu, rozpocznij nowy sezon"/>
-                </Grid>
-                <Label Text="Nazwa nowego sezonu:"
-                       IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
-                <Entry Text="{Binding NewSeasonName}"
-                       IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
-                <Label Text="Kategoria nowego wpisu:"/>
-                <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
-                <Button Text="{Binding TotalChangeText, StringFormat='Dodaj {0} przed wydatkami jako wpis'}"
-                        Command="{Binding AddNewLedgerEntryCommand}"/>
+            <VerticalStackLayout Spacing="5">
+                <!-- New Season adding -->
+                <Frame Style="{StaticResource OptionsFrame}">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="Auto, *"
+                              RowDefinitions="Auto">
+                            <CheckBox Grid.Row="1"
+                                      Grid.Column="0"
+                                      x:Name="AddNewSeasonAfterSavingCheckBox"
+                                      IsChecked="{Binding AddNewSeasonAfterSaving}"
+                                      IsEnabled="True"/>
+                            <Label Grid.Column="1" 
+                                   VerticalOptions="Center"
+                                   Text="Po dodaniu wpisu, rozpocznij nowy sezon"/>
+                        </Grid>
+                        <Label Text="Nazwa nowego sezonu:"
+                               IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
+                        <Entry Text="{Binding NewSeasonName}"
+                               IsEnabled="{Binding IsChecked, Source={Reference AddNewSeasonAfterSavingCheckBox}}"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- New Entry adding -->
+                <Frame Style="{StaticResource OptionsFrame}">
+                    <VerticalStackLayout>
+                        <Label Text="Kategoria nowego wpisu:"/>
+                        <Picker ItemsSource="{Binding CostTypes}" SelectedItem="{Binding SelectedCostType}"/>
+                        <Button Text="{Binding TotalChangeText, StringFormat='Dodaj zysk ze sprzedaży jako wpis'}"
+                                Command="{Binding AddNewLedgerEntryCommand}" />
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- PDF Exporting -->
+                <Frame Style="{StaticResource OptionsFrame}">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="Auto, *"
+                              RowDefinitions="Auto">        
+                            <CheckBox Grid.Row="1"
+                                      Grid.Column="0" 
+                                      IsEnabled="True"
+                                      IsChecked="{Binding ExportPdfWithPureIncome}"/>
+                            <Label Grid.Column="1" 
+                                   VerticalOptions="Center"
+                                   Text="Uwzględnij zysk ze sprzedaży w PDF"/>
+                        </Grid>
+                        <Button Text="Eksportuj raport jako PDF"
+                                Command="{Binding ExportReportAsPDFCommand}" />
+                    </VerticalStackLayout>
+                </Frame>
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>

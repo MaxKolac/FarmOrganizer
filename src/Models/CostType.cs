@@ -1,6 +1,6 @@
 ﻿using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
-using FarmOrganizer.ViewModels.HelperClasses;
+using FarmOrganizer.ViewModels.Helpers;
 using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.Models;

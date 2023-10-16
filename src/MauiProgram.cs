@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using FarmOrganizer.Database;
+using FarmOrganizer.IO;
 using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
@@ -17,6 +18,9 @@ public static class MauiProgram
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-BoldItalic.ttf", "OpenSansBoldItalic");
+                fonts.AddFont("OpenSans-Italic.ttf", "OpenSansItalic");
+                fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 

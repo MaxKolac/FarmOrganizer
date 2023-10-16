@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels.Converters;
-using FarmOrganizer.ViewModels.HelperClasses;
+using FarmOrganizer.ViewModels.Helpers;
 using System.Collections.ObjectModel;
 
 namespace FarmOrganizer.ViewModels
@@ -86,7 +86,7 @@ namespace FarmOrganizer.ViewModels
             foreach (int id in _filterSet.SelectedCropFieldIds)
                 SelectedCropFields.Add(context.CropFields.FirstOrDefault(e => e.Id == id));
 
-            AllCostTypes = CostType.BuildCostTypeGroups("Uwzględnij rodzaje przychodów:", "Uwzględnij rodzaje wpisów:", context);
+            AllCostTypes = CostType.BuildCostTypeGroups("Uwzględnij rodzaje przychodów:", "Uwzględnij rodzaje wydatków:", context);
             SelectedCostTypes.Clear();
             foreach (int id in _filterSet.SelectedCostTypeIds)
                 SelectedCostTypes.Add(context.CostTypes.FirstOrDefault(e => e.Id == id));
