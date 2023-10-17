@@ -15,7 +15,9 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private bool showCreatorFrame = false;
         [ObservableProperty]
-        private string saveButtonText = "Dodaj pole i zapisz";
+        private string saveButtonText = _buttonTextAddingEntry;
+        private const string _buttonTextAddingEntry = "Dodaj pole i zapisz";
+        private const string _buttonTextEditingEntry = "Zapisz zmiany";
 
         private bool addingEntry = false;
         private bool editingEntry = false;
@@ -44,7 +46,11 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 decimal hectares = Utils.CastToValue(CropFieldHectares);
-                var cropField = new CropField(CropFieldName, hectares);
+                var cropField = new CropField()
+                {
+                    Name = CropFieldName,
+                    Hectares = hectares
+                };
                 if (addingEntry)
                 {
                     CropField.AddEntry(cropField, null);
@@ -80,7 +86,7 @@ namespace FarmOrganizer.ViewModels
             CropFieldHectares = cropFieldToEdit.Hectares.ToString();
             editingEntry = true;
             addingEntry = false;
-            SaveButtonText = "Zapisz zmiany";
+            SaveButtonText = _buttonTextEditingEntry;
             ShowCreatorFrame = true;
         }
 
@@ -109,7 +115,7 @@ namespace FarmOrganizer.ViewModels
         {
             editingEntry = false;
             addingEntry = true;
-            SaveButtonText = "Dodaj pole i zapisz";
+            SaveButtonText = _buttonTextAddingEntry;
             ShowCreatorFrame = !ShowCreatorFrame;
         }
     }

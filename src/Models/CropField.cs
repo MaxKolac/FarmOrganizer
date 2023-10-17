@@ -18,10 +18,6 @@ public partial class CropField : IDatabaseAccesible<CropField>
 
     public CropField(string name, decimal hectares)
     {
-        if (string.IsNullOrEmpty(name))
-            throw new ArgumentException("Name cannot be empty", nameof(name));
-        if (hectares <= 0)
-            throw new ArgumentException("Hectares need to be a positive non-zero integer", nameof(hectares));
         Name = name;
         Hectares = hectares;
     }
