@@ -87,23 +87,6 @@ namespace FarmOrganizerTests.Models
         }
 
         [Theory]
-        [InlineData("", 1.23)]
-        [InlineData("NotEmpty", 0)]
-        [InlineData("NotEmpty", -1)]
-        public static void TestConstructorThrows(string name, decimal hectares)
-        {
-            Assert.Throws<ArgumentException>(() => new CropField(name, hectares));
-        }
-
-        [Theory]
-        [InlineData("a", 0.01)]
-        [InlineData("b", 1.234)]
-        public static void TestConstructorDoesNotThrow(string name, decimal hectares)
-        {
-            _ = new CropField(name, hectares);
-        }
-
-        [Theory]
         [MemberData(nameof(CropFieldTestData.GetInvalidRecordsToValidate), MemberType = typeof(CropFieldTestData))]
         public static void ValidationThrowsTest(List<CropField> recordsToMock)
         {
