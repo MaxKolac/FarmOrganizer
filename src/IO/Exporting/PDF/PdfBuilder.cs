@@ -315,49 +315,4 @@ namespace FarmOrganizer.IO.Exporting.PDF
             }
         }
     }
-
-    /// <summary>
-    /// <b>Be warned when using this method!</b> I'm not sure what it does exactly.
-    /// Origin of code: <see href="https://stackoverflow.com/questions/10141143/c-sharp-extract-text-from-pdf-using-pdfsharp"/><br/>
-    /// Author: <see href="https://stackoverflow.com/users/355899/sergio">Sergio</see>; 
-    /// Modified by: <see href="https://stackoverflow.com/users/64334/ronnie-overby">Ronnie Overby</see>.
-    /// </summary>
-    public static class PdfSharpExtensions
-    {
-        ///<inheritdoc cref="PdfSharpExtensions"/>
-        public static IEnumerable<string> ExtractText(this PdfPage page)
-        {
-            var content = ContentReader.ReadContent(page);
-            var text = content.ExtractText();
-            return text;
-        }
-
-        ///<inheritdoc cref="PdfSharpExtensions"/>
-        public static IEnumerable<string> ExtractText(this CObject cObject)
-        {
-            if (cObject is COperator)
-            {
-                var cOperator = cObject as COperator;
-                if (cOperator.OpCode.Name == OpCodeName.Tj.ToString() ||
-                    cOperator.OpCode.Name == OpCodeName.TJ.ToString())
-                {
-                    foreach (var cOperand in cOperator.Operands)
-                        foreach (var txt in ExtractText(cOperand))
-                            yield return txt;
-                }
-            }
-            else if (cObject is CSequence)
-            {
-                var cSequence = cObject as CSequence;
-                foreach (var element in cSequence)
-                    foreach (var txt in ExtractText(element))
-                        yield return txt;
-            }
-            else if (cObject is CString)
-            {
-                var cString = cObject as CString;
-                yield return cString.Value;
-            }
-        }
-    }
 }
