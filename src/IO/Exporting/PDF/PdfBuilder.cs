@@ -92,6 +92,25 @@ namespace FarmOrganizer.IO.Exporting.PDF
         /// </returns>
         public PdfDocument Build()
         {
+            //things to try to narrow down the exact exception cause:
+            //Does it happen if we comment out all building methosd except InitializeDcoument and SetupSTyles?
+            //It doesnt, no exception thrown
+
+            //Does it happen when we comment out AddReportInfo and all AddTable calls?
+            //It doesn't, no exception thrown - AddHeader, AddGap and AddFooter are clear
+
+            //Does it happen when we comment out all AddTable method calls and leave AddReportInfo?
+            //Yep, the exact exception is thrown - AddReportInfo is an offender
+
+            //Does it happen when we comment out all AddGap, AddTable method calls and leave AddReportInfo?
+            //Yes, AddReportInfo is 100% an offender
+
+            //Does it happen if all that is left is AddTables?
+            //yes, AddTables is 100% an offender
+
+            //Does it happen after fully disabling any trimming (this includes disabling AOT compilation)?
+            //There it is - it is trimming fault
+
             InitializeDocument();
             SetupStyles();
 

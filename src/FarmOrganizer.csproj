@@ -27,6 +27,12 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android33.0|AnyCPU'">
+	  <DebugSymbols>True</DebugSymbols>
+	  <PublishTrimmed>False</PublishTrimmed>
+	  <RunAOTCompilation>False</RunAOTCompilation>
+	</PropertyGroup>
+
 	<!--
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
 	  <ApplicationVersion>1</ApplicationVersion>
