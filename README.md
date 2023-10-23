@@ -1,7 +1,7 @@
 # FarmOrganizer
 .NET MAUI Android app in MVVM architecture, utilizing EntityFramework Core with SQLite as the database provider. Made for farmers and growers to digitalize and simplify the organization of their daily agricultural work and crop sales.
 # "Duck tape" solutions
-List of workaroudns that currently replace officially adopted solutions due to their bugged functionality. Once the official solutions are fixes, these workarounds should be removed.
+List of workaroudns that currently replace officially adopted solutions due to their bugged functionality. Once the official solutions are fixed, these workarounds should be replaced.
 
 ### `DataTemplateSelector` doesn't work at all
 See the [#28](https://github.com/MaxKolac/FarmOrganizer/pull/28).
