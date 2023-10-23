@@ -1,6 +1,4 @@
-﻿using FarmOrganizer.Views;
-
-namespace FarmOrganizer;
+﻿namespace FarmOrganizer;
 
 public partial class AppShell : Shell
 {
