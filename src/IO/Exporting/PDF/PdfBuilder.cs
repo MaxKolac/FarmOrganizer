@@ -5,8 +5,6 @@ using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;
 using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.Content;
-using PdfSharpCore.Pdf.Content.Objects;
 using static MigraDocCore.DocumentObjectModel.Colors;
 
 namespace FarmOrganizer.IO.Exporting.PDF
