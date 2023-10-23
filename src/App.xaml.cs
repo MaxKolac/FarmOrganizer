@@ -23,6 +23,7 @@ public partial class App : Application
         AlertSvc = Services.GetService<IAlertService>();
         SettingsPageViewModel.ApplyPreferences();
 
+        //Required by PdfSharpCore and MigraDocCore in PdfBuilder class
         GlobalFontSettings.FontResolver = new GenericFontResolver();
 
         MainPage = new AppShell();
