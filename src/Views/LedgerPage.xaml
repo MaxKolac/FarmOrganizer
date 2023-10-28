@@ -27,15 +27,23 @@
         <DataTemplate x:DataType="model:BalanceLedger" x:Key="BalanceLedgerTemplate">
             <SwipeView>
                 <SwipeView.LeftItems>
-                    <SwipeItems Mode="Execute">
-                        <SwipeItemView Style="{StaticResource EditSwipeItem}"
-                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}" />
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SIVEditFrame}">
+                                <Label Style="{StaticResource SIVEditLabel}" />
+                            </Frame>
+                        </SwipeItemView>
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
-                    <SwipeItems Mode="Execute">
-                        <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
-                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"/>
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SIVDeleteFrame}">
+                                <Label Style="{StaticResource SIVDeleteLabel}" />
+                            </Frame>
+                        </SwipeItemView>
                     </SwipeItems>
                 </SwipeView.RightItems>
 

@@ -20,15 +20,23 @@
         <DataTemplate x:DataType="model:CostType" x:Key="CostTypeTemplate">
             <SwipeView>
                 <SwipeView.LeftItems>
-                    <SwipeItems Mode="Execute">
-                        <SwipeItemView Style="{StaticResource EditSwipeItem}"
-                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=EditCommand}" />
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=EditCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SIVEditFrame}">
+                                <Label Style="{StaticResource SIVEditLabel}" />
+                            </Frame>
+                        </SwipeItemView>
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
-                    <SwipeItems Mode="Execute">
-                        <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
-                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCommand}" />
+                    <SwipeItems>
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CostTypePageViewModel}}, Path=RemoveCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SIVDeleteFrame}">
+                                <Label Style="{StaticResource SIVDeleteLabel}" />
+                            </Frame>
+                        </SwipeItemView>
                     </SwipeItems>
                 </SwipeView.RightItems>
 
