@@ -27,13 +27,13 @@
         <DataTemplate x:DataType="model:BalanceLedger" x:Key="BalanceLedgerTemplate">
             <SwipeView>
                 <SwipeView.LeftItems>
-                    <SwipeItems Mode="Execute">
+                    <SwipeItems>
                         <SwipeItemView Style="{StaticResource EditSwipeItem}"
                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=EditRecordCommand}" />
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
-                    <SwipeItems Mode="Execute">
+                    <SwipeItems>
                         <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:LedgerPageViewModel}}, Path=DeleteRecordCommand}"/>
                     </SwipeItems>

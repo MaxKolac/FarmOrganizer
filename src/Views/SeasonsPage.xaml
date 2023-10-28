@@ -14,13 +14,13 @@
                       x:Key="SeasonTemplate">
             <SwipeView>
                 <SwipeView.LeftItems>
-                    <SwipeItems Mode="Execute">
+                    <SwipeItems>
                         <SwipeItemView Style="{StaticResource EditSwipeItem}"
                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=EditCommand}" />
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
-                    <SwipeItems Mode="Execute">
+                    <SwipeItems>
                         <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=RemoveCommand}" />
                     </SwipeItems>

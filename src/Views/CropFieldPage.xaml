@@ -11,13 +11,13 @@
                       x:Key="CropFieldTemplate">
             <SwipeView>
                 <SwipeView.LeftItems>
-                    <SwipeItems Mode="Execute">
+                    <SwipeItems>
                         <SwipeItemView Style="{StaticResource EditSwipeItem}"
                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=EditCommand}" />
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
-                    <SwipeItems Mode="Execute">
+                    <SwipeItems>
                         <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:CropFieldPageViewModel}}, Path=RemoveCommand}" />
                     </SwipeItems>
