@@ -52,30 +52,27 @@
         <Setter Property="BorderColor" Value="DarkGrey"/>
     </Style>
 
-    <Style TargetType="SwipeItemView" x:Key="EditSwipeItem">
-        <Setter Property="CommandParameter" Value="{Binding .}" />
-        <Setter Property="Content">
-            <Frame BackgroundColor="LightYellow"
-                   VerticalOptions="FillAndExpand">
-                <Label Text="Edytuj"
-                       TextColor="Black" 
-                       FontAttributes="Bold"
-                       VerticalOptions="Center" />
-            </Frame>
-        </Setter>
+    <!-- Styles for SwipeItemViews, see issue #36 for details why direct SwipeItemView Style can't be used -->
+    <Style TargetType="Frame" x:Key="SIVEditFrame">
+        <Setter Property="BackgroundColor" Value="LightYellow" />
+        <Setter Property="VerticalOptions" Value="FillAndExpand" />
+    </Style>
+    <Style TargetType="Label" x:Key="SIVEditLabel">
+        <Setter Property="Text" Value="Edytuj" />
+        <Setter Property="TextColor" Value="Black" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
     
-    <Style TargetType="SwipeItemView" x:Key="DeleteSwipeItem">
-        <Setter Property="CommandParameter" Value="{Binding .}" />
-        <Setter Property="Content">
-            <Frame BackgroundColor="Firebrick"
-                   VerticalOptions="FillAndExpand">
-                <Label Text="Usuń"
-                       TextColor="White" 
-                       FontAttributes="Bold"
-                       VerticalOptions="Center" />
-            </Frame>
-        </Setter>
+    <Style TargetType="Frame" x:Key="SIVDeleteFrame">
+        <Setter Property="BackgroundColor" Value="Firebrick" />
+        <Setter Property="VerticalOptions" Value="FillAndExpand" />
+    </Style>
+    <Style TargetType="Label" x:Key="SIVDeleteLabel">
+        <Setter Property="Text" Value="Usuń" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <!-- Misc global styles -->
