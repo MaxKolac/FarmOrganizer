@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FarmOrganizer.Controls"
              xmlns:converter="clr-namespace:FarmOrganizer.ViewModels.Converters"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              xmlns:helper="clr-namespace:FarmOrganizer.ViewModels.Helpers"
@@ -79,10 +80,9 @@
                                Text="{Binding CostTypeName}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="1">
-                        <Label Text="{Binding CostTypeLabel}"
-                               VerticalOptions="Center"/>
-                        <Switch Style="{StaticResource CostTypeExpenseSwitch}" 
-                                IsToggled="{Binding CostTypeIsExpense}" />
+                        <controls:TwoOptionSwitch LeftOptionText="Przychód" 
+                                                  RightOptionText="Wydatek" 
+                                                  RightOptionSelected="{Binding CostTypeIsExpense}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">
                         <Button Text="{Binding SaveButtonText}"

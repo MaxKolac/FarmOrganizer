@@ -123,6 +123,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Controls\TwoOptionSwitch.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Default.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

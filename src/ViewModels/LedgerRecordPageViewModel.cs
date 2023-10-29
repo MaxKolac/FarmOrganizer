@@ -70,11 +70,7 @@ namespace FarmOrganizer.ViewModels
         [ObservableProperty]
         private bool costIsExpense;
         [ObservableProperty]
-        private string costTypeLabel = _costTypeLabelExpense;
-        [ObservableProperty]
         private CostType selectedCostType;
-        private const string _costTypeLabelExpense = "Wydatek";
-        private const string _costTypeLabelProfit = "Przychód";
         private readonly List<CostTypeGroup> costTypeGroups = new();
         #endregion
 
@@ -189,7 +185,6 @@ namespace FarmOrganizer.ViewModels
 
         partial void OnCostIsExpenseChanged(bool value)
         {
-            CostTypeLabel = value ? _costTypeLabelExpense : _costTypeLabelProfit;
             BalanceChangeLabel = value ? _balanceLabelExpense : _balanceLabelProfit;
             CurrentCostTypes.Clear();
             foreach (var cost in costTypeGroups[value ? 1 : 0])
