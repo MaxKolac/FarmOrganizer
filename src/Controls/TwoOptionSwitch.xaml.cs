@@ -2,30 +2,36 @@ namespace FarmOrganizer.Controls;
 
 public partial class TwoOptionSwitch : ContentView
 {
-    string _leftOption;
-    string _rightOption;
-
-    public string Title
+    public string LeftOptionText
     {
-        get => (string)GetValue(TitleProperty);
-        set => SetValue(TitleProperty, value);
+        get => (string)GetValue(LeftOptionTextProperty);
+        set => SetValue(LeftOptionTextProperty, value);
+    }
+    
+    public string RightOptionText
+    {
+        get => (string)GetValue(RightOptionTextProperty);
+        set => SetValue(RightOptionTextProperty, value);
     }
 
-    public bool IsSwitchedToRight
+    //True == RightOption
+    public bool OptionSelected
     {
-        get => (bool)optionSwitch.GetValue(Switch.IsToggledProperty);
-        set => optionSwitch.SetValue(Switch.IsToggledProperty, value);
+        get => (bool)GetValue(OptionSelectedProperty);
+        set => SetValue(OptionSelectedProperty, value);
     }
 
-    public static readonly BindableProperty TitleProperty = BindableProperty.Create(nameof(Title), typeof(string), typeof(TwoOptionSwitch), propertyChanged: (bindable, oldValue, newValue) =>
+    public static readonly BindableProperty LeftOptionTextProperty = BindableProperty.Create(nameof(LeftOptionText), typeof(string), typeof(TwoOptionSwitch), "Opcja A");
+    public static readonly BindableProperty RightOptionTextProperty = BindableProperty.Create(nameof(RightOptionText), typeof(string), typeof(TwoOptionSwitch), "Opcja B");
+    public static readonly BindableProperty OptionSelectedProperty = BindableProperty.Create(nameof(OptionSelected), typeof(bool), typeof(TwoOptionSwitch), defaultBindingMode: BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = bindable as TwoOptionSwitch;
-        control.optionLabel.Text = (string)newValue;
+        control.optionLabel.Text = (bool)newValue ? control.RightOptionText : control.LeftOptionText;
     });
 
 	public TwoOptionSwitch()
 	{
 		InitializeComponent();
-        optionSwitch.Toggled += (sender, e) => {  };
+        optionSwitch.Toggled += (sender, e) => { OptionSelected = e.Value; };
 	}
 }

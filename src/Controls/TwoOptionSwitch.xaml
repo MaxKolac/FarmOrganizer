@@ -6,11 +6,10 @@
              x:DataType="controls:TwoOptionSwitch">
     
     <HorizontalStackLayout>
-        <Label x:Name="label"
-               Text="default text" 
+        <Label x:Name="optionLabel"
                VerticalOptions="Center"
                VerticalTextAlignment="Center"/>
-        <Switch x:Name="switch">
+        <Switch x:Name="optionSwitch">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">

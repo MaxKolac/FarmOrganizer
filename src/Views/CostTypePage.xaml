@@ -80,11 +80,9 @@
                                Text="{Binding CostTypeName}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="1">
-                        <Label Text="{Binding CostTypeLabel}"
-                               VerticalOptions="Center"/>
-                        <Switch Style="{StaticResource CostTypeExpenseSwitch}" 
-                                IsToggled="{Binding CostTypeIsExpense}" />
-                        <cc:TwoOptionSwitch />
+                        <cc:TwoOptionSwitch LeftOptionText="Przychód" 
+                                            RightOptionText="Wydatek" 
+                                            OptionSelected="{Binding CostTypeIsExpense}"/>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Grid.Row="2">
                         <Button Text="{Binding SaveButtonText}"
