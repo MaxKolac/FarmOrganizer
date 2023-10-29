@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:FarmOrganizer.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              x:Class="FarmOrganizer.Views.LedgerRecordPage"
@@ -16,17 +17,13 @@
             <Picker ItemsSource="{Binding CropFields}" SelectedItem="{Binding SelectedCropField}"/>
         
             <Label Text="Rodzaj wpisu"/>
-            <Grid ColumnDefinitions=".6*, Auto, .2*">
+            <Grid ColumnDefinitions=".6*, Auto">
                 <Picker ItemsSource="{Binding CurrentCostTypes}" 
                         SelectedItem="{Binding SelectedCostType}" />
-                <Switch Grid.Column="1"
-                        Style="{StaticResource CostTypeExpenseSwitch}"
-                        IsToggled="{Binding CostIsExpense}"/>
-                <Label Text="{Binding CostTypeLabel}" 
-                       Grid.Column="2"
-                       FontAttributes="None"
-                       HorizontalTextAlignment="Start"
-                       VerticalTextAlignment="Center"/>
+                <controls:TwoOptionSwitch Grid.Column="1"
+                                          LeftOptionText="Przychód"
+                                          RightOptionText="Wydatek"
+                                          RightOptionSelected="{Binding CostIsExpense}" />
             </Grid>
 
             <Label Text="Wpis podpięty pod sezon"/>
