@@ -14,16 +14,21 @@ public partial class TwoOptionSwitch : ContentView
         set => SetValue(RightOptionTextProperty, value);
     }
 
-    //True == RightOption
-    public bool OptionSelected
+    public bool RightOptionSelected
     {
-        get => (bool)GetValue(OptionSelectedProperty);
-        set => SetValue(OptionSelectedProperty, value);
+        get => (bool)GetValue(RightOptionSelectedProperty);
+        set => SetValue(RightOptionSelectedProperty, value);
     }
 
-    public static readonly BindableProperty LeftOptionTextProperty = BindableProperty.Create(nameof(LeftOptionText), typeof(string), typeof(TwoOptionSwitch), "Opcja A");
-    public static readonly BindableProperty RightOptionTextProperty = BindableProperty.Create(nameof(RightOptionText), typeof(string), typeof(TwoOptionSwitch), "Opcja B");
-    public static readonly BindableProperty OptionSelectedProperty = BindableProperty.Create(nameof(OptionSelected), typeof(bool), typeof(TwoOptionSwitch), false, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
+    public bool LeftOptionSelected
+    {
+        get => !(bool)GetValue(RightOptionSelectedProperty);
+        set => SetValue(RightOptionSelectedProperty, !value);
+    }
+
+    public static readonly BindableProperty LeftOptionTextProperty = BindableProperty.Create(nameof(LeftOptionText), typeof(string), typeof(TwoOptionSwitch), "Opcja A", BindingMode.TwoWay);
+    public static readonly BindableProperty RightOptionTextProperty = BindableProperty.Create(nameof(RightOptionText), typeof(string), typeof(TwoOptionSwitch), "Opcja B", BindingMode.TwoWay);
+    public static readonly BindableProperty RightOptionSelectedProperty = BindableProperty.Create(nameof(RightOptionSelected), typeof(bool), typeof(TwoOptionSwitch), false, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = bindable as TwoOptionSwitch;
         control.optionLabel.Text = (bool)newValue ? control.RightOptionText : control.LeftOptionText;
@@ -33,7 +38,7 @@ public partial class TwoOptionSwitch : ContentView
 	public TwoOptionSwitch()
 	{
 		InitializeComponent();
-        optionSwitch.Toggled += (sender, e) => { OptionSelected = e.Value; };
+        optionSwitch.Toggled += (sender, e) => { RightOptionSelected = e.Value; };
         optionSwitch.IsToggled = true;
 	}
 }
