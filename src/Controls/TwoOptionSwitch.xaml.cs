@@ -33,5 +33,6 @@ public partial class TwoOptionSwitch : ContentView
 	{
 		InitializeComponent();
         optionSwitch.Toggled += (sender, e) => { OptionSelected = e.Value; };
+        optionSwitch.IsToggled = true;
 	}
 }
