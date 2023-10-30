@@ -18,16 +18,16 @@ namespace FarmOrganizer.IO.Exporting.PDF
     /// </summary>
     public class PdfBuilder
     {
-        private Document _document;
-        private readonly List<CropField> _cropFields = new();
-        private readonly List<Season> _seasons = new();
-        private readonly List<CostTypeReportEntry> _expenses = new();
-        private readonly List<CostTypeReportEntry> _profits = new();
+        Document _document;
+        readonly List<CropField> _cropFields = new();
+        readonly List<Season> _seasons = new();
+        readonly List<CostTypeReportEntry> _expenses = new();
+        readonly List<CostTypeReportEntry> _profits = new();
 
         /// <summary>
-        /// The 0. index holds the total sum of expenses, and 1. index is the total sum of profits.
+        /// The <see cref="Tuple{T,T}.Item1"/> holds the total sum of expenses, and <see cref="Tuple{T,T}.Item2"/> is the total sum of profits.
         /// </summary>
-        private readonly decimal[] _totalAmounts = new decimal[] { 0, 0 };
+        Tuple<decimal, decimal> totalAmounts = new(0, 0);
 
         /// <summary>
         /// The name of the application, which will show up in the footer of the document<br/>
@@ -122,10 +122,10 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
             var grandTotalList = new List<CostTypeReportEntry>
             {
-                new("Suma wydatków", _totalAmounts[0] * -1),
-                new("Suma przychodów", _totalAmounts[1])
+                new("Suma wydatków", totalAmounts.Item1 * -1),
+                new("Suma przychodów", totalAmounts.Item2)
             };
-            AddTable(grandTotalList, _totalAmounts[0] <= _totalAmounts[1] ? "Zyski" : "Straty");
+            AddTable(grandTotalList, totalAmounts.Item1 <= totalAmounts.Item2 ? "Zyski" : "Straty");
 
             AddFooter();
 
@@ -304,13 +304,13 @@ namespace FarmOrganizer.IO.Exporting.PDF
 
         public void AddExpenseEntry(CostTypeReportEntry costTypeEntry)
         {
-            _totalAmounts[0] += costTypeEntry.Amount;
+            totalAmounts = new(totalAmounts.Item1 + costTypeEntry.Amount, totalAmounts.Item2);
             _expenses.Add(costTypeEntry);
         }
 
         public void AddProfitEntry(CostTypeReportEntry costTypeEntry)
         {
-            _totalAmounts[1] += costTypeEntry.Amount;
+            totalAmounts = new(totalAmounts.Item1, totalAmounts.Item2 + costTypeEntry.Amount);
             _profits.Add(costTypeEntry);
         }
 
