@@ -199,13 +199,13 @@ namespace FarmOrganizer.ViewModels
             try
             {
                 var builder = new PdfBuilder(AppInfo.Current.Name,
-                                                     AppInfo.Current.VersionString,
-                                                     PassedCropFields,
-                                                     PassedSeasons,
-                                                     ExpenseEntries,
-                                                     ProfitEntries);
+                                             AppInfo.Current.VersionString,
+                                             PassedCropFields,
+                                             PassedSeasons,
+                                             ExpenseEntries,
+                                             ProfitEntries);
                 if (ExportPdfWithPureIncome)
-                    builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", Utils.CastToValue(PureIncomeValue)));
+                    builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", PureIncomeValue));
                 var document = builder.Build();
                 await PdfBuilder.Export(document);
             }
