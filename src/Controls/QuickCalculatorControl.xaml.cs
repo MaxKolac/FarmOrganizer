@@ -2,11 +2,7 @@ namespace FarmOrganizer.Controls;
 
 public partial class QuickCalculatorControl : ContentView
 {
-    const string _maxLengthExceededMessage = "Za du¿o";
-    const string _cropAmountKey = "cropAmount";
-    const string _sellRateKey = "sellRate";
-    const string _pureIncomeKey = "pureIncome";
-    readonly Queue<Entry> _lastFocusedQueue = new();
+    readonly Queue<Entry> _lastTappedEntries = new();
 
     public decimal CropAmount
     {
@@ -28,15 +24,18 @@ public partial class QuickCalculatorControl : ContentView
 
     public static readonly BindableProperty CropAmountProperty = BindableProperty.Create(nameof(CropAmount), typeof(decimal), typeof(QuickCalculatorControl), 0m, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
-
+        var control = bindable as QuickCalculatorControl;
+        control.cropAmountEntry.Text = ((decimal)newValue).ToString("0.00");
     });
     public static readonly BindableProperty SellRateProperty = BindableProperty.Create(nameof(SellRate), typeof(decimal), typeof(QuickCalculatorControl), 0m, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
-
+        var control = bindable as QuickCalculatorControl;
+        control.sellRateEntry.Text = ((decimal)newValue).ToString("0.00");
     });
     public static readonly BindableProperty PureIncomeProperty = BindableProperty.Create(nameof(PureIncome), typeof(decimal), typeof(QuickCalculatorControl), 0m, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
-
+        var control = bindable as QuickCalculatorControl;
+        control.pureIncomeEntry.Text = ((decimal)newValue).ToString("0.00");
     });
 
 	public QuickCalculatorControl()
@@ -52,23 +51,32 @@ public partial class QuickCalculatorControl : ContentView
         decimal sellRate = Utils.CastToValue(sellRateEntry.Text);
         decimal pureIncome = Utils.CastToValue(pureIncomeEntry.Text);
 
-        if (_lastFocusedQueue.Contains(cropAmountEntry) && _lastFocusedQueue.Contains(sellRateEntry))
+        if (_lastTappedEntries.Contains(cropAmountEntry) && _lastTappedEntries.Contains(sellRateEntry))
         {
             pureIncome = decimal.Multiply(cropAmount, sellRate);
             string pureIncomeFormatted = pureIncome.ToString("0.00");
-            pureIncomeEntry.Text = pureIncomeFormatted.Length > Globals.NumericEntryMaxLength ? _maxLengthExceededMessage : pureIncomeFormatted;
+            pureIncomeEntry.Text = 
+                pureIncomeFormatted.Length > Globals.NumericEntryMaxLength ? 
+                Globals.NumericEntryMaxLengthExceeded: 
+                pureIncomeFormatted;
         }
-        else if (_lastFocusedQueue.Contains(sellRateEntry) && _lastFocusedQueue.Contains(pureIncomeEntry))
+        else if (_lastTappedEntries.Contains(sellRateEntry) && _lastTappedEntries.Contains(pureIncomeEntry))
         {
             cropAmount = sellRate != 0m ? decimal.Divide(pureIncome, sellRate) : 0;
             string cropAmountFormatted = cropAmount.ToString("0.00");
-            cropAmountEntry.Text = cropAmountFormatted.Length > Globals.NumericEntryMaxLength ? _maxLengthExceededMessage : cropAmountFormatted;
+            cropAmountEntry.Text = 
+                cropAmountFormatted.Length > Globals.NumericEntryMaxLength ?
+                Globals.NumericEntryMaxLengthExceeded :
+                cropAmountFormatted;
         }
-        else if (_lastFocusedQueue.Contains(pureIncomeEntry) && _lastFocusedQueue.Contains(cropAmountEntry))
+        else if (_lastTappedEntries.Contains(pureIncomeEntry) && _lastTappedEntries.Contains(cropAmountEntry))
         {
             sellRate = cropAmount != 0 ? decimal.Divide(pureIncome, cropAmount) : 0;
             string sellRateFormatted = sellRate.ToString("0.00");
-            sellRateEntry.Text = sellRateFormatted.Length > Globals.NumericEntryMaxLength ? _maxLengthExceededMessage : sellRateFormatted;
+            sellRateEntry.Text = 
+                sellRateFormatted.Length > Globals.NumericEntryMaxLength ?
+                Globals.NumericEntryMaxLengthExceeded : 
+                sellRateFormatted;
         }
 
         CropAmount = cropAmount;
@@ -78,15 +86,12 @@ public partial class QuickCalculatorControl : ContentView
 
     void OnEntryTapped(object sender, TappedEventArgs e)
     {
-        if (sender is not Entry tappedEntry || _lastFocusedQueue.Contains(tappedEntry))
-        {
-            return;
-        }
+        if (sender is not Entry tappedEntry || _lastTappedEntries.Contains(tappedEntry)) return;
 
-        _lastFocusedQueue.Enqueue(tappedEntry);
-        _lastFocusedQueue.Dequeue();
-        cropAmountFocusIndicator.IsChecked = _lastFocusedQueue.Contains(cropAmountEntry);
-        sellRateFocusIndicator.IsChecked = _lastFocusedQueue.Contains(sellRateEntry);
-        pureIncomeFocusIndicator.IsChecked = _lastFocusedQueue.Contains(pureIncomeEntry);
+        _lastTappedEntries.Enqueue(tappedEntry);
+        _lastTappedEntries.Dequeue();
+        cropAmountFocusIndicator.IsChecked = _lastTappedEntries.Contains(cropAmountEntry);
+        sellRateFocusIndicator.IsChecked = _lastTappedEntries.Contains(sellRateEntry);
+        pureIncomeFocusIndicator.IsChecked = _lastTappedEntries.Contains(pureIncomeEntry);
     }
 }
