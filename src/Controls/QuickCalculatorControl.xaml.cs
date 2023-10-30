@@ -59,6 +59,7 @@ public partial class QuickCalculatorControl : ContentView
                 pureIncomeFormatted.Length > Globals.NumericEntryMaxLength ? 
                 Globals.NumericEntryMaxLengthExceeded: 
                 pureIncomeFormatted;
+            PureIncome = pureIncome;
         }
         else if (_lastTappedEntries.Contains(sellRateEntry) && _lastTappedEntries.Contains(pureIncomeEntry))
         {
@@ -68,6 +69,7 @@ public partial class QuickCalculatorControl : ContentView
                 cropAmountFormatted.Length > Globals.NumericEntryMaxLength ?
                 Globals.NumericEntryMaxLengthExceeded :
                 cropAmountFormatted;
+            CropAmount = cropAmount;
         }
         else if (_lastTappedEntries.Contains(pureIncomeEntry) && _lastTappedEntries.Contains(cropAmountEntry))
         {
@@ -77,11 +79,8 @@ public partial class QuickCalculatorControl : ContentView
                 sellRateFormatted.Length > Globals.NumericEntryMaxLength ?
                 Globals.NumericEntryMaxLengthExceeded : 
                 sellRateFormatted;
+            SellRate = sellRate;
         }
-
-        CropAmount = cropAmount;
-        SellRate = sellRate;
-        PureIncome = pureIncome;
     }
 
     void OnEntryTapped(object sender, TappedEventArgs e)

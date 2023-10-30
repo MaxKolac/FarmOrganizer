@@ -68,7 +68,7 @@
             </Entry>
             <CheckBox x:Name="pureIncomeFocusIndicator" 
                       Grid.Row="5" 
-                      IsChecked="True" />
+                      IsChecked="False" />
         </Grid>
     </Frame>
 </ContentView>
