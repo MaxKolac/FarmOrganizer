@@ -3,6 +3,8 @@
 # "Duck tape" solutions
 List of workaroudns that currently replace officially adopted solutions due to their bugged functionality. Once the official solutions are fixed, these workarounds should be replaced.
 
+## Android version
+
 ### `DataTemplateSelector` doesn't work at all
 See the [#28](https://github.com/MaxKolac/FarmOrganizer/pull/28).
 It is currently replaced by a simple `Converter`. Workaround used in a `DataTemplate` of `BalanceLedger` model class in `LedgerPage` to dynamically change the `TextColor` property, according to the current `BalanceChange` property.
