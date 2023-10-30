@@ -108,6 +108,11 @@ namespace FarmOrganizer.ViewModels
             {
                 ExceptionHandler.Handle(ex, false);
             }
+            finally
+            {
+                ToggleAdding();
+                ShowCreatorFrame = false;
+            }
         }
 
         [RelayCommand]

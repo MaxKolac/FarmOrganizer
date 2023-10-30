@@ -15,14 +15,22 @@
             <SwipeView>
                 <SwipeView.LeftItems>
                     <SwipeItems>
-                        <SwipeItemView Style="{StaticResource EditSwipeItem}"
-                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=EditCommand}" />
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=EditCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SIVEditFrame}">
+                                <Label Style="{StaticResource SIVEditLabel}" />
+                            </Frame>
+                        </SwipeItemView>
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.RightItems>
                     <SwipeItems>
-                        <SwipeItemView Style="{StaticResource DeleteSwipeItem}"
-                                       Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=RemoveCommand}" />
+                        <SwipeItemView Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:SeasonsPageViewModel}}, Path=RemoveCommand}"
+                                       CommandParameter="{Binding .}">
+                            <Frame Style="{StaticResource SIVDeleteFrame}">
+                                <Label Style="{StaticResource SIVDeleteLabel}" />
+                            </Frame>
+                        </SwipeItemView>
                     </SwipeItems>
                 </SwipeView.RightItems>
 

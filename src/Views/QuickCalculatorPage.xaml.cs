@@ -2,9 +2,9 @@ using FarmOrganizer.ViewModels;
 
 namespace FarmOrganizer.Views;
 
-public partial class QuickCalculator : ContentPage
+public partial class QuickCalculatorPage : ContentPage
 {
-    public QuickCalculator(QuickCalculatorViewModel vm)
+    public QuickCalculatorPage(QuickCalculatorViewModel vm)
     {
         InitializeComponent();
         BindingContext = vm;
