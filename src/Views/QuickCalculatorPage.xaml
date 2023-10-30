@@ -13,11 +13,6 @@
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
-        <Style TargetType="Label" x:Key="InstructionStyle">
-            <Setter Property="HorizontalTextAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="FontSize" Value="16"/>
-        </Style>
         <Style TargetType="Entry" BasedOn="{StaticResource NumericEntry}">
             <Setter Property="VerticalOptions" Value="Fill"/>
             <Setter Property="FontSize" Value="16" />
@@ -26,8 +21,7 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. Dotyczy liczb wewnątrz poniższej ramki. Pozostałe liczby są opcjonalne." 
-                   Style="{StaticResource InstructionStyle}"/>
+            <controls:QuickCalculatorInstruction />
 
             <Grid Margin="10" ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
                 <!-- Example Expenses Entry -->

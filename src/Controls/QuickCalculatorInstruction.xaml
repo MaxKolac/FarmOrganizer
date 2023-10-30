@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:FarmOrganizer.Controls"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FarmOrganizer.Controls.QuickCalculatorInstruction"
+             x:DataType="controls:QuickCalculatorInstruction">
+
+    <HorizontalStackLayout>
+        <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. Dotyczy liczb wewnątrz poniższej ramki. Pozostałe liczby są opcjonalne." 
+               Margin="10"
+               FontSize="16"
+               HorizontalTextAlignment="Center"
+               LineBreakMode="WordWrap"/>
+    </HorizontalStackLayout>
+</ContentView>

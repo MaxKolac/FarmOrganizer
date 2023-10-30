@@ -8,20 +8,6 @@
              x:DataType="viewmodel:ReportPageViewModel"
              Title="Raport wydatków i przychodów">
     <ContentPage.Resources>
-        <Style TargetType="CheckBox">
-            <Setter Property="IsEnabled" Value="False"/>
-            <Setter Property="Grid.Column" Value="1"/>
-            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
-        </Style>
-        <Style TargetType="Entry" x:Key="QuickCalcEntry" BasedOn="{StaticResource NumericEntry}">
-            <Setter Property="VerticalOptions" Value="Fill"/>
-            <Setter Property="FontSize" Value="16"/>
-        </Style>
-        <Style TargetType="Entry" x:Key="QuickCalcReadOnlyEntry" BaseResourceKey="QuickCalcEntry">
-            <Setter Property="FontAttributes" Value="Bold"/>
-            <Setter Property="IsReadOnly" Value="True"/>
-        </Style>
-
         <Style TargetType="Frame" x:Key="EntriesFrame">
             <Setter Property="Padding" Value="2"/>
             <Setter Property="CornerRadius" Value="0"/>
@@ -44,20 +30,6 @@
         <Style TargetType="Label" x:Key="CollectionViewTitleLabel">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontAttributes" Value="Bold"/>
-        </Style>
-        <Style TargetType="Label" x:Key="InstructionLabel">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="HorizontalTextAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="10"/>
-        </Style>
-        <Style TargetType="Label" x:Key="QuickCalcLabel">
-            <Setter Property="HorizontalTextAlignment" Value="Start"/>
-            <Setter Property="VerticalTextAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontAttributes" Value="Bold"/>
-        </Style>
-        <Style TargetType="Label" x:Key="QuickCalcTotalLabel" BasedOn="{StaticResource QuickCalcLabel}">
-            <Setter Property="Margin" Value="5"/>
         </Style>
 
         <DataTemplate x:DataType="viewmodel:CostTypeReportEntry" x:Key="CostTypeReportEntryTemplate">
@@ -158,10 +130,13 @@
                 </Frame>
             </VerticalStackLayout>
             
-            <!-- QuickCalculator Copy with more stuff -->
-            <controls:QuickCalculatorControl CropAmount="{Binding CropAmountValue}"
-                                             SellRate="{Binding SellRateValue}"
-                                             PureIncome="{Binding PureIncomeValue}"/>
+            <!-- QuickCalculator -->
+            <VerticalStackLayout>
+                <controls:QuickCalculatorInstruction />
+                <controls:QuickCalculatorControl CropAmount="{Binding CropAmountValue}"
+                                                 SellRate="{Binding SellRateValue}"
+                                                 PureIncome="{Binding PureIncomeValue}"/>
+            </VerticalStackLayout>
 
             <!-- Options at the bottom -->
             <VerticalStackLayout Spacing="5">
