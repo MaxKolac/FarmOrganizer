@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:FarmOrganizer.Controls"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
+             x:Class="FarmOrganizer.Views.QuickCalculatorPage"
+             x:DataType="viewmodel:QuickCalculatorViewModel"
+             Title="Szybki kalkulator">
+    <ContentPage.Resources>
+        <Style TargetType="Label" x:Key="BaseLabel">
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+        <Style TargetType="Entry" x:Key="BaseEntry" BasedOn="{StaticResource NumericEntry}">
+            <Setter Property="VerticalOptions" Value="Fill"/>
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <controls:QuickCalculatorInstruction />
+
+            <Grid Margin="10" ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+                <!-- Example Expenses Entry -->
+                <Label Grid.ColumnSpan="2" 
+                       Style="{StaticResource BaseLabel}"
+                       Text="Przykładowe wydatki (zł):"/>
+                <Entry Grid.Row="1" 
+                       Style="{StaticResource BaseEntry}"
+                       Text="{Binding ExampleExpenseValue}"/>
+
+                <controls:QuickCalculatorControl Grid.Row="2" 
+                                                 Padding="0,10"
+                                                 PureIncome="{Binding PureIncome}"/>
+
+                <!-- Theoritical Total Change Entry -->
+                <Label Grid.Row="3" 
+                       Grid.ColumnSpan="2" 
+                       Style="{StaticResource BaseLabel}"
+                       Text="{Binding ExampleChangeText}"/>
+                <Entry Grid.Row="4" 
+                       Style="{StaticResource BaseEntry}"
+                       Text="{Binding ExampleChangeValue}" 
+                       IsReadOnly="True"/>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

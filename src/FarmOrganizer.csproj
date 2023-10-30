@@ -117,12 +117,18 @@
 	  <Compile Update="Views\ReportPage.xaml.cs">
 	    <DependentUpon>ReportPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\QuickCalculator.xaml.cs">
-	    <DependentUpon>QuickCalculator.xaml</DependentUpon>
+	  <Compile Update="Views\QuickCalculatorPage.xaml.cs">
+	    <DependentUpon>QuickCalculatorPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Controls\QuickCalculatorControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\QuickCalculatorInstruction.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Controls\TwoOptionSwitch.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -153,7 +159,7 @@
 	  <MauiXaml Update="Views\ReportPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\QuickCalculator.xaml">
+	  <MauiXaml Update="Views\QuickCalculatorPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SeasonsPage.xaml">

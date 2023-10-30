@@ -9,7 +9,7 @@ public partial class AppShell : Shell
         InitializeComponent();
 
         //Route registries for different pages
-        Routing.RegisterRoute(nameof(QuickCalculator), typeof(QuickCalculator));
+        Routing.RegisterRoute(nameof(QuickCalculatorPage), typeof(QuickCalculatorPage));
         Routing.RegisterRoute(nameof(LedgerPage), typeof(LedgerPage));
         Routing.RegisterRoute(nameof(LedgerFilterPage), typeof(LedgerFilterPage));
         Routing.RegisterRoute(nameof(LedgerRecordPage), typeof(LedgerRecordPage));
