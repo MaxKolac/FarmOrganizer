@@ -7,7 +7,7 @@ public partial class TwoOptionSwitch : ContentView
         get => (string)GetValue(LeftOptionTextProperty);
         set => SetValue(LeftOptionTextProperty, value);
     }
-    
+
     public string RightOptionText
     {
         get => (string)GetValue(RightOptionTextProperty);
@@ -35,10 +35,10 @@ public partial class TwoOptionSwitch : ContentView
         control.optionSwitch.IsToggled = (bool)newValue;
     });
 
-	public TwoOptionSwitch()
-	{
-		InitializeComponent();
+    public TwoOptionSwitch()
+    {
+        InitializeComponent();
         optionSwitch.Toggled += (sender, e) => { RightOptionSelected = e.Value; };
         optionSwitch.IsToggled = true;
-	}
+    }
 }

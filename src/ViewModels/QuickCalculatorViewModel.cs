@@ -20,10 +20,10 @@ namespace FarmOrganizer.ViewModels
 
         #endregion
 
-        private void CalculateExampleChange() => 
+        private void CalculateExampleChange() =>
             ExampleChangeValue = (PureIncome - Utils.CastToValue(ExampleExpenseValue)).ToString("0.00");
 
-        partial void OnPureIncomeChanged(decimal value) => 
+        partial void OnPureIncomeChanged(decimal value) =>
             CalculateExampleChange();
 
         partial void OnExampleExpenseValueChanged(string value) =>

@@ -9,13 +9,13 @@ public partial class QuickCalculatorControl : ContentView
         get => (decimal)GetValue(CropAmountProperty);
         set => SetValue(CropAmountProperty, value);
     }
-    
+
     public decimal SellRate
     {
         get => (decimal)GetValue(SellRateProperty);
         set => SetValue(SellRateProperty, value);
     }
-    
+
     public decimal PureIncome
     {
         get => (decimal)GetValue(PureIncomeProperty);
@@ -38,12 +38,12 @@ public partial class QuickCalculatorControl : ContentView
         control.pureIncomeEntry.Text = ((decimal)newValue).ToString("0.00");
     });
 
-	public QuickCalculatorControl()
-	{
-		InitializeComponent();
+    public QuickCalculatorControl()
+    {
+        InitializeComponent();
         _lastTappedEntries.Enqueue(cropAmountEntry);
         _lastTappedEntries.Enqueue(sellRateEntry);
-	}
+    }
 
     void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
@@ -55,9 +55,9 @@ public partial class QuickCalculatorControl : ContentView
         {
             pureIncome = decimal.Multiply(cropAmount, sellRate);
             string pureIncomeFormatted = pureIncome.ToString("0.00");
-            pureIncomeEntry.Text = 
-                pureIncomeFormatted.Length > Globals.NumericEntryMaxLength ? 
-                Globals.NumericEntryMaxLengthExceeded: 
+            pureIncomeEntry.Text =
+                pureIncomeFormatted.Length > Globals.NumericEntryMaxLength ?
+                Globals.NumericEntryMaxLengthExceeded :
                 pureIncomeFormatted;
             PureIncome = pureIncome;
         }
@@ -65,7 +65,7 @@ public partial class QuickCalculatorControl : ContentView
         {
             cropAmount = sellRate != 0m ? decimal.Divide(pureIncome, sellRate) : 0;
             string cropAmountFormatted = cropAmount.ToString("0.00");
-            cropAmountEntry.Text = 
+            cropAmountEntry.Text =
                 cropAmountFormatted.Length > Globals.NumericEntryMaxLength ?
                 Globals.NumericEntryMaxLengthExceeded :
                 cropAmountFormatted;
@@ -75,9 +75,9 @@ public partial class QuickCalculatorControl : ContentView
         {
             sellRate = cropAmount != 0 ? decimal.Divide(pureIncome, cropAmount) : 0;
             string sellRateFormatted = sellRate.ToString("0.00");
-            sellRateEntry.Text = 
+            sellRateEntry.Text =
                 sellRateFormatted.Length > Globals.NumericEntryMaxLength ?
-                Globals.NumericEntryMaxLengthExceeded : 
+                Globals.NumericEntryMaxLengthExceeded :
                 sellRateFormatted;
             SellRate = sellRate;
         }
