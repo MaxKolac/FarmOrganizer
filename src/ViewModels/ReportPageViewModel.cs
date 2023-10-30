@@ -11,7 +11,7 @@ namespace FarmOrganizer.ViewModels
     [QueryProperty(nameof(passedLedgerEntries), "entries")]
     [QueryProperty(nameof(cropFieldIds), "cropfields")]
     [QueryProperty(nameof(seasonIds), "seasons")]
-    public partial class ReportPageViewModel : QuickCalculatorViewModel, IQueryAttributable
+    public partial class ReportPageViewModel : ObservableObject, IQueryAttributable
     {
         #region Query Properties
         private List<BalanceLedger> passedLedgerEntries;
@@ -23,6 +23,13 @@ namespace FarmOrganizer.ViewModels
         private List<CropField> passedCropFields = new();
         [ObservableProperty]
         private List<Season> passedSeasons = new();
+
+        [ObservableProperty]
+        decimal cropAmountValue;
+        [ObservableProperty]
+        decimal sellRateValue;
+        [ObservableProperty]
+        decimal pureIncomeValue;
 
         #region Money Related Properties and Lists
         [ObservableProperty]
@@ -157,8 +164,8 @@ namespace FarmOrganizer.ViewModels
                     IdCropField = PassedCropFields[0].Id,
                     IdSeason = PassedSeasons[0].Id,
                     DateAdded = DateTime.Now,
-                    BalanceChange = Utils.CastToValue(PureIncomeValue),
-                    Notes = $"Sprzedaż {Utils.CastToValue(CropAmountValue)} kg przy stawce {Utils.CastToValue(SellRateValue)} zł za kilo."
+                    BalanceChange = PureIncomeValue,
+                    Notes = $"Sprzedaż {CropAmountValue} kg przy stawce {SellRateValue} zł za kilo."
                 };
                 if (AddNewSeasonAfterSaving)
                 {
@@ -196,13 +203,10 @@ namespace FarmOrganizer.ViewModels
                                          ExpenseEntries,
                                          ProfitEntries);
             if (ExportPdfWithPureIncome)
-                builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", Utils.CastToValue(PureIncomeValue)));
+                builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", PureIncomeValue));
             var document = builder.Build();
             await PdfBuilder.Export(document);
         }
-
-        protected override void OnIncomeChanged(string value) =>
-            ProfitAfterExpenses = Utils.CastToValue(value) + TotalChange;
 
         partial void OnTotalChangeChanged(decimal value) =>
             TotalChangeText = value >= 0 ? _labelProfit : _labelLoss;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:controls="clr-namespace:FarmOrganizer.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
              xmlns:model="clr-namespace:FarmOrganizer.Models"
@@ -158,87 +159,9 @@
             </VerticalStackLayout>
             
             <!-- QuickCalculator Copy with more stuff -->
-            <VerticalStackLayout>
-                <Label Text="Dwie ostatnio kliknięte liczby (oznaczone ptaszkiem) są użyte do obliczenia trzeciej. Dotyczy liczb wewnątrz poniższej ramki. Pozostałe liczby są opcjonalne." 
-                       Style="{StaticResource InstructionLabel}"/>
-
-                <Grid ColumnDefinitions=".9*, Auto"
-                      RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
-
-                    <!-- Total change -->
-                    <Label Grid.Row="0"
-                           Text="{Binding TotalChangeText, StringFormat='{0}:'}" 
-                           Style="{StaticResource QuickCalcLabel}"/>
-                    <Label Grid.Row="1"
-                           Text="{Binding TotalChange, StringFormat='{0:F2} zł'}"
-                           Style="{StaticResource QuickCalcTotalLabel}"/>
-
-                    <!-- Profit after expenses -->
-                    <Label Grid.Row="0"
-                           HorizontalOptions="End"
-                           Text="{Binding ProfitAfterExpensesText, StringFormat='{0} po wydatkach:'}" 
-                           Style="{StaticResource QuickCalcLabel}"/>
-                    <Label Grid.Row="1"
-                           HorizontalOptions="End"
-                           Text="{Binding ProfitAfterExpenses, StringFormat='{0:F2} zł'}"
-                           Style="{StaticResource QuickCalcTotalLabel}"/>
-
-                    <Frame Grid.Row="2" 
-                           BackgroundColor="{AppThemeBinding Light=LightGray, Dark=Black}"
-                           BorderColor="{AppThemeBinding Light=DarkGray, Dark=LightGray}"
-                           Margin="0,10,0,10">
-                        <Grid ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
-
-                            <!-- Crop Amount Entry -->
-                            <Label Grid.ColumnSpan="2"  
-                                   Style="{StaticResource QuickCalcLabel}"
-                                   Text="Ilość plonów (kg):"/>
-                            <Entry x:Name="cropAmount" 
-                                   Grid.Row="1"
-                                   Text="{Binding CropAmountValue}"
-                                   Style="{StaticResource QuickCalcEntry}">
-                                <Entry.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                                          CommandParameter="cropAmount"/>
-                                </Entry.GestureRecognizers>
-                            </Entry>
-                            <CheckBox Grid.Row="1" IsChecked="{Binding CropAmountFocused}"/>
-
-                            <!-- Sell Rate Entry -->
-                            <Label Grid.Row="2" 
-                                   Grid.ColumnSpan="2" 
-                                   Style="{StaticResource QuickCalcLabel}"
-                                   Text="Cena za kilogram (zł/kg):"/>
-                            <Entry x:Name="sellRate"
-                                   Grid.Row="3"
-                                   Text="{Binding SellRateValue}"
-                                   Style="{StaticResource QuickCalcEntry}">
-                                <Entry.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                                          CommandParameter="sellRate"/>
-                                </Entry.GestureRecognizers>
-                            </Entry>
-                            <CheckBox Grid.Row="3" IsChecked="{Binding SellRateFocused}"/>
-
-                            <!-- Pure Income Entry -->
-                            <Label Grid.Row="4" 
-                                   Grid.ColumnSpan="2" 
-                                   Style="{StaticResource QuickCalcLabel}"
-                                   Text="Zysk ze sprzedaży (zł):"/>
-                            <Entry x:Name="pureIncome"
-                                   Grid.Row="5"
-                                   Text="{Binding PureIncomeValue}"
-                                   Style="{StaticResource QuickCalcEntry}">
-                                <Entry.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding LastTappedControlsChangedCommand}" 
-                                                          CommandParameter="pureIncome"/>
-                                </Entry.GestureRecognizers>
-                            </Entry>
-                            <CheckBox Grid.Row="5" IsChecked="{Binding PureIncomeFocused}"/>
-                        </Grid>
-                    </Frame>
-                </Grid>
-            </VerticalStackLayout>
+            <controls:QuickCalculatorControl CropAmount="{Binding CropAmountValue}"
+                                             SellRate="{Binding SellRateValue}"
+                                             PureIncome="{Binding PureIncomeValue}"/>
 
             <!-- Options at the bottom -->
             <VerticalStackLayout Spacing="5">
