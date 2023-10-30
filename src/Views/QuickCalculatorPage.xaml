@@ -7,13 +7,13 @@
              x:DataType="viewmodel:QuickCalculatorViewModel"
              Title="Szybki kalkulator">
     <ContentPage.Resources>
-        <Style TargetType="Label">
+        <Style TargetType="Label" x:Key="BaseLabel">
             <Setter Property="HorizontalTextAlignment" Value="Start"/>
             <Setter Property="VerticalTextAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
-        <Style TargetType="Entry" BasedOn="{StaticResource NumericEntry}">
+        <Style TargetType="Entry" x:Key="BaseEntry" BasedOn="{StaticResource NumericEntry}">
             <Setter Property="VerticalOptions" Value="Fill"/>
             <Setter Property="FontSize" Value="16" />
         </Style>
@@ -25,8 +25,12 @@
 
             <Grid Margin="10" ColumnDefinitions=".9*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
                 <!-- Example Expenses Entry -->
-                <Label Grid.ColumnSpan="2" Text="Przykładowe wydatki (zł):"/>
-                <Entry Grid.Row="1" Text="{Binding ExampleExpenseValue}"/>
+                <Label Grid.ColumnSpan="2" 
+                       Style="{StaticResource BaseLabel}"
+                       Text="Przykładowe wydatki (zł):"/>
+                <Entry Grid.Row="1" 
+                       Style="{StaticResource BaseEntry}"
+                       Text="{Binding ExampleExpenseValue}"/>
 
                 <controls:QuickCalculatorControl Grid.Row="2" 
                                                  Padding="0,10"
@@ -35,8 +39,10 @@
                 <!-- Theoritical Total Change Entry -->
                 <Label Grid.Row="3" 
                        Grid.ColumnSpan="2" 
+                       Style="{StaticResource BaseLabel}"
                        Text="{Binding ExampleChangeText}"/>
                 <Entry Grid.Row="4" 
+                       Style="{StaticResource BaseEntry}"
                        Text="{Binding ExampleChangeValue}" 
                        IsReadOnly="True"/>
             </Grid>
