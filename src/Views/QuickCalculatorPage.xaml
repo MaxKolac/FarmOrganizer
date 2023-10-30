@@ -29,6 +29,7 @@
                 <Entry Grid.Row="1" Text="{Binding ExampleExpenseValue}"/>
 
                 <controls:QuickCalculatorControl Grid.Row="2" 
+                                                 Padding="0,10"
                                                  PureIncome="{Binding PureIncome}"/>
 
                 <!-- Theoritical Total Change Entry -->

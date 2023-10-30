@@ -135,7 +135,8 @@
                 <controls:QuickCalculatorInstruction />
                 <controls:QuickCalculatorControl CropAmount="{Binding CropAmountValue}"
                                                  SellRate="{Binding SellRateValue}"
-                                                 PureIncome="{Binding PureIncomeValue}"/>
+                                                 PureIncome="{Binding PureIncomeValue}"
+                                                 Margin="0,5"/>
             </VerticalStackLayout>
 
             <!-- Options at the bottom -->
