@@ -2,7 +2,7 @@
 
 REM Laptop
 SET PdfSharpCoreRootDir="C:\Users\ja\Documents\GitHub\PdfSharpCore"
-SET DestinationDir="C:\Users\ja\Documents\GitHub\FarmOrganizer\localdependencies"
+SET DestinationDir="C:\Users\ja\Documents\GitHub\FarmOrganizer\localpackages"
 
 REM PC - TODO
 
