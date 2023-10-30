@@ -36,7 +36,9 @@
                     <TapGestureRecognizer Tapped="OnEntryTapped" />
                 </Entry.GestureRecognizers>
             </Entry>
-            <CheckBox x:Name="cropAmountFocusIndicator" Grid.Row="1" />
+            <CheckBox x:Name="cropAmountFocusIndicator" 
+                      Grid.Row="1" 
+                      IsChecked="True" />
 
             <!-- Sell Rate Entry -->
             <Label Grid.Row="2" 
@@ -49,7 +51,9 @@
                     <TapGestureRecognizer Tapped="OnEntryTapped" />
                 </Entry.GestureRecognizers>
             </Entry>
-            <CheckBox x:Name="sellRateFocusIndicator" Grid.Row="3" />
+            <CheckBox x:Name="sellRateFocusIndicator" 
+                      Grid.Row="3" 
+                      IsChecked="True" />
 
             <!-- Pure Income Entry -->
             <Label Grid.Row="4" 
@@ -62,7 +66,9 @@
                     <TapGestureRecognizer Tapped="OnEntryTapped" />
                 </Entry.GestureRecognizers>
             </Entry>
-            <CheckBox x:Name="pureIncomeFocusIndicator" Grid.Row="5" />
+            <CheckBox x:Name="pureIncomeFocusIndicator" 
+                      Grid.Row="5" 
+                      IsChecked="True" />
         </Grid>
     </Frame>
 </ContentView>

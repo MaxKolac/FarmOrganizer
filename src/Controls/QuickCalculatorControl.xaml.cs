@@ -42,10 +42,8 @@ public partial class QuickCalculatorControl : ContentView
 	public QuickCalculatorControl()
 	{
 		InitializeComponent();
-        _lastFocusedQueue.Enqueue(cropAmountEntry);
-        cropAmountFocusIndicator.IsChecked = true;
-        _lastFocusedQueue.Enqueue(sellRateEntry);
-        sellRateFocusIndicator.IsChecked = true;
+        _lastTappedEntries.Enqueue(cropAmountEntry);
+        _lastTappedEntries.Enqueue(sellRateEntry);
 	}
 
     void OnEntryTextChanged(object sender, TextChangedEventArgs e)
