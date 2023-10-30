@@ -25,7 +25,6 @@ namespace FarmOrganizer.ViewModels
         protected bool pureIncomeFocused;
 
         protected readonly Queue<string> lastEditedControls = new();
-        protected const string maxLengthExceededMessage = "Za dużo";
         #endregion
 
         #region Additional Private Fields
