@@ -30,6 +30,8 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android33.0|AnyCPU'">
 	  <DebugSymbols>True</DebugSymbols>
 	  <PublishTrimmed>True</PublishTrimmed>
+      <EnableTrimAnalyzer>True</EnableTrimAnalyzer>
+      <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
 	  <RunAOTCompilation>True</RunAOTCompilation>
 	</PropertyGroup>
 
@@ -107,11 +109,26 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-		<PackageReference Include="MigraDocCore.DocumentObjectModel" Version="1.0.0" />
-		<PackageReference Include="MigraDocCore.Rendering" Version="1.0.0" />
-		<PackageReference Include="PdfSharpCore" Version="1.0.0" />
-		<PackageReference Include="PdfSharpCore.Charting" Version="1.0.0" />
+		<PackageReference Include="SharpZipLib" Version="1.4.2" />
+		<PackageReference Include="SixLabors.Fonts" Version="2.0.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The following won't work without the dependencies: SharpZipLib, SixLabors.Fonts, SixLabors.ImageSharp -->
+	  <Reference Include="MigraDocCore.DocumentObjectModel">
+	      <HintPath>..\localpackages\MigraDocCore.DocumentObjectModel.dll</HintPath>
+	  </Reference>
+	  <Reference Include="MigraDocCore.Rendering">
+		  <HintPath>..\localpackages\MigraDocCore.Rendering.dll</HintPath>
+	  </Reference>
+	  <Reference Include="PdfSharpCore">
+	      <HintPath>..\localpackages\PdfSharpCore.dll</HintPath>
+	  </Reference>
+	  <Reference Include="PdfSharpCore.Charting">
+	      <HintPath>..\localpackages\PdfSharpCore.Charting.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>
