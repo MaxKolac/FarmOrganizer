@@ -25,17 +25,46 @@ public partial class QuickCalculatorControl : ContentView
     public static readonly BindableProperty CropAmountProperty = BindableProperty.Create(nameof(CropAmount), typeof(decimal), typeof(QuickCalculatorControl), 0m, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = bindable as QuickCalculatorControl;
-        control.cropAmountEntry.Text = ((decimal)newValue).ToString("0.00");
+        var entry = control.cropAmountEntry;
+
+        if (!entry.IsFocused)
+        {
+            var formattedValue = ((decimal)newValue).ToString("0.00");
+            entry.Text =
+                formattedValue.Length > Globals.NumericEntryMaxLength ?
+                Globals.NumericEntryMaxLengthExceeded :
+                formattedValue;
+        }
     });
+
     public static readonly BindableProperty SellRateProperty = BindableProperty.Create(nameof(SellRate), typeof(decimal), typeof(QuickCalculatorControl), 0m, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = bindable as QuickCalculatorControl;
-        control.sellRateEntry.Text = ((decimal)newValue).ToString("0.00");
+        var entry = control.sellRateEntry;
+
+        if (!entry.IsFocused)
+        {
+            var formattedValue = ((decimal)newValue).ToString("0.00");
+            entry.Text =
+                formattedValue.Length > Globals.NumericEntryMaxLength ?
+                Globals.NumericEntryMaxLengthExceeded :
+                formattedValue;
+        }
     });
+
     public static readonly BindableProperty PureIncomeProperty = BindableProperty.Create(nameof(PureIncome), typeof(decimal), typeof(QuickCalculatorControl), 0m, BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = bindable as QuickCalculatorControl;
-        control.pureIncomeEntry.Text = ((decimal)newValue).ToString("0.00");
+        var entry = control.pureIncomeEntry;
+
+        if (!entry.IsFocused)
+        {
+            var formattedValue = ((decimal)newValue).ToString("0.00");
+            entry.Text = 
+                formattedValue.Length > Globals.NumericEntryMaxLength ?
+                Globals.NumericEntryMaxLengthExceeded : 
+                formattedValue;
+        }
     });
 
     public QuickCalculatorControl()
@@ -47,39 +76,23 @@ public partial class QuickCalculatorControl : ContentView
 
     void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
-        decimal cropAmount = Utils.CastToValue(cropAmountEntry.Text);
-        decimal sellRate = Utils.CastToValue(sellRateEntry.Text);
-        decimal pureIncome = Utils.CastToValue(pureIncomeEntry.Text);
+        if (e.NewTextValue == Globals.NumericEntryMaxLengthExceeded) return;
+
+        CropAmount = Utils.CastToValue(cropAmountEntry.Text);
+        SellRate = Utils.CastToValue(sellRateEntry.Text);
+        PureIncome = Utils.CastToValue(pureIncomeEntry.Text);
 
         if (_lastTappedEntries.Contains(cropAmountEntry) && _lastTappedEntries.Contains(sellRateEntry))
         {
-            pureIncome = decimal.Multiply(cropAmount, sellRate);
-            string pureIncomeFormatted = pureIncome.ToString("0.00");
-            pureIncomeEntry.Text =
-                pureIncomeFormatted.Length > Globals.NumericEntryMaxLength ?
-                Globals.NumericEntryMaxLengthExceeded :
-                pureIncomeFormatted;
-            PureIncome = pureIncome;
+            PureIncome = CropAmount * SellRate;
         }
         else if (_lastTappedEntries.Contains(sellRateEntry) && _lastTappedEntries.Contains(pureIncomeEntry))
         {
-            cropAmount = sellRate != 0m ? decimal.Divide(pureIncome, sellRate) : 0;
-            string cropAmountFormatted = cropAmount.ToString("0.00");
-            cropAmountEntry.Text =
-                cropAmountFormatted.Length > Globals.NumericEntryMaxLength ?
-                Globals.NumericEntryMaxLengthExceeded :
-                cropAmountFormatted;
-            CropAmount = cropAmount;
+            CropAmount = SellRate != 0 ? PureIncome / SellRate : 0;
         }
         else if (_lastTappedEntries.Contains(pureIncomeEntry) && _lastTappedEntries.Contains(cropAmountEntry))
         {
-            sellRate = cropAmount != 0 ? decimal.Divide(pureIncome, cropAmount) : 0;
-            string sellRateFormatted = sellRate.ToString("0.00");
-            sellRateEntry.Text =
-                sellRateFormatted.Length > Globals.NumericEntryMaxLength ?
-                Globals.NumericEntryMaxLengthExceeded :
-                sellRateFormatted;
-            SellRate = sellRate;
+            SellRate = CropAmount != 0 ? PureIncome / CropAmount : 0;
         }
     }
 
