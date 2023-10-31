@@ -196,16 +196,23 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task ExportReportAsPDF()
         {
-            var builder = new PdfBuilder(AppInfo.Current.Name,
-                                         AppInfo.Current.VersionString,
-                                         PassedCropFields,
-                                         PassedSeasons,
-                                         ExpenseEntries,
-                                         ProfitEntries);
-            if (ExportPdfWithPureIncome)
-                builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", PureIncomeValue));
-            var document = builder.Build();
-            await PdfBuilder.Export(document);
+            try
+            {
+                var builder = new PdfBuilder(AppInfo.Current.Name,
+                                             AppInfo.Current.VersionString,
+                                             PassedCropFields,
+                                             PassedSeasons,
+                                             ExpenseEntries,
+                                             ProfitEntries);
+                if (ExportPdfWithPureIncome)
+                    builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", PureIncomeValue));
+                var document = builder.Build();
+                await PdfBuilder.Export(document);
+            }
+            catch (Exception ex)
+            {
+                App.AlertSvc.ShowAlert("Błąd", ex.ToString());
+            }
         }
 
         partial void OnTotalChangeChanged(decimal value) =>

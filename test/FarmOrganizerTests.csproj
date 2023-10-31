@@ -34,4 +34,19 @@
     <ProjectReference Include="..\src\FarmOrganizer-xUnitCompatible.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="MigraDocCore.DocumentObjectModel">
+      <HintPath>..\localpackages\MigraDocCore.DocumentObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDocCore.Rendering">
+      <HintPath>..\localpackages\MigraDocCore.Rendering.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharpCore">
+      <HintPath>..\localpackages\PdfSharpCore.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharpCore.Charting">
+      <HintPath>..\localpackages\PdfSharpCore.Charting.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
