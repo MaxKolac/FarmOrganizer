@@ -29,8 +29,8 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android33.0|AnyCPU'">
 	  <DebugSymbols>True</DebugSymbols>
-	  <PublishTrimmed>False</PublishTrimmed>
-	  <RunAOTCompilation>False</RunAOTCompilation>
+	  <PublishTrimmed>True</PublishTrimmed>
+	  <RunAOTCompilation>True</RunAOTCompilation>
 	</PropertyGroup>
 
 	<!--
