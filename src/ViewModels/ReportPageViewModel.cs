@@ -20,9 +20,9 @@ namespace FarmOrganizer.ViewModels
         #endregion
 
         [ObservableProperty]
-        private List<CropField> passedCropFields = new();
+        List<CropField> passedCropFields = new();
         [ObservableProperty]
-        private List<Season> passedSeasons = new();
+        List<Season> passedSeasons = new();
 
         [ObservableProperty]
         decimal cropAmountValue;
@@ -33,49 +33,49 @@ namespace FarmOrganizer.ViewModels
 
         #region Money Related Properties and Lists
         [ObservableProperty]
-        private List<CostTypeReportEntry> expenseEntries = new();
+        List<CostTypeReportEntry> expenseEntries = new();
         [ObservableProperty]
-        private List<CostTypeReportEntry> profitEntries = new();
+        List<CostTypeReportEntry> profitEntries = new();
         [ObservableProperty]
-        private decimal totalExpense = 0.0m;
+        decimal totalExpense = 0.0m;
         [ObservableProperty]
-        private decimal totalProfit = 0.0m;
+        decimal totalProfit = 0.0m;
         [ObservableProperty]
-        private decimal totalChange = 0.0m;
+        decimal totalChange = 0.0m;
         [ObservableProperty]
-        private decimal profitAfterExpenses = 0.0m;
+        decimal profitAfterExpenses = 0.0m;
         #endregion
 
         #region Properties related to options at view's bottom
         [ObservableProperty]
-        private bool addNewSeasonAfterSaving = false;
+        bool addNewSeasonAfterSaving = false;
         [ObservableProperty]
-        private string newSeasonName;
+        string newSeasonName;
         [ObservableProperty]
-        private List<CostType> costTypes;
+        List<CostType> costTypes;
         [ObservableProperty]
-        private CostType selectedCostType;
+        CostType selectedCostType;
         [ObservableProperty]
-        private bool exportPdfWithPureIncome = false;
+        bool exportPdfWithPureIncome = false;
         #endregion
 
         #region Dynamic text
         [ObservableProperty]
-        private string seasonsLabel = _seasonLabelSingle;
-        private const string _seasonLabelSingle = "Sezon:";
-        private const string _seasonLabelMultiple = "Sezony:";
+        string seasonsLabel = _seasonLabelSingle;
+        const string _seasonLabelSingle = "Sezon:";
+        const string _seasonLabelMultiple = "Sezony:";
 
         [ObservableProperty]
-        private string cropFieldsLabel = _cropFieldLabelSingle;
-        private const string _cropFieldLabelSingle = "Pole uprawne:";
-        private const string _cropFieldLabelMultiple = "Pola uprawne:";
+        string cropFieldsLabel = _cropFieldLabelSingle;
+        const string _cropFieldLabelSingle = "Pole uprawne:";
+        const string _cropFieldLabelMultiple = "Pola uprawne:";
 
         [ObservableProperty]
-        private string totalChangeText = _labelProfit;
+        string totalChangeText = _labelProfit;
         [ObservableProperty]
-        private string profitAfterExpensesText = _labelProfit;
-        private const string _labelProfit = "Zysk";
-        private const string _labelLoss = "Straty";
+        string profitAfterExpensesText = _labelProfit;
+        const string _labelProfit = "Zysk";
+        const string _labelLoss = "Straty";
         #endregion
 
         public static event EventHandler OnPageQuit;
@@ -136,6 +136,7 @@ namespace FarmOrganizer.ViewModels
             ExpenseEntries = ExpenseEntries.OrderBy(entry => entry.Name).ToList();
             ProfitEntries = ProfitEntries.OrderBy(entry => entry.Name).ToList();
             TotalChange = TotalProfit - TotalExpense;
+            ProfitAfterExpenses = TotalChange - PureIncomeValue;
             SelectedCostType = CostTypes.First();
         }
 
@@ -217,6 +218,9 @@ namespace FarmOrganizer.ViewModels
 
         partial void OnTotalChangeChanged(decimal value) =>
             TotalChangeText = value >= 0 ? _labelProfit : _labelLoss;
+
+        partial void OnPureIncomeValueChanged(decimal value) =>        
+            ProfitAfterExpenses = TotalChange + value;
 
         partial void OnProfitAfterExpensesChanged(decimal value) =>
             ProfitAfterExpensesText = value >= 0 ? _labelProfit : _labelLoss;
