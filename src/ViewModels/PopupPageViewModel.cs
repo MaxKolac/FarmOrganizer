@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FarmOrganizer.ViewModels
 {
@@ -25,4 +24,4 @@ namespace FarmOrganizer.ViewModels
             IsConfirmable = isConfirmable;
         }
     }
-}        
+}
