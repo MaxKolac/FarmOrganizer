@@ -67,16 +67,16 @@ namespace FarmOrganizer.ViewModels
             Application.Current.UserAppTheme = Enum.Parse<AppTheme>(Preferences.Get(AppThemeKey, Enum.GetName(AppTheme.Unspecified)));
         }
 
-        partial void OnSelectedThemeChanging(AppTheme oldValue, AppTheme newValue)
+        partial void OnSelectedThemeChanged(AppTheme value)
         {
-            Preferences.Set(AppThemeKey, Enum.GetName(newValue));
+            Preferences.Set(AppThemeKey, Enum.GetName(value));
             ApplyPreferences();
         }
 
-        partial void OnDefaultCropFieldChanged(CropField oldValue, CropField newValue)
+        partial void OnDefaultCropFieldChanged(CropField value)
         {
             if (CropFieldPickerEnabled)
-                Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
+                Preferences.Set(LedgerPage_DefaultCropField, value.Id);
             ApplyPreferences();
         }
 
