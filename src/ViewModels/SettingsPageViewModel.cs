@@ -58,7 +58,7 @@ namespace FarmOrganizer.ViewModels
             catch (TableValidationException ex)
             {
                 CropFieldPickerEnabled = false;
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -91,7 +91,7 @@ namespace FarmOrganizer.ViewModels
                     )
                 )
             {
-                if (!await PermissionManager.RequestPermissionsAsync(popupService))
+                if (!await PermissionManager.RequestPermissionsAsync())
                     return;
 
                 await DatabaseFile.Delete();
@@ -104,7 +104,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                if (!await PermissionManager.RequestPermissionsAsync(popupService))
+                if (!await PermissionManager.RequestPermissionsAsync())
                     return;
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
                 if (!folder.IsSuccessful)
@@ -118,7 +118,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (IOException ex)
             {
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -127,7 +127,7 @@ namespace FarmOrganizer.ViewModels
         {
             try
             {
-                if (!await PermissionManager.RequestPermissionsAsync(popupService))
+                if (!await PermissionManager.RequestPermissionsAsync())
                     return;
                 await DatabaseFile.CreateBackup();
                 FileResult file = await FilePicker.PickAsync();
@@ -147,7 +147,7 @@ namespace FarmOrganizer.ViewModels
             catch (IOException ex)
             {
                 await DatabaseFile.RestoreBackup();
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
     }

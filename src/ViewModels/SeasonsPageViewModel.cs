@@ -44,7 +44,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (TableValidationException ex)
             {
-                ExceptionHandler.Handle(popupService, ex, true);
+                ExceptionHandler.Handle(ex, true);
             }
         }
 
@@ -75,15 +75,15 @@ namespace FarmOrganizer.ViewModels
             }
             catch (InvalidRecordPropertyException ex)
             {
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
             catch (NoRecordFoundException ex)
             {
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
             catch (SqliteException ex)
             {
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
         }
 
@@ -118,7 +118,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (RecordDeletionException ex)
             {
-                ExceptionHandler.Handle(popupService, ex, false);
+                ExceptionHandler.Handle(ex, false);
             }
             finally
             {
