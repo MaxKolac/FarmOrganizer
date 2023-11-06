@@ -5,19 +5,30 @@
                xmlns:viewmodel="clr-namespace:FarmOrganizer.ViewModels"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                x:Class="FarmOrganizer.Views.PopupPage"
-               x:DataType="viewmodel:PopupPageViewModel">
+               x:DataType="viewmodel:PopupPageViewModel"
+               Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}">
     
-    <VerticalStackLayout>
-        <Label Text="{Binding Title}" />
-        <Editor Text="{Binding Description}" IsReadOnly="True" />
-        <HorizontalStackLayout IsVisible="{Binding IsConfirmable}">
+    <VerticalStackLayout Padding="20"
+                         Spacing="5">
+        <Label Text="{Binding Title}" 
+               FontAttributes="Bold"
+               FontSize="20"/>
+        <Label Text="{Binding Description}" 
+               LineBreakMode="WordWrap" 
+               Margin="0,0,0,10"/>
+        <Grid IsVisible="{Binding IsConfirmable}"
+              ColumnDefinitions=".5*, .5*">
             <Button Text="Anuluj"
                     Clicked="OnDeclined" 
+                    BorderColor="{StaticResource DarkPrimary}"
+                    BorderWidth="3"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
                     HorizontalOptions="Start"/>
-            <Button Text="Potwierdź"
+            <Button Grid.Column="1"
+                    Text="Potwierdź"
                     Clicked="OnAccepted" 
                     HorizontalOptions="End"/>
-        </HorizontalStackLayout>
+        </Grid>
         <Button Text="OK"
                 IsVisible="{Binding IsConfirmable, Converter={converter:BoolNegatingConverter}}"
                 Clicked="OnDeclined"
