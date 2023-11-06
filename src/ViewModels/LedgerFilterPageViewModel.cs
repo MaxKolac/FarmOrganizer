@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Models;
@@ -11,59 +12,62 @@ namespace FarmOrganizer.ViewModels
     [QueryProperty(nameof(_filterSet), "filterSet")]
     public partial class LedgerFilterPageViewModel : ObservableObject, IQueryAttributable
     {
-        public static event EventHandler<LedgerFilterSet> OnFilterSetCreated;
-        public static event EventHandler OnPageQuit;
+        readonly IPopupService popupService;
+
+        LedgerFilterSet _filterSet;
 
         #region Collections and Choices Bindings
         [ObservableProperty]
-        private List<CropField> allCropFields = new();
+        List<CropField> allCropFields = new();
         [ObservableProperty]
-        private ObservableCollection<object> selectedCropFields = new();
+        ObservableCollection<object> selectedCropFields = new();
 
         [ObservableProperty]
-        private ObservableCollection<CostTypeGroup> allCostTypes = new();
+        ObservableCollection<CostTypeGroup> allCostTypes = new();
         [ObservableProperty]
-        private ObservableCollection<object> selectedCostTypes = new();
+        ObservableCollection<object> selectedCostTypes = new();
 
         [ObservableProperty]
-        private List<Season> allSeasons = new();
+        List<Season> allSeasons = new();
         [ObservableProperty]
-        private ObservableCollection<object> selectedSeasons = new();
+        ObservableCollection<object> selectedSeasons = new();
 
         [ObservableProperty]
-        private DateTime selectedEarliestDate = DateTime.MinValue;
+        DateTime selectedEarliestDate = DateTime.MinValue;
         [ObservableProperty]
-        private bool useCustomEarliestDate;
+        bool useCustomEarliestDate;
 
         [ObservableProperty]
-        private DateTime selectedLatestDate = Season.MaximumDate;
+        DateTime selectedLatestDate = Season.MaximumDate;
         [ObservableProperty]
-        private bool useCustomLatestDate;
+        bool useCustomLatestDate;
 
         [ObservableProperty]
-        private decimal smallestBalanceChange;
+        decimal smallestBalanceChange;
         [ObservableProperty]
-        private bool useCustomSmallestChange;
+        bool useCustomSmallestChange;
 
         [ObservableProperty]
-        private decimal largestBalanceChange;
+        decimal largestBalanceChange;
         [ObservableProperty]
-        private bool useCustomLargestChange;
+        bool useCustomLargestChange;
         #endregion
 
         #region Sorting Related Fields
         [ObservableProperty]
-        private ObservableCollection<string> sortMethods;
+        ObservableCollection<string> sortMethods;
         [ObservableProperty]
-        private LedgerFilterSet.SortingCriteria selectedSortMethod;
+        LedgerFilterSet.SortingCriteria selectedSortMethod;
         [ObservableProperty]
-        private bool useDescendingSortOrder;
+        bool useDescendingSortOrder;
         #endregion
 
-        private LedgerFilterSet _filterSet;
+        public static event EventHandler<LedgerFilterSet> OnFilterSetCreated;
+        public static event EventHandler OnPageQuit;
 
-        public LedgerFilterPageViewModel()
+        public LedgerFilterPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             //The only way to open this Page is through LedgerPage, which already validates all tables
             //Because of this, LedgerFilterPage is allowed to proceed without validation
             using var context = new DatabaseContext();

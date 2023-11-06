@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Storage;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
@@ -11,25 +12,28 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class SettingsPageViewModel : ObservableObject
     {
+        readonly IPopupService popupService;
+
+        [ObservableProperty]
+        List<string> appThemes;
+        [ObservableProperty]
+        AppTheme selectedTheme;
+
+        [ObservableProperty]
+        List<CropField> cropFields = new();
+        [ObservableProperty]
+        CropField defaultCropField;
+        [ObservableProperty]
+        bool cropFieldPickerEnabled = true;
+        
         #region Preference Keys
         public const string AppThemeKey = "appTheme";
         public const string LedgerPage_DefaultCropField = "ledger_defaultCropFieldKey";
         #endregion
 
-        [ObservableProperty]
-        private List<string> appThemes;
-        [ObservableProperty]
-        private AppTheme selectedTheme;
-
-        [ObservableProperty]
-        private List<CropField> cropFields = new();
-        [ObservableProperty]
-        private CropField defaultCropField;
-        [ObservableProperty]
-        private bool cropFieldPickerEnabled = true;
-
-        public SettingsPageViewModel()
+        public SettingsPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             using var context = new DatabaseContext();
             AppThemes = new()
                 {

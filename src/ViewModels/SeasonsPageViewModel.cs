@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
@@ -9,30 +10,33 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class SeasonsPageViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private List<Season> seasons = new();
-        [ObservableProperty]
-        private bool showCreatorFrame = false;
-        [ObservableProperty]
-        private bool dateEndPickerEnabled = false;
-        [ObservableProperty]
-        private string saveButtonText = "Dodaj sezon i zapisz";
+        readonly IPopupService popupService;
 
-        private bool addingSeason = false;
-        private bool editingSeason = false;
-        private int editedSeasonId;
+        [ObservableProperty]
+        List<Season> seasons = new();
+        [ObservableProperty]
+        bool showCreatorFrame = false;
+        [ObservableProperty]
+        bool dateEndPickerEnabled = false;
+        [ObservableProperty]
+        string saveButtonText = "Dodaj sezon i zapisz";
+
+        bool addingSeason = false;
+        bool editingSeason = false;
+        int editedSeasonId;
 
         #region Season Details
         [ObservableProperty]
-        private string seasonName = "Nowy sezon " + DateTime.Now.AddMonths(1).Year.ToString();
+        string seasonName = "Nowy sezon " + DateTime.Now.AddMonths(1).Year.ToString();
         [ObservableProperty]
-        private DateTime seasonDateStart = DateTime.Now;
+        DateTime seasonDateStart = DateTime.Now;
         [ObservableProperty]
-        private DateTime seasonDateEnd = DateTime.Now.AddYears(1);
+        DateTime seasonDateEnd = DateTime.Now.AddYears(1);
         #endregion
 
-        public SeasonsPageViewModel()
+        public SeasonsPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             try
             {
                 Seasons = Season.RetrieveAll(null);

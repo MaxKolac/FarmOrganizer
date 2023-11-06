@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
@@ -13,10 +14,12 @@ namespace FarmOrganizer.ViewModels
     [QueryProperty(nameof(seasonIds), "seasons")]
     public partial class ReportPageViewModel : ObservableObject, IQueryAttributable
     {
+        readonly IPopupService popupService;
+        
         #region Query Properties
-        private List<BalanceLedger> passedLedgerEntries;
-        private List<int> cropFieldIds;
-        private List<int> seasonIds;
+        List<BalanceLedger> passedLedgerEntries;
+        List<int> cropFieldIds;
+        List<int> seasonIds;
         #endregion
 
         [ObservableProperty]
@@ -80,8 +83,9 @@ namespace FarmOrganizer.ViewModels
 
         public static event EventHandler OnPageQuit;
 
-        public ReportPageViewModel()
+        public ReportPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             try
             {
                 CostType.Validate(null);

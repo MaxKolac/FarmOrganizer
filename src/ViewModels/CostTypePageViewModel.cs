@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
@@ -11,27 +12,30 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class CostTypePageViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private ObservableCollection<CostTypeGroup> costTypeGroups;
-        [ObservableProperty]
-        private bool showCreatorFrame = false;
+        readonly IPopupService popupService;
 
         [ObservableProperty]
-        private string saveButtonText = _saveButtonAddText;
-        private const string _saveButtonAddText = "Dodaj rodzaj i zapisz";
-        private const string _saveButtonEditText = "Zapisz zmiany";
-
-        private bool addingEntry = false;
-        private bool editingEntry = false;
-        private int editedEntryId;
+        ObservableCollection<CostTypeGroup> costTypeGroups;
+        [ObservableProperty]
+        bool showCreatorFrame = false;
 
         [ObservableProperty]
-        private string costTypeName = "Nowy rodzaj";
-        [ObservableProperty]
-        private bool costTypeIsExpense = true;
+        string saveButtonText = _saveButtonAddText;
+        const string _saveButtonAddText = "Dodaj rodzaj i zapisz";
+        const string _saveButtonEditText = "Zapisz zmiany";
 
-        public CostTypePageViewModel()
+        bool addingEntry = false;
+        bool editingEntry = false;
+        int editedEntryId;
+
+        [ObservableProperty]
+        string costTypeName = "Nowy rodzaj";
+        [ObservableProperty]
+        bool costTypeIsExpense = true;
+
+        public CostTypePageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             try
             {
                 using var context = new DatabaseContext();

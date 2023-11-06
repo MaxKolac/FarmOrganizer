@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
@@ -9,27 +10,30 @@ namespace FarmOrganizer.ViewModels
 {
     public partial class CropFieldPageViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private List<CropField> cropFields = new();
+        readonly IPopupService popupService;
 
         [ObservableProperty]
-        private bool showCreatorFrame = false;
-        [ObservableProperty]
-        private string saveButtonText = _buttonTextAddingEntry;
-        private const string _buttonTextAddingEntry = "Dodaj pole i zapisz";
-        private const string _buttonTextEditingEntry = "Zapisz zmiany";
-
-        private bool addingEntry = false;
-        private bool editingEntry = false;
-        private int editedEntryId;
+        List<CropField> cropFields = new();
 
         [ObservableProperty]
-        private string cropFieldName = "Nowe pole";
+        bool showCreatorFrame = false;
         [ObservableProperty]
-        private string cropFieldHectares;
+        string saveButtonText = _buttonTextAddingEntry;
+        const string _buttonTextAddingEntry = "Dodaj pole i zapisz";
+        const string _buttonTextEditingEntry = "Zapisz zmiany";
 
-        public CropFieldPageViewModel()
+        bool addingEntry = false;
+        bool editingEntry = false;
+        int editedEntryId;
+
+        [ObservableProperty]
+        string cropFieldName = "Nowe pole";
+        [ObservableProperty]
+        string cropFieldHectares;
+
+        public CropFieldPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             try
             {
                 CropFields = CropField.RetrieveAll(null);
