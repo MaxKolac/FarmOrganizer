@@ -1,4 +1,6 @@
-﻿namespace FarmOrganizer.IO
+﻿using FarmOrganizer.Services;
+
+namespace FarmOrganizer.IO
 {
     public static class PermissionManager
     {
@@ -37,7 +39,7 @@
             }
 
             if (!writePermissionGranted || !readPermissionGranted)
-                App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                PopupExtensions.ShowAlert(App.PopupService, "Błąd", _IOAlertNoPermissions);
 
             return writePermissionGranted && readPermissionGranted;
         }

@@ -1,35 +1,40 @@
-﻿using CommunityToolkit.Maui.Storage;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.IO;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels.Converters;
 
 namespace FarmOrganizer.ViewModels
 {
     public partial class SettingsPageViewModel : ObservableObject
     {
+        readonly IPopupService popupService;
+
+        [ObservableProperty]
+        List<string> appThemes;
+        [ObservableProperty]
+        AppTheme selectedTheme;
+
+        [ObservableProperty]
+        List<CropField> cropFields = new();
+        [ObservableProperty]
+        CropField defaultCropField;
+        [ObservableProperty]
+        bool cropFieldPickerEnabled = true;
+
         #region Preference Keys
         public const string AppThemeKey = "appTheme";
         public const string LedgerPage_DefaultCropField = "ledger_defaultCropFieldKey";
         #endregion
 
-        [ObservableProperty]
-        private List<string> appThemes;
-        [ObservableProperty]
-        private AppTheme selectedTheme;
-
-        [ObservableProperty]
-        private List<CropField> cropFields = new();
-        [ObservableProperty]
-        private CropField defaultCropField;
-        [ObservableProperty]
-        private bool cropFieldPickerEnabled = true;
-
-        public SettingsPageViewModel()
+        public SettingsPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             using var context = new DatabaseContext();
             AppThemes = new()
                 {
@@ -62,27 +67,29 @@ namespace FarmOrganizer.ViewModels
             Application.Current.UserAppTheme = Enum.Parse<AppTheme>(Preferences.Get(AppThemeKey, Enum.GetName(AppTheme.Unspecified)));
         }
 
-        partial void OnSelectedThemeChanging(AppTheme oldValue, AppTheme newValue)
+        partial void OnSelectedThemeChanged(AppTheme value)
         {
-            Preferences.Set(AppThemeKey, Enum.GetName(newValue));
+            Preferences.Set(AppThemeKey, Enum.GetName(value));
             ApplyPreferences();
         }
 
-        partial void OnDefaultCropFieldChanged(CropField oldValue, CropField newValue)
+        partial void OnDefaultCropFieldChanged(CropField value)
         {
             if (CropFieldPickerEnabled)
-                Preferences.Set(LedgerPage_DefaultCropField, newValue.Id);
+                Preferences.Set(LedgerPage_DefaultCropField, value.Id);
             ApplyPreferences();
         }
 
         [RelayCommand]
-        private async static Task ResetDatabase()
+        async Task ResetDatabase()
         {
-            if (await App.AlertSvc.ShowConfirmationAsync(
-                "Uwaga!",
-                "Za chwilę bezpowrotnie wyczyścisz wszystkie dane z bazy danych. " +
-                "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
-                "Tak", "Nie"))
+            if (await PopupExtensions.ShowConfirmationAsync(
+                    popupService,
+                    "Uwaga!",
+                    "Za chwilę bezpowrotnie wyczyścisz wszystkie dane z bazy danych. " +
+                    "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?"
+                    )
+                )
             {
                 if (!await PermissionManager.RequestPermissionsAsync())
                     return;
@@ -93,7 +100,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async static Task ExportDatabase()
+        async Task ExportDatabase()
         {
             try
             {
@@ -103,7 +110,8 @@ namespace FarmOrganizer.ViewModels
                 if (!folder.IsSuccessful)
                     return;
                 await DatabaseFile.ExportTo(folder.Folder.Path);
-                App.AlertSvc.ShowAlert(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Sukces",
                     $"Baza danych została pomyślnie wyeksportowana do lokalizacji: {folder.Folder.Path}"
                     );
@@ -115,7 +123,7 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async static Task ImportDatabase()
+        async Task ImportDatabase()
         {
             try
             {
@@ -129,7 +137,8 @@ namespace FarmOrganizer.ViewModels
                     return;
                 }
                 await DatabaseFile.ImportFrom(file.FullPath);
-                App.AlertSvc.ShowAlert(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Sukces",
                     $"Baza danych została pomyślnie importowana z pliku {file.FileName}"
                     );

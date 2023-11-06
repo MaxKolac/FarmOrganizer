@@ -1,9 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
@@ -13,10 +15,12 @@ namespace FarmOrganizer.ViewModels
     [QueryProperty(nameof(seasonIds), "seasons")]
     public partial class ReportPageViewModel : ObservableObject, IQueryAttributable
     {
+        readonly IPopupService popupService;
+
         #region Query Properties
-        private List<BalanceLedger> passedLedgerEntries;
-        private List<int> cropFieldIds;
-        private List<int> seasonIds;
+        List<BalanceLedger> passedLedgerEntries;
+        List<int> cropFieldIds;
+        List<int> seasonIds;
         #endregion
 
         [ObservableProperty]
@@ -80,8 +84,9 @@ namespace FarmOrganizer.ViewModels
 
         public static event EventHandler OnPageQuit;
 
-        public ReportPageViewModel()
+        public ReportPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             try
             {
                 CostType.Validate(null);
@@ -145,14 +150,20 @@ namespace FarmOrganizer.ViewModels
         {
             if (PassedCropFields.Count == 0 || PassedSeasons.Count == 0)
             {
-                App.AlertSvc.ShowAlert("Nie można dodać nowego rekordu",
-                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport bez zaznaczonego przynajmniej jednego sezonu i/lub jednego pola uprawnego.");
+                PopupExtensions.ShowAlert(
+                    popupService,
+                    "Nie można dodać nowego rekordu",
+                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport bez zaznaczonego przynajmniej jednego sezonu i/lub jednego pola uprawnego."
+                    );
                 return;
             }
             if (PassedCropFields.Count != 1 || PassedSeasons.Count != 1)
             {
-                App.AlertSvc.ShowAlert("Nie można dodać nowego rekordu",
-                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport zawierający więcej niż jeden sezon i/lub więcej niż jedno pole uprawne.");
+                PopupExtensions.ShowAlert(
+                    popupService,
+                    "Nie można dodać nowego rekordu",
+                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport zawierający więcej niż jeden sezon i/lub więcej niż jedno pole uprawne."
+                    );
                 return;
             }
 
@@ -212,14 +223,14 @@ namespace FarmOrganizer.ViewModels
             }
             catch (Exception ex)
             {
-                App.AlertSvc.ShowAlert("Błąd", ex.ToString());
+                PopupExtensions.ShowAlert(popupService, "Błąd", ex.ToString());
             }
         }
 
         partial void OnTotalChangeChanged(decimal value) =>
             TotalChangeText = value >= 0 ? _labelProfit : _labelLoss;
 
-        partial void OnPureIncomeValueChanged(decimal value) =>        
+        partial void OnPureIncomeValueChanged(decimal value) =>
             ProfitAfterExpenses = TotalChange + value;
 
         partial void OnProfitAfterExpensesChanged(decimal value) =>

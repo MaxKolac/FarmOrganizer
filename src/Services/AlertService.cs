@@ -1,6 +1,7 @@
 ﻿namespace FarmOrganizer.Services
 {
     /// <inheritdoc/>
+    [Obsolete("Replaced with CommunityToolkitMaui's PopupService, see https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/popup#presenting-a-popup. This class is only preserved as a working fallback in case the PopupService breaks down.")]
     internal class AlertService : IAlertService
     {
         /// <inheritdoc/>

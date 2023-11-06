@@ -60,9 +60,9 @@ public partial class QuickCalculatorControl : ContentView
         if (!entry.IsFocused)
         {
             var formattedValue = ((decimal)newValue).ToString("0.00");
-            entry.Text = 
+            entry.Text =
                 formattedValue.Length > Globals.NumericEntryMaxLength ?
-                Globals.NumericEntryMaxLengthExceeded : 
+                Globals.NumericEntryMaxLengthExceeded :
                 formattedValue;
         }
     });

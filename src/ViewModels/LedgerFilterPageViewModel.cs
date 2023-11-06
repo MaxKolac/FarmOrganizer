@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels.Converters;
 using FarmOrganizer.ViewModels.Helpers;
 using System.Collections.ObjectModel;
@@ -11,59 +13,62 @@ namespace FarmOrganizer.ViewModels
     [QueryProperty(nameof(_filterSet), "filterSet")]
     public partial class LedgerFilterPageViewModel : ObservableObject, IQueryAttributable
     {
-        public static event EventHandler<LedgerFilterSet> OnFilterSetCreated;
-        public static event EventHandler OnPageQuit;
+        readonly IPopupService popupService;
+
+        LedgerFilterSet _filterSet;
 
         #region Collections and Choices Bindings
         [ObservableProperty]
-        private List<CropField> allCropFields = new();
+        List<CropField> allCropFields = new();
         [ObservableProperty]
-        private ObservableCollection<object> selectedCropFields = new();
+        ObservableCollection<object> selectedCropFields = new();
 
         [ObservableProperty]
-        private ObservableCollection<CostTypeGroup> allCostTypes = new();
+        ObservableCollection<CostTypeGroup> allCostTypes = new();
         [ObservableProperty]
-        private ObservableCollection<object> selectedCostTypes = new();
+        ObservableCollection<object> selectedCostTypes = new();
 
         [ObservableProperty]
-        private List<Season> allSeasons = new();
+        List<Season> allSeasons = new();
         [ObservableProperty]
-        private ObservableCollection<object> selectedSeasons = new();
+        ObservableCollection<object> selectedSeasons = new();
 
         [ObservableProperty]
-        private DateTime selectedEarliestDate = DateTime.MinValue;
+        DateTime selectedEarliestDate = DateTime.MinValue;
         [ObservableProperty]
-        private bool useCustomEarliestDate;
+        bool useCustomEarliestDate;
 
         [ObservableProperty]
-        private DateTime selectedLatestDate = Season.MaximumDate;
+        DateTime selectedLatestDate = Season.MaximumDate;
         [ObservableProperty]
-        private bool useCustomLatestDate;
+        bool useCustomLatestDate;
 
         [ObservableProperty]
-        private decimal smallestBalanceChange;
+        decimal smallestBalanceChange;
         [ObservableProperty]
-        private bool useCustomSmallestChange;
+        bool useCustomSmallestChange;
 
         [ObservableProperty]
-        private decimal largestBalanceChange;
+        decimal largestBalanceChange;
         [ObservableProperty]
-        private bool useCustomLargestChange;
+        bool useCustomLargestChange;
         #endregion
 
         #region Sorting Related Fields
         [ObservableProperty]
-        private ObservableCollection<string> sortMethods;
+        ObservableCollection<string> sortMethods;
         [ObservableProperty]
-        private LedgerFilterSet.SortingCriteria selectedSortMethod;
+        LedgerFilterSet.SortingCriteria selectedSortMethod;
         [ObservableProperty]
-        private bool useDescendingSortOrder;
+        bool useDescendingSortOrder;
         #endregion
 
-        private LedgerFilterSet _filterSet;
+        public static event EventHandler<LedgerFilterSet> OnFilterSetCreated;
+        public static event EventHandler OnPageQuit;
 
-        public LedgerFilterPageViewModel()
+        public LedgerFilterPageViewModel(IPopupService popupService)
         {
+            this.popupService = popupService;
             //The only way to open this Page is through LedgerPage, which already validates all tables
             //Because of this, LedgerFilterPage is allowed to proceed without validation
             using var context = new DatabaseContext();
@@ -174,9 +179,11 @@ namespace FarmOrganizer.ViewModels
             //Warn when no crop field was selected
             if (cropFieldsIds.Count == 0)
             {
-                await App.AlertSvc.ShowAlertAsync(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Brak wybranych pól uprawnych",
-                    "Nie wybrano żadnych pól uprawnych do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono pola uprawne, którch wpisy mają zostać pokazane.");
+                    "Nie wybrano żadnych pól uprawnych do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. " +
+                    "Zaznacz na zielono pola uprawne, którch wpisy mają zostać pokazane.");
                 return;
             }
 
@@ -187,9 +194,11 @@ namespace FarmOrganizer.ViewModels
             //Warn when no cost type was selected
             if (costTypeIds.Count == 0)
             {
-                await App.AlertSvc.ShowAlertAsync(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Brak wybranych rodzajów wpisów",
-                    "Nie wybrano żadnych rodzajów wpisów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono rodzaje, które mają posiadać wpisy aby zostały pokazane.");
+                    "Nie wybrano żadnych rodzajów wpisów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. " +
+                    "Zaznacz na zielono rodzaje, które mają posiadać wpisy aby zostały pokazane.");
                 return;
             }
 
@@ -200,18 +209,23 @@ namespace FarmOrganizer.ViewModels
             //Warn when no season was selected
             if (seasons.Count == 0)
             {
-                await App.AlertSvc.ShowAlertAsync(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Brak wybranych sezonów",
-                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono sezony, z których wpisy mają być pokazane.");
+                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. " +
+                    "Zaznacz na zielono sezony, z których wpisy mają być pokazane."
+                    );
                 return;
             }
 
             //Condition of LargestBalance >= SmallerBalance
             if (LargestBalanceChange < SmallestBalanceChange)
             {
-                await App.AlertSvc.ShowAlertAsync(
-                    "Zły zakres wartości kosztu",
-                    "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronnie otwarty zakres.");
+                PopupExtensions.ShowAlert(
+                    popupService,
+                     "Zły zakres wartości kosztu",
+                     "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. " +
+                     "Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronnie otwarty zakres.");
                 return;
             }
 

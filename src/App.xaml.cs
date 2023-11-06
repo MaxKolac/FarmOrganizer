@@ -1,5 +1,5 @@
-﻿using FarmOrganizer.IO.Exporting.PDF;
-using FarmOrganizer.Services;
+﻿using CommunityToolkit.Maui.Core;
+using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.ViewModels;
 using PdfSharpCore.Fonts;
 using System.Globalization;
@@ -8,11 +8,15 @@ namespace FarmOrganizer;
 
 public partial class App : Application
 {
-    private static IServiceProvider services;
-    private static IAlertService alertSvc;
+    /// <summary>
+    /// Static property exposing the collection of all services registered in the app.
+    /// </summary>
+    public static IServiceProvider Services { get; set; }
 
-    public static IServiceProvider Services { get => services; set => services = value; }
-    public static IAlertService AlertSvc { get => alertSvc; set => alertSvc = value; }
+    /// <summary>
+    /// An <see cref="IPopupService"/> property for classes which aren't ViewModels or can't benefit from dependency injection.
+    /// </summary>
+    public static IPopupService PopupService { get; set; }
 
     public App(IServiceProvider provider)
     {
@@ -20,11 +24,10 @@ public partial class App : Application
         CultureInfo.CurrentCulture = new CultureInfo("pl-PL", false);
 
         Services = provider;
-        AlertSvc = Services.GetService<IAlertService>();
+        PopupService = provider.GetService<IPopupService>();
+
         SettingsPageViewModel.ApplyPreferences();
-
         GlobalFontSettings.FontResolver = new GenericFontResolver();
-
         MainPage = new AppShell();
     }
 }

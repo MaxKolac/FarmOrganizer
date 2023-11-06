@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using FarmOrganizer.Services;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.Exceptions
 {
@@ -14,7 +15,7 @@ namespace FarmOrganizer.Exceptions
         /// <param name="returnToPreviousPage">If <c>true</c>, the app will return the user to the previous page on the navigation stack.</param>
         public static void Handle(FarmOrganizerException exception, bool returnToPreviousPage)
         {
-            App.AlertSvc.ShowAlert(exception.Title, exception.Message);
+            PopupExtensions.ShowAlert(App.PopupService, exception.Title, exception.Message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
         }
@@ -30,7 +31,7 @@ namespace FarmOrganizer.Exceptions
                 message += $" Błąd wewnętrzny: {exception.InnerException.Message};";
             if (exception.Message is not null)
                 message += $" Wiadomość: {exception.Message};";
-            App.AlertSvc.ShowAlert("Błąd SQLite", message);
+            PopupExtensions.ShowAlert(App.PopupService, "Błąd SQLite", message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
         }
@@ -41,7 +42,7 @@ namespace FarmOrganizer.Exceptions
         /// <inheritdoc cref="Handle(FarmOrganizerException, bool)"/>
         public static void Handle(IOException exception, bool returnToPreviousPage)
         {
-            App.AlertSvc.ShowAlert("Błąd podczas pracy na plikach", exception.Message);
+            PopupExtensions.ShowAlert(App.PopupService, "Błąd podczas pracy na plikach", exception.Message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
         }
@@ -53,7 +54,7 @@ namespace FarmOrganizer.Exceptions
         [Obsolete("Do not use this method to handle actual exceptions. For debugging purposes only.")]
         public static void EmergencyHandle(Exception exception)
         {
-            App.AlertSvc.ShowAlert("Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
+            PopupExtensions.ShowAlert(App.PopupService, "Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
             ReturnToPreviousPage();
         }
 

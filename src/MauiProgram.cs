@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using FarmOrganizer.Database;
 using FarmOrganizer.IO;
-using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels;
 using FarmOrganizer.Views;
 using Microsoft.Extensions.Logging;
@@ -54,7 +53,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CropFieldPage>();
         builder.Services.AddTransient<CropFieldPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
-        builder.Services.AddSingleton<IAlertService, AlertService>();
+        builder.Services.AddTransientPopup<PopupPage, PopupPageViewModel>();
 
         if (!DatabaseFile.Exists())
             MainThread.InvokeOnMainThreadAsync(DatabaseFile.Create);

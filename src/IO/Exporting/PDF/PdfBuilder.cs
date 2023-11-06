@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Storage;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;
@@ -324,7 +325,10 @@ namespace FarmOrganizer.IO.Exporting.PDF
                 if (!folder.IsSuccessful)
                     return;
                 document.Save(Path.Combine(folder.Folder.Path, Filename));
-                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path} z nazwą {Filename}.");
+                PopupExtensions.ShowAlert(
+                    App.PopupService,
+                    "Sukces",
+                    $"Raport wyeksportowano do folderu {folder.Folder.Path} z nazwą {Filename}.");
             }
             catch (IOException ex)
             {
