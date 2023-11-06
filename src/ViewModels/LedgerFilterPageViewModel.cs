@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels.Converters;
 using FarmOrganizer.ViewModels.Helpers;
 using System.Collections.ObjectModel;
@@ -178,9 +179,11 @@ namespace FarmOrganizer.ViewModels
             //Warn when no crop field was selected
             if (cropFieldsIds.Count == 0)
             {
-                await App.AlertSvc.ShowAlertAsync(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Brak wybranych pól uprawnych",
-                    "Nie wybrano żadnych pól uprawnych do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono pola uprawne, którch wpisy mają zostać pokazane.");
+                    "Nie wybrano żadnych pól uprawnych do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. " +
+                    "Zaznacz na zielono pola uprawne, którch wpisy mają zostać pokazane.");
                 return;
             }
 
@@ -191,9 +194,11 @@ namespace FarmOrganizer.ViewModels
             //Warn when no cost type was selected
             if (costTypeIds.Count == 0)
             {
-                await App.AlertSvc.ShowAlertAsync(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Brak wybranych rodzajów wpisów",
-                    "Nie wybrano żadnych rodzajów wpisów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono rodzaje, które mają posiadać wpisy aby zostały pokazane.");
+                    "Nie wybrano żadnych rodzajów wpisów do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. " +
+                    "Zaznacz na zielono rodzaje, które mają posiadać wpisy aby zostały pokazane.");
                 return;
             }
 
@@ -204,18 +209,23 @@ namespace FarmOrganizer.ViewModels
             //Warn when no season was selected
             if (seasons.Count == 0)
             {
-                await App.AlertSvc.ShowAlertAsync(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Brak wybranych sezonów",
-                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. Zaznacz na zielono sezony, z których wpisy mają być pokazane.");
+                    "Nie wybrano żadnego sezonu do uwzględnienia. Oznacza to, że nie zostanie pokazany żaden wpis. " +
+                    "Zaznacz na zielono sezony, z których wpisy mają być pokazane."
+                    );
                 return;
             }
 
             //Condition of LargestBalance >= SmallerBalance
             if (LargestBalanceChange < SmallestBalanceChange)
             {
-                await App.AlertSvc.ShowAlertAsync(
-                    "Zły zakres wartości kosztu",
-                    "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronnie otwarty zakres.");
+                PopupExtensions.ShowAlert(
+                    popupService,
+                     "Zły zakres wartości kosztu",
+                     "Najmniejszy koszt jest większy od największego kosztu, przez co zakres wartości kosztów jest nie poprawny. " +
+                     "Zamień je miejscami, lub wyłącz jeden z nich aby ustawić jednostronnie otwarty zakres.");
                 return;
             }
 

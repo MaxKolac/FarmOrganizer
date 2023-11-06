@@ -6,6 +6,7 @@ using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.IO;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels.Converters;
 
 namespace FarmOrganizer.ViewModels
@@ -25,7 +26,7 @@ namespace FarmOrganizer.ViewModels
         CropField defaultCropField;
         [ObservableProperty]
         bool cropFieldPickerEnabled = true;
-        
+
         #region Preference Keys
         public const string AppThemeKey = "appTheme";
         public const string LedgerPage_DefaultCropField = "ledger_defaultCropFieldKey";
@@ -57,7 +58,7 @@ namespace FarmOrganizer.ViewModels
             catch (TableValidationException ex)
             {
                 CropFieldPickerEnabled = false;
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
         }
 
@@ -80,15 +81,17 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async static Task ResetDatabase()
+        async Task ResetDatabase()
         {
-            if (await App.AlertSvc.ShowConfirmationAsync(
-                "Uwaga!",
-                "Za chwilę bezpowrotnie wyczyścisz wszystkie dane z bazy danych. " +
-                "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?",
-                "Tak", "Nie"))
+            if (await PopupExtensions.ShowConfirmationAsync(
+                    popupService,
+                    "Uwaga!",
+                    "Za chwilę bezpowrotnie wyczyścisz wszystkie dane z bazy danych. " +
+                    "Tej akcji nie można odwrócić. Czy jesteś pewny aby kontynuować?"
+                    )
+                )
             {
-                if (!await PermissionManager.RequestPermissionsAsync())
+                if (!await PermissionManager.RequestPermissionsAsync(popupService))
                     return;
 
                 await DatabaseFile.Delete();
@@ -97,33 +100,34 @@ namespace FarmOrganizer.ViewModels
         }
 
         [RelayCommand]
-        private async static Task ExportDatabase()
+        async Task ExportDatabase()
         {
             try
             {
-                if (!await PermissionManager.RequestPermissionsAsync())
+                if (!await PermissionManager.RequestPermissionsAsync(popupService))
                     return;
                 FolderPickerResult folder = await FolderPicker.PickAsync(default);
                 if (!folder.IsSuccessful)
                     return;
                 await DatabaseFile.ExportTo(folder.Folder.Path);
-                App.AlertSvc.ShowAlert(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Sukces",
                     $"Baza danych została pomyślnie wyeksportowana do lokalizacji: {folder.Folder.Path}"
                     );
             }
             catch (IOException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
         }
 
         [RelayCommand]
-        private async static Task ImportDatabase()
+        async Task ImportDatabase()
         {
             try
             {
-                if (!await PermissionManager.RequestPermissionsAsync())
+                if (!await PermissionManager.RequestPermissionsAsync(popupService))
                     return;
                 await DatabaseFile.CreateBackup();
                 FileResult file = await FilePicker.PickAsync();
@@ -133,7 +137,8 @@ namespace FarmOrganizer.ViewModels
                     return;
                 }
                 await DatabaseFile.ImportFrom(file.FullPath);
-                App.AlertSvc.ShowAlert(
+                PopupExtensions.ShowAlert(
+                    popupService,
                     "Sukces",
                     $"Baza danych została pomyślnie importowana z pliku {file.FileName}"
                     );
@@ -142,7 +147,7 @@ namespace FarmOrganizer.ViewModels
             catch (IOException ex)
             {
                 await DatabaseFile.RestoreBackup();
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
         }
     }

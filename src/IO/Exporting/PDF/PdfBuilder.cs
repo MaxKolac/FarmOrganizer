@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Maui.Storage;
-using FarmOrganizer.Exceptions;
-using FarmOrganizer.Models;
+﻿using FarmOrganizer.Models;
 using FarmOrganizer.ViewModels;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.Rendering;
@@ -11,7 +9,7 @@ namespace FarmOrganizer.IO.Exporting.PDF
 {
     /// <summary>
     /// Responsible for instantiating, creating and then building reports as PDF files.<br/>
-    /// First, create a new object instance. Initialize the object with predefined lists right away or use any method with <c>Add</c> prefix to add data to the report. Once ready to be rendered, use <see cref="Build"/> to return a rendered a <see cref="PdfDocument"/> and call <see cref="Export(PdfDocument)"/> to save it as a PDF file on the device.
+    /// First, create a new object instance. Initialize the object with predefined lists right away or use any method with <c>Add</c> prefix to add data to the report. Once ready to be rendered, use <see cref="Build"/> to return a rendered a <see cref="PdfDocument"/> and call <see cref="PdfDocument.Save(Stream)"/> on it to save it as a PDF file.
     /// <para>
     /// Class contains some code originally written by <see href="https://github.com/icebeam7">Luis Beltran</see>. His code was copied and partially modified from his <see href="https://github.com/icebeam7/PDFDemo"> example GitHub repository - PDFDemo</see>
     /// </para>
@@ -312,24 +310,6 @@ namespace FarmOrganizer.IO.Exporting.PDF
         {
             totalAmounts = new(totalAmounts.Item1, totalAmounts.Item2 + costTypeEntry.Amount);
             _profits.Add(costTypeEntry);
-        }
-
-        public static async Task Export(PdfDocument document)
-        {
-            try
-            {
-                if (!await PermissionManager.RequestPermissionsAsync())
-                    return;
-                FolderPickerResult folder = await FolderPicker.PickAsync(default);
-                if (!folder.IsSuccessful)
-                    return;
-                document.Save(Path.Combine(folder.Folder.Path, Filename));
-                App.AlertSvc.ShowAlert("Sukces", $"Raport wyeksportowano do folderu {folder.Folder.Path} z nazwą {Filename}.");
-            }
-            catch (IOException ex)
-            {
-                ExceptionHandler.Handle(ex, false);
-            }
         }
     }
 }

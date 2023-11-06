@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
+using FarmOrganizer.IO;
 using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
@@ -15,7 +18,7 @@ namespace FarmOrganizer.ViewModels
     public partial class ReportPageViewModel : ObservableObject, IQueryAttributable
     {
         readonly IPopupService popupService;
-        
+
         #region Query Properties
         List<BalanceLedger> passedLedgerEntries;
         List<int> cropFieldIds;
@@ -93,7 +96,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (TableValidationException ex)
             {
-                ExceptionHandler.Handle(ex, true);
+                ExceptionHandler.Handle(popupService, ex, true);
             }
         }
 
@@ -149,14 +152,20 @@ namespace FarmOrganizer.ViewModels
         {
             if (PassedCropFields.Count == 0 || PassedSeasons.Count == 0)
             {
-                App.AlertSvc.ShowAlert("Nie można dodać nowego rekordu",
-                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport bez zaznaczonego przynajmniej jednego sezonu i/lub jednego pola uprawnego.");
+                PopupExtensions.ShowAlert(
+                    popupService,
+                    "Nie można dodać nowego rekordu",
+                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport bez zaznaczonego przynajmniej jednego sezonu i/lub jednego pola uprawnego."
+                    );
                 return;
             }
             if (PassedCropFields.Count != 1 || PassedSeasons.Count != 1)
             {
-                App.AlertSvc.ShowAlert("Nie można dodać nowego rekordu",
-                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport zawierający więcej niż jeden sezon i/lub więcej niż jedno pole uprawne.");
+                PopupExtensions.ShowAlert(
+                    popupService,
+                    "Nie można dodać nowego rekordu",
+                    "Program nie jest pewien pod jaki sezon i pod jakie pole uprawne powinien być podpięty wpis ze sprzedaży, ponieważ wygenerowano raport zawierający więcej niż jeden sezon i/lub więcej niż jedno pole uprawne."
+                    );
                 return;
             }
 
@@ -190,11 +199,11 @@ namespace FarmOrganizer.ViewModels
             }
             catch (InvalidRecordPropertyException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
             catch (SqliteException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
         }
 
@@ -212,18 +221,27 @@ namespace FarmOrganizer.ViewModels
                 if (ExportPdfWithPureIncome)
                     builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", PureIncomeValue));
                 var document = builder.Build();
-                await PdfBuilder.Export(document);
+                if (!await PermissionManager.RequestPermissionsAsync(popupService))
+                    return;
+                FolderPickerResult folder = await FolderPicker.PickAsync(default);
+                if (!folder.IsSuccessful)
+                    return;
+                document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
+                PopupExtensions.ShowAlert(
+                    popupService,
+                    "Sukces",
+                    $"Raport wyeksportowano do folderu {folder.Folder.Path} pod nazwą {PdfBuilder.Filename}.");
             }
             catch (Exception ex)
             {
-                App.AlertSvc.ShowAlert("Błąd", ex.ToString());
+                PopupExtensions.ShowAlert(popupService, "Błąd", ex.ToString());
             }
         }
 
         partial void OnTotalChangeChanged(decimal value) =>
             TotalChangeText = value >= 0 ? _labelProfit : _labelLoss;
 
-        partial void OnPureIncomeValueChanged(decimal value) =>        
+        partial void OnPureIncomeValueChanged(decimal value) =>
             ProfitAfterExpenses = TotalChange + value;
 
         partial void OnProfitAfterExpensesChanged(decimal value) =>

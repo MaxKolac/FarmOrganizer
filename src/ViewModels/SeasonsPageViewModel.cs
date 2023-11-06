@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
@@ -43,7 +44,7 @@ namespace FarmOrganizer.ViewModels
             }
             catch (TableValidationException ex)
             {
-                ExceptionHandler.Handle(ex, true);
+                ExceptionHandler.Handle(popupService, ex, true);
             }
         }
 
@@ -74,15 +75,15 @@ namespace FarmOrganizer.ViewModels
             }
             catch (InvalidRecordPropertyException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
             catch (NoRecordFoundException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
             catch (SqliteException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
         }
 
@@ -103,20 +104,21 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task Remove(Season seasonToRemove)
         {
+            if (!await PopupExtensions.ShowConfirmationAsync(
+                popupService,
+                "Uwaga!",
+                "Usunięcie sezonu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany sezon. " +
+                "Tej operacji nie można cofnąć. Czy chcesz kontynuować?"
+                ))
+                return;
             try
             {
-                if (!await App.AlertSvc.ShowConfirmationAsync(
-                    "Uwaga!",
-                    "Usunięcie sezonu usunie również WSZYSTKIE wpisy z kosztami, które były podpięte pod usuwany sezon. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
-                    "Tak, usuń",
-                    "Anuluj"))
-                    return;
                 Season.DeleteEntry(seasonToRemove.Id, null);
                 Seasons = new DatabaseContext().Seasons.ToList();
             }
             catch (RecordDeletionException ex)
             {
-                ExceptionHandler.Handle(ex, false);
+                ExceptionHandler.Handle(popupService, ex, false);
             }
             finally
             {

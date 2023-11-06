@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using CommunityToolkit.Maui.Core;
+using FarmOrganizer.Services;
+using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.Exceptions
 {
@@ -10,11 +12,12 @@ namespace FarmOrganizer.Exceptions
         /// <summary>
         /// Handles exceptions which inherit <see cref="FarmOrganizerException"/> class.
         /// </summary>
+        /// <param name="popupService">An <see cref="IPopupService"/> object used by method to show appropriate alerts.</param>
         /// <param name="exception">The exception to handle.</param>
         /// <param name="returnToPreviousPage">If <c>true</c>, the app will return the user to the previous page on the navigation stack.</param>
-        public static void Handle(FarmOrganizerException exception, bool returnToPreviousPage)
+        public static void Handle(IPopupService popupService, FarmOrganizerException exception, bool returnToPreviousPage)
         {
-            App.AlertSvc.ShowAlert(exception.Title, exception.Message);
+            PopupExtensions.ShowAlert(popupService, exception.Title, exception.Message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
         }
@@ -22,15 +25,15 @@ namespace FarmOrganizer.Exceptions
         /// <summary>
         /// Handles the <see cref="SqliteException"/>, which require a different approach.
         /// </summary>
-        /// <inheritdoc cref="Handle(FarmOrganizerException, bool)"/>
-        public static void Handle(SqliteException exception, bool returnToPreviousPage)
+        /// <inheritdoc cref="Handle(IPopupService, FarmOrganizerException, bool)"/>
+        public static void Handle(IPopupService popupService, SqliteException exception, bool returnToPreviousPage)
         {
             string message = $"Kod błędu: ({exception.SqliteErrorCode}/{exception.SqliteExtendedErrorCode});";
             if (exception.InnerException is not null)
                 message += $" Błąd wewnętrzny: {exception.InnerException.Message};";
             if (exception.Message is not null)
                 message += $" Wiadomość: {exception.Message};";
-            App.AlertSvc.ShowAlert("Błąd SQLite", message);
+            PopupExtensions.ShowAlert(popupService, "Błąd SQLite", message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
         }
@@ -38,10 +41,10 @@ namespace FarmOrganizer.Exceptions
         /// <summary>
         /// Handles the <see cref="IOException"/> when manipulating files.
         /// </summary>
-        /// <inheritdoc cref="Handle(FarmOrganizerException, bool)"/>
-        public static void Handle(IOException exception, bool returnToPreviousPage)
+        /// <inheritdoc cref="Handle(IPopupService, FarmOrganizerException, bool)"/>
+        public static void Handle(IPopupService popupService, IOException exception, bool returnToPreviousPage)
         {
-            App.AlertSvc.ShowAlert("Błąd podczas pracy na plikach", exception.Message);
+            PopupExtensions.ShowAlert(popupService, "Błąd podczas pracy na plikach", exception.Message);
             if (returnToPreviousPage)
                 ReturnToPreviousPage();
         }
@@ -51,9 +54,9 @@ namespace FarmOrganizer.Exceptions
         /// Use this method only to diagnose the cause and type of exceptions being thrown at unexpected moments at runtime.
         /// </summary>
         [Obsolete("Do not use this method to handle actual exceptions. For debugging purposes only.")]
-        public static void EmergencyHandle(Exception exception)
+        public static void EmergencyHandle(IPopupService popupService, Exception exception)
         {
-            App.AlertSvc.ShowAlert("Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
+            PopupExtensions.ShowAlert(popupService, "Fatalny błąd", exception.Message + "\n\t" + exception.StackTrace);
             ReturnToPreviousPage();
         }
 

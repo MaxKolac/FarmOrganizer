@@ -1,4 +1,7 @@
-﻿namespace FarmOrganizer.IO
+﻿using CommunityToolkit.Maui.Core;
+using FarmOrganizer.Services;
+
+namespace FarmOrganizer.IO
 {
     public static class PermissionManager
     {
@@ -17,8 +20,9 @@
         /// <para><see href="https://stackoverflow.com/a/75331176/21342746">Liyun Zhang's answer on StackOverflow</see></para>
         /// <para><see href="https://github.com/dotnet/maui/issues/11275">.NET MAUI GitHub Issue discussion regarding the workaround</see></para>
         /// </summary>
+        /// <param name="popupService"><see cref="IPopupService"/> required to show user the appropriate alert, if necessary.</param>
         /// <returns><c>true</c> if both permissions have been granted, <c>false</c> otherwise.</returns>
-        public static async Task<bool> RequestPermissionsAsync()
+        public static async Task<bool> RequestPermissionsAsync(IPopupService popupService)
         {
             var storageWritePerm = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
             var storageReadPerm = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
@@ -37,7 +41,7 @@
             }
 
             if (!writePermissionGranted || !readPermissionGranted)
-                App.AlertSvc.ShowAlert("Błąd", _IOAlertNoPermissions);
+                PopupExtensions.ShowAlert(popupService, "Błąd", _IOAlertNoPermissions);
 
             return writePermissionGranted && readPermissionGranted;
         }

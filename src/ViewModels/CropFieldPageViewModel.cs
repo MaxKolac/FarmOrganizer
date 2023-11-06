@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using Microsoft.Data.Sqlite;
 
 namespace FarmOrganizer.ViewModels
@@ -97,11 +98,13 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task Remove(CropField cropFieldToRemove)
         {
-            if (!await App.AlertSvc.ShowConfirmationAsync(
-                "Uwaga!",
-                "Usunięcie pola uprawnego usunie również WSZYSTKIE wpisy, które były podpięte pod usuwane pole. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
-                "Tak, usuń",
-                "Anuluj"))
+            if (!await PopupExtensions.ShowConfirmationAsync(
+                    popupService,
+                    "Uwaga!",
+                    "Usunięcie pola uprawnego usunie również WSZYSTKIE wpisy, które były podpięte pod usuwane pole. " +
+                    "Tej operacji nie można cofnąć. Czy chcesz kontynuować?"
+                    )
+                )
                 return;
             try
             {

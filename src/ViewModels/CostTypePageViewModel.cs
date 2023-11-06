@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
 using FarmOrganizer.Models;
+using FarmOrganizer.Services;
 using FarmOrganizer.ViewModels.Helpers;
 using Microsoft.Data.Sqlite;
 using System.Collections.ObjectModel;
@@ -99,14 +100,16 @@ namespace FarmOrganizer.ViewModels
         [RelayCommand]
         private async Task Remove(CostType costToRemove)
         {
+            if (!await PopupExtensions.ShowConfirmationAsync(
+                    popupService,
+                    "Uwaga!",
+                    "Usunięcie rodzaju wpisu usunie również WSZYSTKIE wpisy z tego rodzaju. " +
+                    "Tej operacji nie można cofnąć. Czy chcesz kontynuować?"
+                    )
+                )
+                return;
             try
             {
-                if (!await App.AlertSvc.ShowConfirmationAsync(
-                "Uwaga!",
-                "Usunięcie rodzaju wpisu usunie również WSZYSTKIE wpisy z tego rodzaju. Tej operacji nie można cofnąć. Czy chcesz kontynuować?",
-                "Tak, usuń",
-                "Anuluj"))
-                    return;
                 CostType.DeleteEntry(costToRemove.Id, null);
                 CostTypeGroups = CostType.BuildCostTypeGroups(null);
             }
