@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FarmOrganizer.Database;
 using FarmOrganizer.Exceptions;
-using FarmOrganizer.IO;
 using FarmOrganizer.IO.Exporting.PDF;
 using FarmOrganizer.Models;
 using FarmOrganizer.Services;
@@ -221,16 +219,7 @@ namespace FarmOrganizer.ViewModels
                 if (ExportPdfWithPureIncome)
                     builder.AddProfitEntry(new("Zysk ze sprzedaży (prognozowany)", PureIncomeValue));
                 var document = builder.Build();
-                if (!await PermissionManager.RequestPermissionsAsync(popupService))
-                    return;
-                FolderPickerResult folder = await FolderPicker.PickAsync(default);
-                if (!folder.IsSuccessful)
-                    return;
-                document.Save(Path.Combine(folder.Folder.Path, PdfBuilder.Filename));
-                PopupExtensions.ShowAlert(
-                    popupService,
-                    "Sukces",
-                    $"Raport wyeksportowano do folderu {folder.Folder.Path} pod nazwą {PdfBuilder.Filename}.");
+                await PdfBuilder.Export(document);
             }
             catch (Exception ex)
             {
