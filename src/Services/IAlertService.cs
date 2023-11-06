@@ -6,6 +6,7 @@
     /// </para>
     /// <see href="https://stackoverflow.com/questions/72429055/how-to-displayalert-in-a-net-maui-viewmodel"/>
     /// </summary>
+    [Obsolete("Replaced with CommunityToolkitMaui's PopupService, see https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/popup#presenting-a-popup. This interface is only preserved as a working fallback in case the PopupService breaks down.")]
     public interface IAlertService
     {
         // ----- async calls (use with "await" - MUST BE ON DISPATCHER THREAD) -----
