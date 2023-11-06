@@ -54,6 +54,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CropFieldPage>();
         builder.Services.AddTransient<CropFieldPageViewModel>();
         builder.Services.AddDbContext<DatabaseContext>();
+        builder.Services.AddTransientPopup<PopupPage, PopupPageViewModel>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
 
         if (!DatabaseFile.Exists())
